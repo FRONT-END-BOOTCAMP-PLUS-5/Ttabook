@@ -41,26 +41,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# ===================================================================
-# Visual Studio Code
-#
-# Ignore user-specific and state-related files from VS Code.
-# Allow specific, shared configuration files for team consistency.
-# ===================================================================
-
-# Ignore the entire directory by default to catch all personal settings
-# and temporary files.
+# vscode
 .vscode/*
-
-# But, DO commit these specific files that benefit the whole team.
-# Use ! to re-include them.
-!/.vscode/settings.json
-!/.vscode/launch.json
-!/.vscode/extensions.json
-!/.vscode/tasks.json
-
-# Re-ignore user-specific settings that might be nested.
-.vscode/spellright.dic
-.vscode/state.vscdb
-.vscode/super-state.vscdb
-.vscode/workspaceStorage/

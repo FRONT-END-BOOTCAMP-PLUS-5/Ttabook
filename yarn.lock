@@ -510,6 +510,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@eslint/compat@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "@eslint/compat@npm:1.3.1"
+  peerDependencies:
+    eslint: ^8.40 || 9
+  peerDependenciesMeta:
+    eslint:
+      optional: true
+  checksum: 10c0/8dfcea5ecb854111f9c0acc23a469e0a25cdaddceb5fb40c47988c247d6e32ec199bcd00f1b8ba9ed779228526552703c4b74948169e78b78b5fd814e04b042b
+  languageName: node
+  linkType: hard
+
 "@eslint/config-array@npm:^0.21.0":
   version: 0.21.0
   resolution: "@eslint/config-array@npm:0.21.0"
@@ -1196,7 +1208,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/eslint-plugin-next@npm:15.3.4":
+"@next/eslint-plugin-next@npm:15.3.4, @next/eslint-plugin-next@npm:^15.3.4":
   version: 15.3.4
   resolution: "@next/eslint-plugin-next@npm:15.3.4"
   dependencies:
@@ -7131,8 +7143,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "ttabook@workspace:."
   dependencies:
+    "@eslint/compat": "npm:^1.3.1"
     "@eslint/eslintrc": "npm:^3"
     "@eslint/js": "npm:^9.30.1"
+    "@next/eslint-plugin-next": "npm:^15.3.4"
     "@tailwindcss/postcss": "npm:^4"
     "@tanstack/react-query": "npm:^5.81.5"
     "@testing-library/dom": "npm:^10.4.0"
