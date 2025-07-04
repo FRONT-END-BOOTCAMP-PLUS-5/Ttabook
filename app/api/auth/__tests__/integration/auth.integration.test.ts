@@ -10,12 +10,13 @@ describe('Auth Integration Tests', () => {
   let authUseCase: AuthUseCase;
   let userRepository: SupabaseUserRepository;
 
-  const mockUser: User = {
-    id: '123e4567-e89b-12d3-a456-426614174000',
-    email: 'test@example.com',
-    password: 'hashedpassword123',
-    type: 'user',
-  };
+  const mockUser: User = new User(
+    '123e4567-e89b-12d3-a456-426614174000',
+    'test@example.com',
+    'hashedpassword123',
+    'user',
+    'Test User'
+  );
 
   beforeEach(() => {
     userRepository = new SupabaseUserRepository();
@@ -30,6 +31,7 @@ describe('Auth Integration Tests', () => {
         email: 'test@example.com',
         password: 'plainpassword123',
         type: 'user' as const,
+        name: 'Test User',
       };
 
       // 이메일 중복 체크 - 없음
@@ -79,6 +81,7 @@ describe('Auth Integration Tests', () => {
         email: 'test@example.com',
         password: 'plainpassword123',
         type: 'user' as const,
+        name: 'Test User',
       };
 
       // 이메일 중복 체크 - 존재함
@@ -91,7 +94,7 @@ describe('Auth Integration Tests', () => {
         select: jest.fn().mockReturnValue(mockEmailCheck),
       });
 
-      await expect(authUseCase.register(userData)).rejects.toThrow('이미 존재하는 이메일입니다.');
+      await expect(authUseCase.register(userData)).rejects.toThrow('이미 존재하는 이메일입니다: test@example.com');
     });
 
     it('잘못된 비밀번호로 로그인 시 실패해야 한다', async () => {
@@ -111,8 +114,7 @@ describe('Auth Integration Tests', () => {
 
       mockBcrypt.compare.mockResolvedValue(false);
 
-      const result = await authUseCase.login(credentials);
-      expect(result).toBeNull();
+      await expect(authUseCase.login(credentials)).rejects.toThrow('잘못된 이메일 또는 비밀번호입니다.');
     });
   });
 });

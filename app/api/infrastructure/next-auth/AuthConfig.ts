@@ -32,7 +32,7 @@ export const authOptions: NextAuthOptions = {
           return {
             id: user.id,
             email: user.email,
-            name: user.email, // NextAuth requires name field
+            name: user.name, // User's actual name
             type: user.type,
           };
         } catch (error) {

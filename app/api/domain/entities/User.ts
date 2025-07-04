@@ -5,6 +5,7 @@ export class User {
     public id: string, // UUID
     public email: string,
     public password: string,
-    public type: UserType
+    public type: UserType,
+    public name: string
   ) {}
 }
