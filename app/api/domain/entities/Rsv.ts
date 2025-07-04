@@ -1,4 +1,4 @@
-export class Reservation {
+export class Rsv {
   constructor(
     public id: string, // UUID
     public userId: string, // UUID
