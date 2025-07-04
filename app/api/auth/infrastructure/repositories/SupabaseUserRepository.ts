@@ -37,7 +37,7 @@ export class SupabaseUserRepository implements UserRepository {
     return data;
   }
 
-  async create(userData: CreateUserData): Promise<User> {
+  async save(userData: CreateUserData): Promise<User> {
     const { data, error } = await supabaseAdmin
       .from('users')
       .insert([userData])

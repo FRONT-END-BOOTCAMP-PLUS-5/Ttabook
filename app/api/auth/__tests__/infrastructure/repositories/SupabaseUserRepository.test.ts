@@ -107,7 +107,7 @@ describe('SupabaseUserRepository', () => {
         insert: jest.fn().mockReturnValue(mockChain),
       });
 
-      const result = await repository.create(userData);
+      const result = await repository.save(userData);
 
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('users');
       expect(mockChain.select).toHaveBeenCalled();
@@ -133,7 +133,7 @@ describe('SupabaseUserRepository', () => {
         insert: jest.fn().mockReturnValue(mockChain),
       });
 
-      await expect(repository.create(userData)).rejects.toThrow('사용자 생성 중 오류 발생: Insert failed');
+      await expect(repository.save(userData)).rejects.toThrow('사용자 생성 중 오류 발생: Insert failed');
     });
   });
 

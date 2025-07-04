@@ -16,7 +16,7 @@ export class AuthUseCase {
     const hashedPassword = await PasswordUtil.hash(userData.password);
 
     // 사용자 생성
-    const newUser = await this.userRepository.create({
+    const newUser = await this.userRepository.save({
       ...userData,
       password: hashedPassword,
     });

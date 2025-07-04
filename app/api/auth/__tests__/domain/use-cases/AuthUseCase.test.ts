@@ -21,7 +21,7 @@ describe('AuthUseCase', () => {
     mockUserRepository = {
       findByEmail: jest.fn(),
       findById: jest.fn(),
-      create: jest.fn(),
+      save: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
     };
@@ -39,14 +39,14 @@ describe('AuthUseCase', () => {
 
     it('새로운 사용자를 성공적으로 등록해야 한다', async () => {
       mockUserRepository.findByEmail.mockResolvedValue(null);
-      mockUserRepository.create.mockResolvedValue(mockUser);
+      mockUserRepository.save.mockResolvedValue(mockUser);
       (PasswordUtil.hash as jest.Mock).mockResolvedValue('hashedpassword123');
 
       const result = await authUseCase.register(userData);
 
       expect(mockUserRepository.findByEmail).toHaveBeenCalledWith(userData.email);
       expect(PasswordUtil.hash).toHaveBeenCalledWith(userData.password);
-      expect(mockUserRepository.create).toHaveBeenCalledWith({
+      expect(mockUserRepository.save).toHaveBeenCalledWith({
         ...userData,
         password: 'hashedpassword123',
       });
@@ -57,7 +57,7 @@ describe('AuthUseCase', () => {
       mockUserRepository.findByEmail.mockResolvedValue(mockUser);
 
       await expect(authUseCase.register(userData)).rejects.toThrow('이미 존재하는 이메일입니다.');
-      expect(mockUserRepository.create).not.toHaveBeenCalled();
+      expect(mockUserRepository.save).not.toHaveBeenCalled();
     });
 
     it('비밀번호 해싱 실패 시 오류를 전파해야 한다', async () => {
@@ -65,7 +65,7 @@ describe('AuthUseCase', () => {
       (PasswordUtil.hash as jest.Mock).mockRejectedValue(new Error('해싱 실패'));
 
       await expect(authUseCase.register(userData)).rejects.toThrow('해싱 실패');
-      expect(mockUserRepository.create).not.toHaveBeenCalled();
+      expect(mockUserRepository.save).not.toHaveBeenCalled();
     });
   });
 
