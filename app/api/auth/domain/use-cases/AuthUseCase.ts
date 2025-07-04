@@ -1,4 +1,4 @@
-import { UserRepository } from '../../application/repositories/UserRepository';
+import { UserRepository } from '../repositories/UserRepository';
 import { User, CreateUserData, LoginCredentials } from '../../../domain/entities/UserEntity';
 import { PasswordUtil } from '../../../infrastructure/utils/PasswordUtil';
 
