@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AuthUseCase } from '../../domain/usecases/AuthUseCase'; 
-import { SupabaseUserRepository } from '../../../infrastructure/repositories/SupabaseUserRepository';
+import { SupabaseUserRepository } from '../../../infrastructure/repositories/SbUserRepository';
 import { CreateUserData } from '../../../domain/entities/UserEntity';
 
 const userRepository = new SupabaseUserRepository();

@@ -1,8 +1,8 @@
-import { authOptions } from '../../../../infrastructure/next-auth/AuthConfig';
+import { authOptions } from "@/app/api/infrastructure/next-auth/AuthConfig";
 
-// AuthUseCase와 SupabaseUserRepository 모킹
-jest.mock('../../../domain/use-cases/AuthUseCase');
-jest.mock('../../../../infrastructure/repositories/SupabaseUserRepository');
+// AuthUseCase와 SbUserRepository 모킹
+jest.mock('../../../domain/usecases/AuthUseCase');
+jest.mock('../../../../infrastructure/repositories/SbUserRepository');
 
 describe('NextAuth Configuration (Simple)', () => {
   describe('authOptions', () => {
