@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AuthUseCase } from '../domain/use-cases/auth.use-case';
-import { SupabaseUserRepository } from '../infrastructure/repositories/supabase-user.repository';
-import { CreateUserData } from '../domain/entities/user.entity';
+import { AuthUseCase } from '../domain/use-cases/AuthUseCase';
+import { SupabaseUserRepository } from '../infrastructure/repositories/SupabaseUserRepository';
+import { CreateUserData } from '../domain/entities/UserEntity';
 
 const userRepository = new SupabaseUserRepository();
 const authUseCase = new AuthUseCase(userRepository);
@@ -25,7 +25,8 @@ export async function POST(request: NextRequest) {
     });
 
     // 비밀번호 제외하고 반환
-    const { password: _, ...userWithoutPassword } = user;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password, ...userWithoutPassword } = user;
 
     return NextResponse.json(
       { message: '사용자 등록이 완료되었습니다.', user: userWithoutPassword },

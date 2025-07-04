@@ -1,8 +1,8 @@
-import { authOptions } from '../../../infrastructure/next-auth/auth.config';
+import { authOptions } from '../../../infrastructure/next-auth/AuthConfig';
 
 // AuthUseCase와 SupabaseUserRepository 모킹
-jest.mock('../../../domain/use-cases/auth.use-case');
-jest.mock('../../../infrastructure/repositories/supabase-user.repository');
+jest.mock('../../../domain/use-cases/AuthUseCase');
+jest.mock('../../../infrastructure/repositories/SupabaseUserRepository');
 
 describe('NextAuth Configuration (Simple)', () => {
   describe('authOptions', () => {
@@ -19,7 +19,7 @@ describe('NextAuth Configuration (Simple)', () => {
     });
 
     it('credentials provider가 올바른 타입이어야 한다', () => {
-      const credentialsProvider = authOptions.providers[0] as any;
+      const credentialsProvider = authOptions.providers[0] as unknown as Record<string, unknown>;
       
       // CredentialsProvider는 type과 id를 가져야 함
       expect(credentialsProvider.type).toBe('credentials');
@@ -27,7 +27,7 @@ describe('NextAuth Configuration (Simple)', () => {
     });
 
     it('authorize 함수가 정의되어야 한다', () => {
-      const credentialsProvider = authOptions.providers[0] as any;
+      const credentialsProvider = authOptions.providers[0] as unknown as Record<string, unknown>;
       expect(typeof credentialsProvider.authorize).toBe('function');
     });
 

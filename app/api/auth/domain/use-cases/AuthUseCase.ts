@@ -1,6 +1,6 @@
 import { UserRepository } from '../../application/repositories/user.repository';
-import { User, CreateUserData, LoginCredentials } from '../entities/user.entity';
-import { PasswordUtil } from '../../infrastructure/utils/password.util';
+import { User, CreateUserData, LoginCredentials } from '../entities/UserEntity';
+import { PasswordUtil } from '../../infrastructure/utils/PasswordUtil';
 
 export class AuthUseCase {
   constructor(private userRepository: UserRepository) {}

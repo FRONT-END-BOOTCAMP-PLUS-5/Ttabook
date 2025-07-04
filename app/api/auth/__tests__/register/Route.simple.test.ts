@@ -47,7 +47,7 @@ async function POST(request: NextRequest) {
         headers: { 'Content-Type': 'application/json' }
       }
     );
-  } catch (error) {
+  } catch {
     return new Response(
       JSON.stringify({ error: '잘못된 요청입니다.' }),
       { 

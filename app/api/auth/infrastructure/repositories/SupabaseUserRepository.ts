@@ -1,5 +1,5 @@
 import { UserRepository } from '../../application/repositories/user.repository';
-import { User, CreateUserData } from '../../domain/entities/user.entity';
+import { User, CreateUserData } from '../../domain/entities/UserEntity';
 import { supabaseAdmin } from '../supabase/client';
 
 export class SupabaseUserRepository implements UserRepository {

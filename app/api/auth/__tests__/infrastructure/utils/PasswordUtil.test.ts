@@ -1,5 +1,5 @@
 import '../../__mocks__/bcrypt.mock';
-import { PasswordUtil } from '../../../infrastructure/utils/password.util';
+import { PasswordUtil } from '../../../infrastructure/utils/PasswordUtil';
 import { mockBcrypt } from '../../__mocks__/bcrypt.mock';
 
 describe('PasswordUtil', () => {

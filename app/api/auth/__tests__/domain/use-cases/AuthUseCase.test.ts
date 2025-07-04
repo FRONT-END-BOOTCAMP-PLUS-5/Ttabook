@@ -1,10 +1,10 @@
-import { AuthUseCase } from '../../../domain/use-cases/auth.use-case';
+import { AuthUseCase } from '../../../domain/use-cases/AuthUseCase';
 import { UserRepository } from '../../../application/repositories/user.repository';
-import { User, CreateUserData, LoginCredentials } from '../../../domain/entities/user.entity';
-import { PasswordUtil } from '../../../infrastructure/utils/password.util';
+import { User, CreateUserData, LoginCredentials } from '../../../domain/entities/UserEntity';
+import { PasswordUtil } from '../../../infrastructure/utils/PasswordUtil';
 
 // PasswordUtil 모킹
-jest.mock('../../../infrastructure/utils/password.util');
+jest.mock('../../../infrastructure/utils/PasswordUtil');
 
 describe('AuthUseCase', () => {
   let authUseCase: AuthUseCase;

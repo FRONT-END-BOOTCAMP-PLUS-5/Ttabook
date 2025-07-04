@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth';
 import type { NextRequest } from 'next/server';
-import { authOptions } from '../infrastructure/next-auth/auth.config';
+import { authOptions } from '../infrastructure/next-auth/AuthConfig';
 
 const handler = NextAuth(authOptions);
 
