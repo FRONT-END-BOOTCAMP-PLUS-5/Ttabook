@@ -1,4 +1,4 @@
-import { UserRepository } from '../../application/repositories/UserRepository';
+import { UserRepository } from '../../auth/application/repositories/UserRepository';
 import { User, CreateUserData } from '../../domain/entities/UserEntity';
 import { supabaseAdmin } from '../supabase/client';
 

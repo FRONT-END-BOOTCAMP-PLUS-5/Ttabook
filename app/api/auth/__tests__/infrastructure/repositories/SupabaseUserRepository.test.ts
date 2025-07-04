@@ -1,7 +1,7 @@
 import '../../__mocks__/supabase.mock';
-import { SupabaseUserRepository } from '../../../infrastructure/repositories/SupabaseUserRepository';
+import { SupabaseUserRepository } from '../../../../infrastructure/repositories/SupabaseUserRepository';
 import { mockSupabaseClient } from '../../__mocks__/supabase.mock';
-import { User, CreateUserData } from '../../../domain/entities/UserEntity';
+import { User, CreateUserData } from '../../../../domain/entities/UserEntity';
 
 describe('SupabaseUserRepository', () => {
   let repository: SupabaseUserRepository;

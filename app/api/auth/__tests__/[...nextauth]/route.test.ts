@@ -4,7 +4,7 @@ jest.mock('next-auth', () => {
   return jest.fn(() => mockHandler);
 });
 
-jest.mock('../../infrastructure/next-auth/AuthConfig', () => ({
+jest.mock('../../../infrastructure/next-auth/AuthConfig', () => ({
   authOptions: {}
 }));
 
