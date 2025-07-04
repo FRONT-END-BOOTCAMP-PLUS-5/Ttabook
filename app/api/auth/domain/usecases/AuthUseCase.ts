@@ -81,4 +81,9 @@ export class AuthUseCase {
       throw error; // 다른 예외는 그대로 전파
     }
   }
+
+  async checkEmailDuplication(email: string): Promise<boolean> {
+    const existingUser = await this.userRepository.findByEmail(email);
+    return existingUser !== null;
+  }
 }

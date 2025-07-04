@@ -200,4 +200,34 @@ describe('AuthUseCase', () => {
       await expect(authUseCase.verifyCredentials(credentials)).rejects.toThrow('시스템 오류');
     });
   });
+
+  describe('checkEmailDuplication', () => {
+    it('이메일이 이미 존재하는 경우 true를 반환해야 한다', async () => {
+      const email = 'existing@example.com';
+      mockUserRepository.findByEmail.mockResolvedValue(mockUser);
+
+      const result = await authUseCase.checkEmailDuplication(email);
+
+      expect(result).toBe(true);
+      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith(email);
+    });
+
+    it('이메일이 존재하지 않는 경우 false를 반환해야 한다', async () => {
+      const email = 'available@example.com';
+      mockUserRepository.findByEmail.mockResolvedValue(null);
+
+      const result = await authUseCase.checkEmailDuplication(email);
+
+      expect(result).toBe(false);
+      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith(email);
+    });
+
+    it('데이터베이스 오류 시 에러를 전파해야 한다', async () => {
+      const email = 'test@example.com';
+      mockUserRepository.findByEmail.mockRejectedValue(new Error('데이터베이스 연결 오류'));
+
+      await expect(authUseCase.checkEmailDuplication(email)).rejects.toThrow('데이터베이스 연결 오류');
+      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith(email);
+    });
+  });
 });
