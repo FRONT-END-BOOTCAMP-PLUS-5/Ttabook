@@ -1,5 +1,5 @@
-import { AuthUseCase } from '../../../domain/use-cases/AuthUseCase';
-import { UserRepository } from '../../../domain/repositories/UserRepository';
+import { AuthUseCase } from '../../../domain/usecases/AuthUseCase';
+import { UserRepository } from '../../../../domain/repository/UserRepository';
 import { User, CreateUserData, LoginCredentials } from '../../../../domain/entities/UserEntity';
 import { PasswordUtil } from '../../../../infrastructure/utils/PasswordUtil';
 

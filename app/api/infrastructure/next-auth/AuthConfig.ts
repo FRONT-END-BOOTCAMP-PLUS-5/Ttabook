@@ -1,6 +1,6 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { AuthUseCase } from '../../auth/domain/use-cases/AuthUseCase'; 
+import { AuthUseCase } from '../../auth/domain/usecases/AuthUseCase'; 
 import { SupabaseUserRepository } from '../repositories/SupabaseUserRepository';
 
 const userRepository = new SupabaseUserRepository();

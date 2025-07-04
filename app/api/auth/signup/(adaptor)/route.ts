@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AuthUseCase } from '../../domain/use-cases/AuthUseCase'; 
+import { AuthUseCase } from '../../domain/usecases/AuthUseCase'; 
 import { SupabaseUserRepository } from '../../../infrastructure/repositories/SupabaseUserRepository';
 import { CreateUserData } from '../../../domain/entities/UserEntity';
 

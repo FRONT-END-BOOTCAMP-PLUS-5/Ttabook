@@ -1,6 +1,6 @@
 import '../__mocks__/supabase.mock';
 import '../__mocks__/bcrypt.mock';
-import { AuthUseCase } from '../../domain/use-cases/AuthUseCase';
+import { AuthUseCase } from '../../domain/usecases/AuthUseCase';
 import { SupabaseUserRepository } from '../../../infrastructure/repositories/SupabaseUserRepository';
 import { mockSupabaseClient } from '../__mocks__/supabase.mock';
 import { mockBcrypt } from '../__mocks__/bcrypt.mock';
