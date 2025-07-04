@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AuthUseCase } from '../../domain/usecases/AuthUseCase'; 
 import { SupabaseUserRepository } from '../../../infrastructure/repositories/SbUserRepository';
-import { CreateUserData } from '../../../domain/entities/UserEntity';
+import { SignupRequest } from '../dto/SignupRequest';
 
 const userRepository = new SupabaseUserRepository();
 const authUseCase = new AuthUseCase(userRepository);
@@ -9,7 +9,7 @@ const authUseCase = new AuthUseCase(userRepository);
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password, type = 'user' } = body as CreateUserData;
+    const { email, password, type = 'user' } = body as SignupRequest;
 
     if (!email || !password) {
       return NextResponse.json(

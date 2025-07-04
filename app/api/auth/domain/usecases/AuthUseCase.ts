@@ -1,11 +1,13 @@
 import { UserRepository } from '../../../domain/repository/UserRepository';
-import { User, CreateUserData, LoginCredentials } from '../../../domain/entities/UserEntity';
+import { User } from '../../../domain/entities/User';
+import { SignupRequest } from '../application/dto/SignupRequest';
+import { LoginRequest } from '../application/dto/LoginRequest';
 import { PasswordUtil } from '../../../infrastructure/utils/PasswordUtil';
 
 export class AuthUseCase {
   constructor(private userRepository: UserRepository) {}
 
-  async register(userData: CreateUserData): Promise<User> {
+  async register(userData: SignupRequest): Promise<User> {
     // 이메일 중복 확인
     const existingUser = await this.userRepository.findByEmail(userData.email);
     if (existingUser) {
@@ -24,7 +26,7 @@ export class AuthUseCase {
     return newUser;
   }
 
-  async login(credentials: LoginCredentials): Promise<User | null> {
+  async login(credentials: LoginRequest): Promise<User | null> {
     // 사용자 조회
     const user = await this.userRepository.findByEmail(credentials.email);
     if (!user) {
@@ -44,7 +46,7 @@ export class AuthUseCase {
     return user;
   }
 
-  async verifyCredentials(credentials: LoginCredentials): Promise<User | null> {
+  async verifyCredentials(credentials: LoginRequest): Promise<User | null> {
     return this.login(credentials);
   }
 }

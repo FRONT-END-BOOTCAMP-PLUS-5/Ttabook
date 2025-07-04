@@ -1,5 +1,6 @@
 import { UserRepository } from '../../domain/repository/UserRepository';
-import { User, CreateUserData } from '../../domain/entities/UserEntity';
+import { User } from '../../domain/entities/User';
+import { SignupRequest } from '../../auth/application/dto/SignupRequest';
 import { supabaseAdmin } from '../supabase/client';
 
 export class SupabaseUserRepository implements UserRepository {
@@ -37,7 +38,7 @@ export class SupabaseUserRepository implements UserRepository {
     return data;
   }
 
-  async save(userData: CreateUserData): Promise<User> {
+  async save(userData: SignupRequest): Promise<User> {
     const { data, error } = await supabaseAdmin
       .from('users')
       .insert([userData])

@@ -1,7 +1,8 @@
 import '../../__mocks__/supabase.mock';
 import { SupabaseUserRepository } from '../../../../infrastructure/repositories/SbUserRepository';
 import { mockSupabaseClient } from '../../__mocks__/supabase.mock';
-import { User, CreateUserData } from '../../../../domain/entities/UserEntity';
+import { User } from '../../../../domain/entities/User';
+import { SignupRequest } from '../../application/dto/SignupRequest';
 
 describe('SupabaseUserRepository', () => {
   let repository: SupabaseUserRepository;
@@ -92,7 +93,7 @@ describe('SupabaseUserRepository', () => {
 
   describe('create', () => {
     it('새로운 사용자를 생성해야 한다', async () => {
-      const userData: CreateUserData = {
+      const userData: SignupRequest = {
         email: 'test@example.com',
         password: 'hashedpassword123',
         type: 'user',
@@ -115,7 +116,7 @@ describe('SupabaseUserRepository', () => {
     });
 
     it('사용자 생성 실패 시 에러를 발생시켜야 한다', async () => {
-      const userData: CreateUserData = {
+      const userData: SignupRequest = {
         email: 'test@example.com',
         password: 'hashedpassword123',
         type: 'user',

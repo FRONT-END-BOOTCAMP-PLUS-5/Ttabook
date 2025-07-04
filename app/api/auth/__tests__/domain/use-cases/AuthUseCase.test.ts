@@ -1,6 +1,8 @@
 import { AuthUseCase } from '../../../domain/usecases/AuthUseCase';
 import { UserRepository } from '../../../../domain/repository/UserRepository';
-import { User, CreateUserData, LoginCredentials } from '../../../../domain/entities/UserEntity';
+import { User } from '../../../../domain/entities/User';
+import { SignupRequest } from '../../application/dto/SignupRequest';
+import { LoginRequest } from '../../application/dto/LoginRequest';
 import { PasswordUtil } from '../../../../infrastructure/utils/PasswordUtil';
 
 // PasswordUtil 모킹
@@ -31,7 +33,7 @@ describe('AuthUseCase', () => {
   });
 
   describe('register', () => {
-    const userData: CreateUserData = {
+    const userData: SignupRequest = {
       email: 'test@example.com',
       password: 'plainpassword123',
       type: 'user',
@@ -70,7 +72,7 @@ describe('AuthUseCase', () => {
   });
 
   describe('login', () => {
-    const credentials: LoginCredentials = {
+    const credentials: LoginRequest = {
       email: 'test@example.com',
       password: 'plainpassword123',
     };
@@ -116,7 +118,7 @@ describe('AuthUseCase', () => {
   });
 
   describe('verifyCredentials', () => {
-    const credentials: LoginCredentials = {
+    const credentials: LoginRequest = {
       email: 'test@example.com',
       password: 'plainpassword123',
     };

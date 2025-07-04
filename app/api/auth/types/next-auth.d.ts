@@ -1,4 +1,4 @@
-import { UserType } from "../../domain/entities/UserEntity"; 
+import { UserType } from "../../domain/types/UserType"; 
 
 declare module 'next-auth' {
   interface User {

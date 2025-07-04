@@ -4,7 +4,7 @@ import { AuthUseCase } from '../../domain/usecases/AuthUseCase';
 import { SupabaseUserRepository } from '../../../infrastructure/repositories/SbUserRepository';
 import { mockSupabaseClient } from '../__mocks__/supabase.mock';
 import { mockBcrypt } from '../__mocks__/bcrypt.mock';
-import { User } from '../../../domain/entities/UserEntity';
+import { User } from '../../../domain/entities/User';
 
 describe('Auth Integration Tests', () => {
   let authUseCase: AuthUseCase;
