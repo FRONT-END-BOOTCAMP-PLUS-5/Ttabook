@@ -1,11 +1,11 @@
 import { NextRequest } from 'next/server';
 import { GET } from '../../duplication/(adaptor)/route';
-import { CheckEmailDuplicationUseCase } from '../../duplication/usecase/CheckEmailDuplicationUseCase';
+import { CheckEmailDuplicationUseCase } from '../../duplication/application/usecase/CheckEmailDuplicationUseCase';
 import { SupabaseUserRepository } from '../../../infrastructure/repositories/SbUserRepository';
-import { ValidationError } from '../../duplication/dto';
+import { ValidationError } from '../../duplication/application/dto';
 
 // CheckEmailDuplicationUseCase와 SupabaseUserRepository 모킹
-jest.mock('../../duplication/usecase/CheckEmailDuplicationUseCase');
+jest.mock('../../duplication/application/usecase/CheckEmailDuplicationUseCase');
 jest.mock('../../../infrastructure/repositories/SbUserRepository');
 
 describe('GET /api/auth/duplication', () => {

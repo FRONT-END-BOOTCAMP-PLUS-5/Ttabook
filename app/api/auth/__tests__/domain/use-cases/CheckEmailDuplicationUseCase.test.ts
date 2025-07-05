@@ -1,7 +1,7 @@
-import { CheckEmailDuplicationUseCase } from '../../../duplication/usecase/CheckEmailDuplicationUseCase';
+import { CheckEmailDuplicationUseCase } from '../../../duplication/application/usecase/CheckEmailDuplicationUseCase';
 import { UserRepository } from '../../../../domain/repository/UserRepository';
 import { User } from '../../../../domain/entities/User';
-import { ValidationError } from '../../../duplication/dto';
+import { ValidationError } from '../../../duplication/application/dto';
 
 describe('CheckEmailDuplicationUseCase', () => {
   let checkEmailDuplicationUseCase: CheckEmailDuplicationUseCase;
