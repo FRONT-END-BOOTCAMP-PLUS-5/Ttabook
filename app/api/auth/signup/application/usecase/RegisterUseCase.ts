@@ -1,10 +1,10 @@
 import { UserRepository } from '../../../domain/repository/UserRepository';
 import { User } from '../../../domain/entities/User';
 import { SignupRequest } from '../dto/SignupRequest';
-import { PasswordUtil } from '../../../infrastructure/utils/PasswordUtil';
+import { PasswordUtil } from '../../../../infrastructure/utils/PasswordUtil';
 import { DuplicateEmailError } from '../dto/DuplicateEmailError';
 import { ValidationError } from '../dto/ValidationError';
-import { validateSignupRequest } from '../../application/validation/AuthSchemas';
+import { validateSignupRequest } from './SignupValidation';
 import { ZodError } from 'zod';
 
 export class RegisterUseCase {

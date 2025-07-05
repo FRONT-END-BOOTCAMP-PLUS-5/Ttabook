@@ -1,10 +1,10 @@
 import { UserRepository } from '../../../domain/repository/UserRepository';
 import { User } from '../../../domain/entities/User';
 import { LoginRequest } from '../dto/LoginRequest';
-import { PasswordUtil } from '../../../infrastructure/utils/PasswordUtil';
+import { PasswordUtil } from '../../../../infrastructure/utils/PasswordUtil';
 import { InvalidCredentialsError } from '../dto/InvalidCredentialsError';
 import { ValidationError } from '../dto/ValidationError';
-import { validateLoginRequest } from '../validation/AuthSchemas';
+import { validateLoginRequest } from './LoginValidation';
 import { ZodError } from 'zod';
 
 export class LoginUseCase {

@@ -1,6 +1,6 @@
 import { AuthError as DuplicationAuthError, DuplicateEmailError, InvalidEmailFormatError } from '../../../duplication/dto';
-import { WeakPasswordError, AuthError as SignupAuthError } from '../../../signup/dto';
-import { InvalidCredentialsError, AuthError as NextAuthAuthError } from '../../../[...nextauth]/dto';
+import { WeakPasswordError, AuthError as SignupAuthError } from '../../../signup/application/dto';
+import { InvalidCredentialsError, AuthError as NextAuthAuthError } from '../../../[...nextauth]/application/dto';
 
 describe('AuthErrors', () => {
   describe('AuthError', () => {

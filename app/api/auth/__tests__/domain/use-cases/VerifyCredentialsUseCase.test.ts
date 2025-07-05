@@ -1,7 +1,7 @@
-import { VerifyCredentialsUseCase } from '../../../[...nextauth]/usecase/VerifyCredentialsUseCase';
+import { VerifyCredentialsUseCase } from '../../../[...nextauth]/application/usecase/VerifyCredentialsUseCase';
 import { UserRepository } from '../../../../domain/repository/UserRepository';
 import { User } from '../../../../domain/entities/User';
-import { LoginRequest } from '../../../[...nextauth]/dto/LoginRequest';
+import { LoginRequest } from '../../../[...nextauth]/application/dto/LoginRequest';
 import { PasswordUtil } from '../../../../infrastructure/utils/PasswordUtil';
 
 // PasswordUtil 모킹

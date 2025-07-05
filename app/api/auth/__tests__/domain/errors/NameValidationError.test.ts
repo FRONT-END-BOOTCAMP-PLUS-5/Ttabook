@@ -1,8 +1,8 @@
-import { RegisterUseCase } from '../../../signup/usecase/RegisterUseCase';
+import { RegisterUseCase } from '../../../signup/application/usecase/RegisterUseCase';
 import { UserRepository } from '../../../../domain/repository/UserRepository';
 import { User } from '../../../../domain/entities/User';
 
-import { ValidationError } from '../../../signup/dto';
+import { ValidationError } from '../../../signup/application/dto';
 
 // 모킹
 jest.mock('../../../../infrastructure/utils/PasswordUtil');

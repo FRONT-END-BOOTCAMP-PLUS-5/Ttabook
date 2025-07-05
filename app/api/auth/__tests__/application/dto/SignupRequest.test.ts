@@ -1,4 +1,4 @@
-import { SignupRequest } from "../../../signup/dto"; 
+import { SignupRequest } from "../../../signup/application/dto"; 
 
 describe('SignupRequest DTO', () => {
   it('name 속성이 필수여야 한다', () => {

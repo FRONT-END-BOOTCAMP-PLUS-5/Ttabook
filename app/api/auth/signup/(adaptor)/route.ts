@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { RegisterUseCase } from '../usecase/RegisterUseCase'; 
+import { RegisterUseCase } from '../application/usecase/RegisterUseCase'; 
 import { SupabaseUserRepository } from '../../../infrastructure/repositories/SbUserRepository';
-import { SignupResponse, SignupErrorResponse } from '../dto/SignupResponse';
-import { DuplicateEmailError } from '../dto/DuplicateEmailError';
-import { ValidationError } from '../dto/ValidationError';
-import { AuthError } from '../dto/AuthError'; 
+import { SignupResponse, SignupErrorResponse } from '../application/dto/SignupResponse';
+import { DuplicateEmailError } from '../application/dto/DuplicateEmailError';
+import { ValidationError } from '../application/dto/ValidationError';
+import { AuthError } from '../application/dto/AuthError'; 
 
 // 의존성 생성 팩토리 - 테스트하기 쉽고 이해하기 명확함
 function createRegisterUseCase(): RegisterUseCase {

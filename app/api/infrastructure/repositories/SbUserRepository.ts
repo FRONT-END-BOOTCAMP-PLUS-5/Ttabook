@@ -1,6 +1,6 @@
 import { UserRepository } from '../../domain/repository/UserRepository';
 import { User } from '../../domain/entities/User';
-import { SignupRequest } from '../../auth/application/dto/SignupRequest';
+import { SignupRequest } from '../../auth/signup/application/dto/SignupRequest';
 import { supabaseAdmin } from '../supabase/client';
 
 export class SupabaseUserRepository implements UserRepository {
