@@ -1,5 +1,5 @@
 import { UserRepository } from '../../../domain/repository/UserRepository';
-import { ValidationError } from '../dto';
+import { ValidationError } from '../dto/ValidationError';
 import { ZodError, z } from 'zod';
 
 export class CheckEmailDuplicationUseCase {

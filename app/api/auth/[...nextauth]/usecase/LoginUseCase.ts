@@ -2,7 +2,8 @@ import { UserRepository } from '../../../domain/repository/UserRepository';
 import { User } from '../../../domain/entities/User';
 import { LoginRequest } from '../dto/LoginRequest';
 import { PasswordUtil } from '../../../infrastructure/utils/PasswordUtil';
-import { InvalidCredentialsError, ValidationError } from '../dto';
+import { InvalidCredentialsError } from '../dto/InvalidCredentialsError';
+import { ValidationError } from '../dto/ValidationError';
 import { validateLoginRequest } from '../validation/AuthSchemas';
 import { ZodError } from 'zod';
 

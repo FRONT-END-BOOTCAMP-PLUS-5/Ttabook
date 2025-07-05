@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { CheckEmailDuplicationUseCase } from '../../application/usecases/CheckEmailDuplicationUseCase';
+import { CheckEmailDuplicationUseCase } from '../usecase/CheckEmailDuplicationUseCase';
 import { SupabaseUserRepository } from '../../../infrastructure/repositories/SbUserRepository';
-import { EmailCheckResponse, EmailCheckErrorResponse } from '../../application/dto/EmailCheckResponse';
-import { ValidationError } from '../../application/dto';
+import { EmailCheckResponse, EmailCheckErrorResponse } from '../dto/EmailCheckResponse';
+import { ValidationError } from '../dto/ValidationError';
 
 // 의존성 생성 팩토리 - 테스트하기 쉽고 이해하기 명확함
 function createCheckEmailDuplicationUseCase(): CheckEmailDuplicationUseCase {
