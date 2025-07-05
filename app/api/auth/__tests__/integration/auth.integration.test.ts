@@ -1,13 +1,14 @@
 import '../__mocks__/supabase.mock';
 import '../__mocks__/bcrypt.mock';
-import { AuthUseCase } from '../../domain/usecases/AuthUseCase';
+import { RegisterUseCase, LoginUseCase } from '../../application/usecases';
 import { SupabaseUserRepository } from '../../../infrastructure/repositories/SbUserRepository';
 import { mockSupabaseClient } from '../__mocks__/supabase.mock';
 import { mockBcrypt } from '../__mocks__/bcrypt.mock';
 import { User } from '../../../domain/entities/User';
 
 describe('Auth Integration Tests', () => {
-  let authUseCase: AuthUseCase;
+  let registerUseCase: RegisterUseCase;
+  let loginUseCase: LoginUseCase;
   let userRepository: SupabaseUserRepository;
 
   const mockUser: User = new User(
@@ -20,7 +21,8 @@ describe('Auth Integration Tests', () => {
 
   beforeEach(() => {
     userRepository = new SupabaseUserRepository();
-    authUseCase = new AuthUseCase(userRepository);
+    registerUseCase = new RegisterUseCase(userRepository);
+    loginUseCase = new LoginUseCase(userRepository);
     jest.clearAllMocks();
   });
 
@@ -64,11 +66,11 @@ describe('Auth Integration Tests', () => {
       mockBcrypt.compare.mockResolvedValue(true);
 
       // 등록
-      const registeredUser = await authUseCase.register(userData);
+      const registeredUser = await registerUseCase.execute(userData);
       expect(registeredUser).toEqual(mockUser);
 
       // 로그인
-      const loggedInUser = await authUseCase.login({
+      const loggedInUser = await loginUseCase.execute({
         email: userData.email,
         password: userData.password,
       });
@@ -94,7 +96,7 @@ describe('Auth Integration Tests', () => {
         select: jest.fn().mockReturnValue(mockEmailCheck),
       });
 
-      await expect(authUseCase.register(userData)).rejects.toThrow('이미 존재하는 이메일입니다: test@example.com');
+      await expect(registerUseCase.execute(userData)).rejects.toThrow('이미 존재하는 이메일입니다: test@example.com');
     });
 
     it('잘못된 비밀번호로 로그인 시 실패해야 한다', async () => {
@@ -114,7 +116,7 @@ describe('Auth Integration Tests', () => {
 
       mockBcrypt.compare.mockResolvedValue(false);
 
-      await expect(authUseCase.login(credentials)).rejects.toThrow('잘못된 이메일 또는 비밀번호입니다.');
+      await expect(loginUseCase.execute(credentials)).rejects.toThrow('잘못된 이메일 또는 비밀번호입니다.');
     });
   });
 });

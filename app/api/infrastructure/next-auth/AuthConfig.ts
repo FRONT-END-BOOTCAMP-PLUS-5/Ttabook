@@ -1,10 +1,10 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { AuthUseCase } from '../../auth/domain/usecases/AuthUseCase'; 
+import { VerifyCredentialsUseCase } from '../../auth/application/usecases/VerifyCredentialsUseCase'; 
 import { SupabaseUserRepository } from '../repositories/SbUserRepository';
 
 const userRepository = new SupabaseUserRepository();
-const authUseCase = new AuthUseCase(userRepository);
+const verifyCredentialsUseCase = new VerifyCredentialsUseCase(userRepository);
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -20,7 +20,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          const user = await authUseCase.verifyCredentials({
+          const user = await verifyCredentialsUseCase.execute({
             email: credentials.email,
             password: credentials.password,
           });

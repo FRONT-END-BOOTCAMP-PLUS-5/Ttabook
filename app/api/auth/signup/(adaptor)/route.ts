@@ -1,23 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AuthUseCase } from '../../domain/usecases/AuthUseCase'; 
+import { RegisterUseCase } from '../../application/usecases/RegisterUseCase'; 
 import { SupabaseUserRepository } from '../../../infrastructure/repositories/SbUserRepository';
 import { SignupResponse, SignupErrorResponse } from '../../application/dto/SignupResponse';
-import { DuplicateEmailError, ValidationError, AuthError } from '../../domain/errors/AuthErrors'; 
+import { DuplicateEmailError, ValidationError, AuthError } from '../../application/dto'; 
 
 // 의존성 생성 팩토리 - 테스트하기 쉽고 이해하기 명확함
-function createAuthUseCase(): AuthUseCase {
+function createRegisterUseCase(): RegisterUseCase {
   const userRepository = new SupabaseUserRepository();
-  return new AuthUseCase(userRepository);
+  return new RegisterUseCase(userRepository);
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const authUseCase = createAuthUseCase();
+    const registerUseCase = createRegisterUseCase();
     
     const body = await request.json();
     
-    // Zod 검증은 AuthUseCase에서 처리됨
-    const user = await authUseCase.register(body);
+    // Zod 검증은 RegisterUseCase에서 처리됨
+    const user = await registerUseCase.execute(body);
 
     // 응답 DTO로 변환 - 보안상 password 제외
     const response: SignupResponse = {

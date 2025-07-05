@@ -4,7 +4,7 @@ import {
   InvalidCredentialsError,
   WeakPasswordError,
   InvalidEmailFormatError,
-} from '../../../domain/errors/AuthErrors';
+} from '../../../application/dto';
 
 describe('AuthErrors', () => {
   describe('AuthError', () => {

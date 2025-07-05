@@ -1,14 +1,14 @@
-import { AuthUseCase } from '../../../domain/usecases/AuthUseCase';
+import { RegisterUseCase } from '../../../application/usecases/RegisterUseCase';
 import { UserRepository } from '../../../../domain/repository/UserRepository';
 import { User } from '../../../../domain/entities/User';
 
-import { ValidationError } from '../../../domain/errors/AuthErrors';
+import { ValidationError } from '../../../application/dto';
 
 // 모킹
 jest.mock('../../../../infrastructure/utils/PasswordUtil');
 
-describe('Name Validation in AuthUseCase', () => {
-  let authUseCase: AuthUseCase;
+describe('Name Validation in RegisterUseCase', () => {
+  let registerUseCase: RegisterUseCase;
   let mockUserRepository: jest.Mocked<UserRepository>;
 
   beforeEach(() => {
@@ -20,7 +20,7 @@ describe('Name Validation in AuthUseCase', () => {
       delete: jest.fn(),
     };
 
-    authUseCase = new AuthUseCase(mockUserRepository);
+    registerUseCase = new RegisterUseCase(mockUserRepository);
     jest.clearAllMocks();
   });
 
@@ -34,8 +34,8 @@ describe('Name Validation in AuthUseCase', () => {
 
     mockUserRepository.findByEmail.mockResolvedValue(null);
 
-    await expect(authUseCase.register(userData as any)).rejects.toThrow(ValidationError);
-    await expect(authUseCase.register(userData as any)).rejects.toThrow('검증 실패: name: 이름은 필수입니다.');
+    await expect(registerUseCase.execute(userData as any)).rejects.toThrow(ValidationError);
+    await expect(registerUseCase.execute(userData as any)).rejects.toThrow('검증 실패: name: 이름은 필수입니다.');
   });
 
   it('빈 이름이면 에러를 발생시켜야 한다', async () => {
@@ -48,8 +48,8 @@ describe('Name Validation in AuthUseCase', () => {
 
     mockUserRepository.findByEmail.mockResolvedValue(null);
 
-    await expect(authUseCase.register(userData as any)).rejects.toThrow(ValidationError);
-    await expect(authUseCase.register(userData as any)).rejects.toThrow('검증 실패');
+    await expect(registerUseCase.execute(userData as any)).rejects.toThrow(ValidationError);
+    await expect(registerUseCase.execute(userData as any)).rejects.toThrow('검증 실패');
   });
 
   it('이름이 너무 짧으면 에러를 발생시켜야 한다', async () => {
@@ -62,7 +62,7 @@ describe('Name Validation in AuthUseCase', () => {
 
     mockUserRepository.findByEmail.mockResolvedValue(null);
 
-    await expect(authUseCase.register(userData as any)).rejects.toThrow(ValidationError);
-    await expect(authUseCase.register(userData as any)).rejects.toThrow('검증 실패: name: 이름은 최소 2자 이상이어야 합니다.');
+    await expect(registerUseCase.execute(userData as any)).rejects.toThrow(ValidationError);
+    await expect(registerUseCase.execute(userData as any)).rejects.toThrow('검증 실패: name: 이름은 최소 2자 이상이어야 합니다.');
   });
 });

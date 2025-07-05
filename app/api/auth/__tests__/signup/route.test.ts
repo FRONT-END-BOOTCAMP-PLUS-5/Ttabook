@@ -1,16 +1,16 @@
 import { NextRequest } from 'next/server';
 import { POST } from '../../signup/(adaptor)/route';
-import { AuthUseCase } from '../../domain/usecases/AuthUseCase';
+import { RegisterUseCase } from '../../application/usecases/RegisterUseCase';
 import { SupabaseUserRepository } from '../../../infrastructure/repositories/SbUserRepository';
-import { DuplicateEmailError, ValidationError } from '../../domain/errors/AuthErrors';
+import { DuplicateEmailError, ValidationError } from '../../application/dto';
 import { User } from '../../../domain/entities/User';
 
-// AuthUseCase와 SupabaseUserRepository 모킹
-jest.mock('../../domain/usecases/AuthUseCase');
+// RegisterUseCase와 SupabaseUserRepository 모킹
+jest.mock('../../application/usecases/RegisterUseCase');
 jest.mock('../../../infrastructure/repositories/SbUserRepository');
 
 describe('POST /api/auth/signup', () => {
-  let mockAuthUseCase: jest.Mocked<AuthUseCase>;
+  let mockRegisterUseCase: jest.Mocked<RegisterUseCase>;
   let mockUserRepository: jest.Mocked<SupabaseUserRepository>;
 
   const mockUser: User = new User(
@@ -23,10 +23,10 @@ describe('POST /api/auth/signup', () => {
 
   beforeEach(() => {
     mockUserRepository = new SupabaseUserRepository() as jest.Mocked<SupabaseUserRepository>;
-    mockAuthUseCase = new AuthUseCase(mockUserRepository) as jest.Mocked<AuthUseCase>;
+    mockRegisterUseCase = new RegisterUseCase(mockUserRepository) as jest.Mocked<RegisterUseCase>;
     
-    // AuthUseCase 생성자 모킹
-    (AuthUseCase as jest.MockedClass<typeof AuthUseCase>).mockImplementation(() => mockAuthUseCase);
+    // RegisterUseCase 생성자 모킹
+    (RegisterUseCase as jest.MockedClass<typeof RegisterUseCase>).mockImplementation(() => mockRegisterUseCase);
     
     jest.clearAllMocks();
   });
@@ -40,7 +40,7 @@ describe('POST /api/auth/signup', () => {
         name: 'Test User',
       };
 
-      mockAuthUseCase.register.mockResolvedValue(mockUser);
+      mockRegisterUseCase.execute.mockResolvedValue(mockUser);
 
       const request = new NextRequest('http://localhost:3000/api/auth/signup', {
         method: 'POST',
@@ -69,7 +69,7 @@ describe('POST /api/auth/signup', () => {
     it('필수 필드가 누락된 경우 ValidationError를 발생시켜야 한다', async () => {
       const requestBody = {}; // 모든 필드 누락
 
-      mockAuthUseCase.register.mockRejectedValue(
+      mockRegisterUseCase.execute.mockRejectedValue(
         new ValidationError([
           { path: 'email', message: '이메일은 필수입니다.' },
           { path: 'password', message: '비밀번호는 필수입니다.' },
@@ -99,7 +99,7 @@ describe('POST /api/auth/signup', () => {
         name: 'Test User',
       };
 
-      mockAuthUseCase.register.mockRejectedValue(new DuplicateEmailError('existing@example.com'));
+      mockRegisterUseCase.execute.mockRejectedValue(new DuplicateEmailError('existing@example.com'));
 
       const request = new NextRequest('http://localhost:3000/api/auth/signup', {
         method: 'POST',
@@ -123,7 +123,7 @@ describe('POST /api/auth/signup', () => {
         name: 'Test User',
       };
 
-      mockAuthUseCase.register.mockRejectedValue(
+      mockRegisterUseCase.execute.mockRejectedValue(
         new ValidationError([{ path: 'email', message: '유효하지 않은 이메일 형식입니다.' }])
       );
 
@@ -149,7 +149,7 @@ describe('POST /api/auth/signup', () => {
         name: 'Test User',
       };
 
-      mockAuthUseCase.register.mockRejectedValue(
+      mockRegisterUseCase.execute.mockRejectedValue(
         new ValidationError([{ path: 'password', message: '비밀번호는 최소 8자 이상이어야 합니다.' }])
       );
 
@@ -175,7 +175,7 @@ describe('POST /api/auth/signup', () => {
         name: 'A',
       };
 
-      mockAuthUseCase.register.mockRejectedValue(
+      mockRegisterUseCase.execute.mockRejectedValue(
         new ValidationError([{ path: 'name', message: '이름은 최소 2자 이상이어야 합니다.' }])
       );
 
@@ -201,7 +201,7 @@ describe('POST /api/auth/signup', () => {
         name: 'Test User',
       };
 
-      mockAuthUseCase.register.mockRejectedValue(new Error('알 수 없는 시스템 오류'));
+      mockRegisterUseCase.execute.mockRejectedValue(new Error('알 수 없는 시스템 오류'));
 
       const request = new NextRequest('http://localhost:3000/api/auth/signup', {
         method: 'POST',
@@ -218,8 +218,8 @@ describe('POST /api/auth/signup', () => {
     });
   });
 
-  describe('인라인 팩토리 패턴', () => {
-    it('각 요청마다 새로운 AuthUseCase 인스턴스를 생성해야 한다', async () => {
+  describe('팩토리 패턴', () => {
+    it('각 요청마다 새로운 RegisterUseCase 인스턴스를 생성해야 한다', async () => {
       const requestBody = {
         email: 'test@example.com',
         password: 'validpassword123',
@@ -227,7 +227,7 @@ describe('POST /api/auth/signup', () => {
         name: 'Test User',
       };
 
-      mockAuthUseCase.register.mockResolvedValue(mockUser);
+      mockRegisterUseCase.execute.mockResolvedValue(mockUser);
 
       const request = new NextRequest('http://localhost:3000/api/auth/signup', {
         method: 'POST',
@@ -236,9 +236,9 @@ describe('POST /api/auth/signup', () => {
 
       await POST(request);
 
-      // AuthUseCase 생성자가 호출되었는지 확인
-      expect(AuthUseCase).toHaveBeenCalledWith(expect.any(SupabaseUserRepository));
-      expect(mockAuthUseCase.register).toHaveBeenCalledWith(requestBody);
+      // RegisterUseCase 생성자가 호출되었는지 확인
+      expect(RegisterUseCase).toHaveBeenCalledWith(expect.any(SupabaseUserRepository));
+      expect(mockRegisterUseCase.execute).toHaveBeenCalledWith(requestBody);
     });
   });
 });

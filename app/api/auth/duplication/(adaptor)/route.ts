@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AuthUseCase } from '../../domain/usecases/AuthUseCase';
+import { CheckEmailDuplicationUseCase } from '../../application/usecases/CheckEmailDuplicationUseCase';
 import { SupabaseUserRepository } from '../../../infrastructure/repositories/SbUserRepository';
 import { EmailCheckResponse, EmailCheckErrorResponse } from '../../application/dto/EmailCheckResponse';
-import { z } from 'zod';
+import { ValidationError } from '../../application/dto';
 
-const emailSchema = z.string().email('유효하지 않은 이메일 형식입니다.');
+// 의존성 생성 팩토리 - 테스트하기 쉽고 이해하기 명확함
+function createCheckEmailDuplicationUseCase(): CheckEmailDuplicationUseCase {
+  const userRepository = new SupabaseUserRepository();
+  return new CheckEmailDuplicationUseCase(userRepository);
+}
 
 export async function GET(request: NextRequest): Promise<NextResponse<EmailCheckResponse | EmailCheckErrorResponse>> {
   try {
@@ -18,21 +22,10 @@ export async function GET(request: NextRequest): Promise<NextResponse<EmailCheck
       );
     }
 
-    // 이메일 형식 검증
-    const emailValidation = emailSchema.safeParse(email);
-    if (!emailValidation.success) {
-      return NextResponse.json(
-        { error: '유효하지 않은 이메일 형식입니다.' },
-        { status: 400 }
-      );
-    }
-
-    // 인라인 팩토리 패턴으로 의존성 주입
-    const userRepository = new SupabaseUserRepository();
-    const authUseCase = new AuthUseCase(userRepository);
+    const checkEmailDuplicationUseCase = createCheckEmailDuplicationUseCase();
 
     // 이메일 중복 확인
-    const isDuplicate = await authUseCase.checkEmailDuplication(email);
+    const isDuplicate = await checkEmailDuplicationUseCase.execute(email);
 
     const response: EmailCheckResponse = {
       email: email,
@@ -42,11 +35,17 @@ export async function GET(request: NextRequest): Promise<NextResponse<EmailCheck
 
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
+    console.error('이메일 중복 확인 중 오류 발생:', error);
     
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 }
-    );
+    // 도메인별 에러 처리
+    if (error instanceof ValidationError) {
+      const errorResponse: EmailCheckErrorResponse = { error: error.message };
+      return NextResponse.json(errorResponse, { status: 400 }); // Bad Request
+    }
+    
+    // 알 수 없는 에러
+    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
+    const errorResponse: EmailCheckErrorResponse = { error: errorMessage };
+    return NextResponse.json(errorResponse, { status: 500 });
   }
 }

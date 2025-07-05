@@ -41,7 +41,7 @@ describe('GET /api/auth/duplication - 통합 테스트', () => {
 
     expect(response.status).toBe(400);
     expect(responseData).toHaveProperty('error');
-    expect(responseData.error).toBe('유효하지 않은 이메일 형식입니다.');
+    expect(responseData.error).toBe('검증 실패: root: 유효하지 않은 이메일 형식입니다.');
   });
 
   it('이메일 파라미터가 없는 경우 전체 플로우가 올바르게 동작해야 한다', async () => {
