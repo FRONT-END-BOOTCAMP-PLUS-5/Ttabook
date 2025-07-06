@@ -14,10 +14,25 @@ export class SbSpaceRepository implements SpaceRepository {
   }
 
   async findById(id: number): Promise<SpaceRoomView[]> {
-    return [];
+    void id;
+    throw new Error('SbSpaceRepository.findById not implemented.');
   }
 
-  async save(space: SaveRequest): Promise<void> {}
+  async save(space: SaveRequest): Promise<void> {
+    void space;
+    throw new Error('SbSpaceRepository.save not implemented.');
+  }
 
-  async update(space: UpdateRequest): Promise<void> {}
+  async update(space: UpdateRequest): Promise<void> {
+    void space;
+    throw new Error('SbSpaceRepository.update not implemented.');
+  }
+  async delete(id: number): Promise<void> {
+    void id;
+    throw new Error('SbSpaceRepository.delete not implemented.');
+  }
+
+  async findAll(): Promise<SpaceRoomView[]> {
+    throw new Error('SbSpaceRepository.findAll not implemented.');
+  }
 }
