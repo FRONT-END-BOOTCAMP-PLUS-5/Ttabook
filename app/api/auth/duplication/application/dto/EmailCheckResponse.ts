@@ -1,9 +1,11 @@
-export interface EmailCheckResponse {
-  email: string;
-  available: boolean;
-  message: string;
+export class EmailCheckResponse {
+  constructor(
+    public email: string,
+    public available: boolean,
+    public message: string
+  ) {}
 }
 
-export interface EmailCheckErrorResponse {
-  error: string;
+export class EmailCheckErrorResponse {
+  constructor(public error: string) {}
 }

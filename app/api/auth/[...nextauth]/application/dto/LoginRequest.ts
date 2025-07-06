@@ -1,4 +1,6 @@
-export interface LoginRequest {
-  email: string;
-  password: string;
+export class LoginRequest {
+  constructor(
+    public email: string,
+    public password: string
+  ) {}
 }

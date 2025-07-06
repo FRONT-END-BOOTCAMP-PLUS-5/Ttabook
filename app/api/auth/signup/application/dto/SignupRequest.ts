@@ -1,8 +1,10 @@
-import { UserType } from '../../../domain/types/UserType';
+import { UserType } from "@/app/api/domain/types/UserType"; 
 
-export interface SignupRequest {
-  email: string;
-  password: string;
-  type: UserType;
-  name: string;
+export class SignupRequest {
+  constructor(
+    public email: string,
+    public password: string,
+    public type: UserType,
+    public name: string
+  ) {}
 }
