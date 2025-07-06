@@ -1,5 +1,5 @@
-import { UserRepository } from '../../../domain/repository/UserRepository';
-import { User } from '../../../domain/entities/User';
+import { UserRepository } from '../../../../domain/repository';
+import { User } from '../../../../domain/entities';
 import { InvalidCredentialsError, ValidationError } from '../dto';
 import { LoginUseCase } from './LoginUseCase';
 

@@ -1,4 +1,4 @@
-import { UserRepository } from '../../../domain/repository/UserRepository';
+import { UserRepository } from '../../../../domain/repository';
 import { ValidationError } from '../dto/ValidationError';
 import { ZodError, z } from 'zod';
 
