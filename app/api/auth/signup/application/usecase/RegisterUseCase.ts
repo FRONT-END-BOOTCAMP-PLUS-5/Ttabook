@@ -1,5 +1,5 @@
-import { UserRepository } from '../../../domain/repository/UserRepository';
-import { User } from '../../../domain/entities/User';
+import { UserRepository } from '@/app/api/domain/repository/UserRepository'; 
+import { User } from '@/app/api/domain/entities/User'; 
 import { SignupRequest } from '../dto/SignupRequest';
 import { PasswordUtil } from '../../../../infrastructure/utils/PasswordUtil';
 import { DuplicateEmailError } from '../dto/DuplicateEmailError';
