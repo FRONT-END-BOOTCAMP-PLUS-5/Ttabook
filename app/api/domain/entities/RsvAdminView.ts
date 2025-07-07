@@ -1,6 +1,3 @@
-// import { Room } from "./Room";
-// import { Rsv } from "./Rsv";
-
 export class RsvAdminView {
   constructor(
     public spaceId: number,
@@ -12,6 +9,3 @@ export class RsvAdminView {
     public endTime: Date
   ) {}
 }
-
-// type RsvAdminViewType = Pick<Room, 'name'> &
-//   Omit<Rsv, 'createAt' | 'editedAt' | 'deletedAt'>;

@@ -7,15 +7,9 @@ import {
   SaveRequest,
   UpdateRequest,
 } from '../../domain/repository/rsvRequest';
-import { SupabaseClient } from '@supabase/supabase-js';
+import { supabaseAdmin as supabase } from '@/app/api/infrastructure/supabase/client';
 
 export class SbRsvRepository implements RsvRepository {
-  private supabase;
-
-  constructor(supabase: SupabaseClient) {
-    this.supabase = supabase;
-  }
-
   private static mapToRsvAdminView(rsv: unknown): RsvAdminView {
     if (typeof rsv !== 'object' || rsv === null) {
       throw new Error('Invalid reservation data');
@@ -50,7 +44,7 @@ export class SbRsvRepository implements RsvRepository {
   }
 
   async findAll(): Promise<RsvAdminView[]> {
-    const query = this.supabase.from('reservation').select(`
+    const query = supabase.from('reservation').select(`
       user_id,
       room_id,
       space_id,
