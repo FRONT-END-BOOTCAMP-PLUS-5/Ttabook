@@ -1,3 +1,5 @@
+import { Room } from "./Room";
+
 export class Rsv {
   constructor(
     public id: string, // UUID
@@ -6,8 +8,10 @@ export class Rsv {
     public roomId: number,
     public startTime: Date,
     public endTime: Date,
-    public createdAt: Date,
-    public editedAt: Date,
-    public deletedAt: Date | null
+    public createdAt: Date |null,
+    public editedAt: Date | null,
+    public deletedAt: Date | null,
+
+    public room: Room | null, 
   ) {}
 }

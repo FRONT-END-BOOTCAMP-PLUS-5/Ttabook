@@ -1,4 +1,5 @@
-import { RsvAdminView } from '../../domain/entities/RsvAdminView';
+import { Room } from '../../domain/entities/Room';
+import { Rsv } from '../../domain/entities/Rsv';
 import { RsvRoomSub } from '../../domain/entities/RsvRoomSub';
 import { RsvUserView } from '../../domain/entities/RsvUserView';
 import { RsvRepository } from '../../domain/repository/RsvRepository';
@@ -10,40 +11,62 @@ import {
 import { supabaseAdmin as supabase } from '@/app/api/infrastructure/supabase/client';
 
 export class SbRsvRepository implements RsvRepository {
-  private static mapToRsvAdminView(rsv: unknown): RsvAdminView {
-    if (typeof rsv !== 'object' || rsv === null) {
-      throw new Error('Invalid reservation data');
-    }
+  private static mapToRsv(rsv: {
+    space_id: number;
+    room_id: number;
+    user_id: string;
+    id: string;
+    start_time: Date;
+    end_time: Date;
+    created_at?: Date;
+    edited_at?: Date;
+    deleted_at?: Date | null;
+    room?: {
+      id?: number;
+      supply_id?: number;
+      name?: string;
+      detail?: string;
+      roomItem_id?: number;
+      space_id?: number;
+      position_x?: number;
+      position_y?: number;
+      scale_x?: number;
+      scale_y?: number;
+    };
+  }): Rsv {
+    const createdAt = rsv.created_at ? rsv.created_at : null;
+    const editedAt = rsv.edited_at ? rsv.edited_at : null;
+    const deletedAt = rsv.deleted_at ? rsv.deleted_at : null;
+    const room = rsv.room
+      ? new Room(
+          rsv.room.id ? rsv.room.id : 0,
+          rsv.room.supply_id ? rsv.room.supply_id : 0,
+          rsv.room.name ? rsv.room.name : '',
+          rsv.room.detail ? rsv.room.detail : null,
+          rsv.room.roomItem_id ? rsv.room.roomItem_id : 0,
+          rsv.space_id,
+          rsv.room.position_x ? rsv.room.position_x : 0,
+          rsv.room.position_y ? rsv.room.position_y : 0,
+          rsv.room.scale_x ? rsv.room.scale_x : 1,
+          rsv.room.scale_y ? rsv.room.scale_y : 1
+        )
+      : null;
 
-    const { space_id, room_id, user_id, id, start_time, end_time, room } =
-      rsv as any;
-
-    if (
-      typeof space_id !== 'number' ||
-      typeof room_id !== 'number' ||
-      typeof user_id !== 'string' ||
-      typeof id !== 'string' ||
-      !(start_time instanceof Date) ||
-      !(end_time instanceof Date) ||
-      typeof room !== 'object' ||
-      room === null ||
-      typeof room.name !== 'string'
-    ) {
-      throw new Error('Invalid reservation data');
-    }
-
-    return new RsvAdminView(
-      space_id,
-      user_id,
-      room_id,
-      room.name,
-      id,
-      start_time,
-      end_time
+    return new Rsv(
+      rsv.id,
+      rsv.user_id,
+      rsv.space_id,
+      rsv.room_id,
+      rsv.start_time,
+      rsv.end_time,
+      createdAt,
+      editedAt,
+      deletedAt,
+      room
     );
   }
 
-  async findAll(): Promise<RsvAdminView[]> {
+  async findAll(): Promise<Rsv[]> {
     const query = supabase.from('reservation').select(`
       user_id,
       room_id,
@@ -74,7 +97,7 @@ export class SbRsvRepository implements RsvRepository {
           name: string;
         };
       }[]
-    ).map((rsv) => SbRsvRepository.mapToRsvAdminView(rsv));
+    ).map((rsv) => SbRsvRepository.mapToRsv(rsv));
   }
 
   async findByUserId(id: string): Promise<RsvUserView[] | null> {

@@ -1,6 +1,6 @@
 import { GetRsvListDto } from '../dto/GetRsvListDto';
 import { RsvRepository } from '../../../../domain/repository/RsvRepository';
-import { RsvAdminView } from '../../../../domain/entities/RsvAdminView';
+import { Rsv } from '../../../../domain/entities/Rsv';
 
 export class GetRsvListUsecase {
   private repository: RsvRepository;
@@ -12,19 +12,19 @@ export class GetRsvListUsecase {
     // Todo: token 관리자인지 확인 로직 필요
 
     // if admin
-    const rsvList: RsvAdminView[] = await this.repository.findAll();
-    return rsvList.map((rsv: RsvAdminView) => {
+    const rsvList: Rsv[] = await this.repository.findAll();
+    return rsvList.map((rsv: Rsv) => {
       return new GetRsvListDto(
         rsv.spaceId,
         {
           roomId: rsv.roomId,
-          roomName: rsv.roomName,
+          roomName: rsv.room ? rsv.room.name : '',
         },
         {
           userId: rsv.userId,
         },
         {
-          rsvId: rsv.rsvId,
+          rsvId: rsv.id,
           startTime: rsv.startTime,
           endTime: rsv.endTime,
         }
