@@ -14,26 +14,32 @@ export class SbRsvRepository implements RsvRepository{
 
 
   async findAll(): Promise<Rsv[]> {
-    return [];
+    throw new Error("SbRsvRepository.findAll not implemented.");
   }
 
   async findByUserId(id: string): Promise<RsvUserView[] | null> {
-    return null;
+    void id;
+    throw new Error("SbRsvRepository.findByUserId not implemented.");
   }
 
   async findByRoomId(spaceId: number, roomId: number): Promise<RsvRoomSub[]> {
-    return [];
+    void spaceId
+    void roomId;
+    throw new Error("SbRsvRepository.findByRoomId not implemented.");
   }
 
   async save(reservation: SaveRequest): Promise<void> {
-    
+    void reservation;
+    throw new Error("SbRsvRepository.save not implemented.");
   }
 
   async update(reservation: UpdateRequest): Promise<void> {
-    
+    void reservation;
+    throw new Error("SbRsvRepository.update not implemented.");
   }
 
   async delete(reservation: DeleteRequest): Promise<void> {
-    
+    void reservation;
+    throw new Error("SbRsvRepository.delete not implemented.");
   }
 }

@@ -1,5 +1,5 @@
 import { User } from '../entities/User';
-import { SignupRequest } from '../../auth/application/dto/SignupRequest';
+import { SignupRequest } from '../../auth/signup/application/dto/SignupRequest';
 
 export interface UserRepository {
   findByEmail(email: string): Promise<User | null>;
