@@ -16,5 +16,7 @@ export class SbSpaceRepository implements SpaceRepository {
     await supabase.from('space').insert({name: space.name});
   }
 
-  async update(space: UpdateRequest): Promise<void> {}
+  async update(space: UpdateRequest): Promise<void> {
+    await supabase.from('space').update({name: space.name}).eq('id', space.id);
+  }
 }

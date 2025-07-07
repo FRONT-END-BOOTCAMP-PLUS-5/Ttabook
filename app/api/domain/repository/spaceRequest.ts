@@ -6,5 +6,7 @@ export class SaveRequest {
 
 export class UpdateRequest {
   constructor(
+    public id: number,
+    public name: string
   ){}
 }
