@@ -1,5 +1,6 @@
 export class SaveRequest {
   constructor(
+    public name: string
   ){}
 }
 

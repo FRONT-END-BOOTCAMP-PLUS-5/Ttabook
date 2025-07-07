@@ -4,20 +4,17 @@ import {
   UpdateRequest,
 } from '../../domain/repository/spaceRequest';
 import { SpaceRepository } from '../../domain/repository/SpaceRepository';
-import { SupabaseClient } from '@supabase/supabase-js';
+import { supabaseAdmin as supabase } from '../supabase/client';
 
 export class SbSpaceRepository implements SpaceRepository {
-  private supabase;
-
-  constructor(supabase: SupabaseClient) {
-    this.supabase = supabase;
-  }
 
   async findById(id: number): Promise<SpaceRoomView[]> {
     return [];
   }
 
-  async save(space: SaveRequest): Promise<void> {}
+  async save(space: SaveRequest): Promise<void> {
+    await supabase.from('space').insert({name: space.name});
+  }
 
   async update(space: UpdateRequest): Promise<void> {}
 }
