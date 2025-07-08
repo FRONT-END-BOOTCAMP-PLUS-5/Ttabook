@@ -148,7 +148,17 @@ export class SbRsvRepository implements RsvRepository {
     throw new Error("SbRsvRepository.findByRoomId not implemented.");
   }
 
-  async save(reservation: SaveRequest): Promise<void> {}
+  async save(reservation: SaveRequest): Promise<void> {
+    const query = supabase
+      .from('reservation')
+      .insert([reservation])
+
+    const { error } = await query;
+
+    if (error) {
+      throw new Error(`Error saving reservation: ${error.message}`);
+    }
+  }
 
   async update(reservation: UpdateRequest): Promise<void> {}
 

@@ -2,6 +2,8 @@ import { SbRsvRepository } from '@/app/api/infrastructure/repositories/SbRsvRepo
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import { GetUserRsvUsecase } from '../application/usecases/GetUserRsvUsecase';
+import { PostUserRsvUsecase } from '../application/usecases/PostUserRsvUsecase';
+import { PostUserRsvDto } from '../application/dto/PostUserRsvDto';
 
 export async function GET(
     request: NextRequest,
@@ -20,4 +22,40 @@ export async function GET(
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
         
+}
+
+export async function POST(
+    request: NextRequest
+) {
+    try {
+        const body = await request.json();
+        const { reservationData } = body;
+
+        if(!reservationData ||
+           !reservationData.userId ||
+           !reservationData.spaceId ||
+           !reservationData.roomId ||
+           !reservationData.startTime ||
+           !reservationData.endTime) {
+            return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+        }
+
+        const rsvRepository = new SbRsvRepository();
+        const postUserRsvUsecase = new PostUserRsvUsecase(rsvRepository);
+
+        await postUserRsvUsecase.execute(
+            new PostUserRsvDto(
+                reservationData.userId,
+                reservationData.spaceId,
+                reservationData.roomId,
+                new Date(reservationData.startTime),
+                new Date(reservationData.endTime)
+            )
+        );
+        return NextResponse.json({ message: 'success' });
+
+    } catch (error) {
+        console.error('Error saving reservation:', error);
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    }
 }
