@@ -1,6 +1,6 @@
 export class SaveRequest {
   constructor(
-    public userId: number,
+    public userId: string,
     public roomId: number,
     public spaceId: number,
     public startTime: Date,

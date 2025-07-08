@@ -1,6 +1,6 @@
 export class PostUserRsvDto {
     constructor(
-        public userId: number,
+        public userId: string,
         public spaceId: number,
         public roomId: number,
         public startTime: Date,
