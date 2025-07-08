@@ -1,6 +1,5 @@
 import { RoomRepository } from "@/app/api/domain/repository/RoomRepository";
-import { PutRoomQueryDto } from "../dto/PutRoomQueryDto";
-import { RoomDto } from "../dto/RoomDto";
+import { PutRoomQueryDto, RoomDto } from "../dto/PutRoomQueryDto";
 import { UpdateRequest } from "@/app/api/domain/repository/roomRequest";
 
 export class PutRoomUsecase {
@@ -12,8 +11,8 @@ export class PutRoomUsecase {
 
   async execute(roomData: PutRoomQueryDto): Promise<any> {
     // roomData.token 처리
-    roomData.rooms.forEach((room: RoomDto) => {
-      const updateData = new UpdateRequest(
+    const updateDatas = roomData.rooms.map((room: RoomDto) => {
+      return new UpdateRequest(
         room.id,
         room.supplyId,
         room.roomName,
@@ -23,7 +22,7 @@ export class PutRoomUsecase {
         room.scaleX,
         room.scaleY
       );
-      this.roomRepository.update(updateData);
-    })
+    });
+    this.roomRepository.upsert(updateDatas);
   }
 }
