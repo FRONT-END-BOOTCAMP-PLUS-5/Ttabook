@@ -9,8 +9,8 @@ export class PostRoomUsecase {
   async execute(roomData: PostRoomQueryDto): Promise<any> {
     // roomData.token 처리
 
-    roomData.rooms.map((room: RoomDto) => {
-      const saveRequest: SaveRequest = {
+    const saveRequests: SaveRequest[] = roomData.rooms.map((room: RoomDto) => {
+      return {
         supplyId: room.supplyId,
         roomName: room.roomName,
         roomDetail: room.roomDetail,
@@ -18,8 +18,8 @@ export class PostRoomUsecase {
         positionY: room.positionY,
         scaleX: room.scaleX,
         scaleY: room.scaleY
-      };
-      return this.repository.save(saveRequest);
+      } as SaveRequest;
     });
+    return this.repository.saveAll(saveRequests);
   }
 }

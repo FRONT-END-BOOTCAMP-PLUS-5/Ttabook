@@ -15,6 +15,25 @@ export class SbRoomRepository implements RoomRepository {
       scale_y: room.scaleY,
     });
   }
+  
+  async saveAll(rooms: SaveRequest[]): Promise<void> {
+    const { error } = await supabase.from('room').insert(
+      rooms.map(room => ({
+        supply_id: room.supplyId,
+        room_name: room.roomName,
+        room_detail: room.roomDetail,
+        position_x: room.positionX,
+        position_y: room.positionY,
+        scale_x: room.scaleX,
+        scale_y: room.scaleY,
+      }))
+    );
+
+    if (error) {
+      throw new Error(`Failed to save rooms: ${error.message}`);
+    }
+  }
+
   async update(room: UpdateRequest): Promise<void> {
     await supabase.from('room')
       .update({
