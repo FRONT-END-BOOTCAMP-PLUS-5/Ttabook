@@ -10,15 +10,15 @@ export class PostRoomUsecase {
     // roomData.token 처리
 
     const saveRequests: SaveRequest[] = roomData.rooms.map((room: RoomDto) => {
-      return {
-        supplyId: room.supplyId,
-        roomName: room.roomName,
-        roomDetail: room.roomDetail,
-        positionX: room.positionX,
-        positionY: room.positionY,
-        scaleX: room.scaleX,
-        scaleY: room.scaleY
-      } as SaveRequest;
+      return new SaveRequest(
+        room.supplyId,
+        room.roomName,
+        room.roomDetail,
+        room.positionX,
+        room.positionY,
+        room.scaleX,
+        room.scaleY
+       )
     });
     return this.repository.saveAll(saveRequests);
   }
