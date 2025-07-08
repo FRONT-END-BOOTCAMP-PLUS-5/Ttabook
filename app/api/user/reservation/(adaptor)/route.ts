@@ -12,23 +12,26 @@ import { createClient } from '@/app/api/infrastructure/supabase/server';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export async function GET(
-    request: NextRequest,
-    { params }: { params: { id: string } }
+    request: NextRequest
 ) {
     try {
-        const { id } = params;
+        const body = await request.json();
+        const { userId } = body;
 
-        const supabase:SupabaseClient = await createClient();
+        if (!userId) {
+            return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+        }
+
+        const supabase: SupabaseClient = await createClient();
         const rsvRepository = new SbRsvRepository(supabase);
         const getUserRsvUsecase = new GetUserRsvUsecase(rsvRepository);
-        const reservations = await getUserRsvUsecase.execute(id);
+        const reservations = await getUserRsvUsecase.execute(userId);
 
         return NextResponse.json({ data: reservations });
     } catch (error) {
         console.error('Error fetching reservations:', error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-        
 }
 
 export async function POST(
