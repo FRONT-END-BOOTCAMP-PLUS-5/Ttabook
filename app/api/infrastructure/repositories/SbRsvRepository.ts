@@ -162,5 +162,17 @@ export class SbRsvRepository implements RsvRepository {
 
   async update(reservation: UpdateRequest): Promise<void> {}
 
-  async delete(reservation: DeleteRequest): Promise<void> {}
+  async delete(reservation: DeleteRequest): Promise<void> {
+    const query = supabase
+      .from('reservation')
+      .delete()
+      .eq('id', reservation.rsvId)
+      .eq('user_id', reservation.userId);
+
+    const { error } = await query;
+
+    if (error) {
+      throw new Error(`Error deleting reservation: ${error.message}`);
+    }
+  }
 }

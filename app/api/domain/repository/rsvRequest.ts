@@ -19,7 +19,7 @@ export class UpdateRequest {
 
 export class DeleteRequest {
   constructor(
-    public rsvId: number,
+    public rsvId: string,
     public userId: string
   ) {}
 }
