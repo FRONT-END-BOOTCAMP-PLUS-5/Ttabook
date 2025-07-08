@@ -1,11 +1,17 @@
 import { RoomRepository } from '@/app/api/domain/repository/RoomRepository';
 import { Room } from '../../domain/entities/Room';
-import { supabaseAdmin as supabase } from '../supabase/client';
 import { SaveRequest, UpdateRequest } from '../../domain/repository/roomRequest';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 export class SbRoomRepository implements RoomRepository {
+  private supabase: SupabaseClient;
+
+  constructor(supabase: SupabaseClient) {
+    this.supabase = supabase;
+  }
+  
   async save(room: SaveRequest): Promise<void> {
-    await supabase.from('room').insert({
+    await this.supabase.from('room').insert({
       supply_id: room.supplyId,
       room_name: room.roomName,
       room_detail: room.roomDetail,
@@ -17,7 +23,7 @@ export class SbRoomRepository implements RoomRepository {
   }
   
   async saveAll(rooms: SaveRequest[]): Promise<void> {
-    const { error } = await supabase.from('room').insert(
+    const { error } = await this.supabase.from('room').insert(
       rooms.map(room => ({
         supply_id: room.supplyId,
         room_name: room.roomName,
@@ -35,7 +41,7 @@ export class SbRoomRepository implements RoomRepository {
   }
 
   async update(room: UpdateRequest): Promise<void> {
-    await supabase.from('room')
+    await this.supabase.from('room')
       .update({
         supply_id: room.supplyId,
         room_name: room.roomName,
@@ -60,7 +66,7 @@ export class SbRoomRepository implements RoomRepository {
       scale_y: room.scaleY,
     }));
 
-    const { error } = await supabase.from('room').upsert(updates);
+    const { error } = await this.supabase.from('room').upsert(updates);
 
     if (error) {
       throw new Error(`Failed to update rooms: ${error.message}`);

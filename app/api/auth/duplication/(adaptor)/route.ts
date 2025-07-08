@@ -3,10 +3,13 @@ import { CheckEmailDuplicationUseCase } from '../application/usecase/CheckEmailD
 import { SupabaseUserRepository } from '../../../infrastructure/repositories/SbUserRepository';
 import { EmailCheckResponse, EmailCheckErrorResponse } from '../application/dto/EmailCheckResponse';
 import { ValidationError } from '../application/dto/ValidationError';
+import { createClient } from '@/app/api/infrastructure/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 // 의존성 생성 팩토리 - 테스트하기 쉽고 이해하기 명확함
-function createCheckEmailDuplicationUseCase(): CheckEmailDuplicationUseCase {
-  const userRepository = new SupabaseUserRepository();
+async function createCheckEmailDuplicationUseCase(): Promise<CheckEmailDuplicationUseCase> {
+  const supabase: SupabaseClient = await createClient();
+  const userRepository = new SupabaseUserRepository(supabase);
   return new CheckEmailDuplicationUseCase(userRepository);
 }
 
@@ -22,7 +25,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<EmailCheck
       );
     }
 
-    const checkEmailDuplicationUseCase = createCheckEmailDuplicationUseCase();
+    const checkEmailDuplicationUseCase = await createCheckEmailDuplicationUseCase();
 
     // 이메일 중복 확인
     const isDuplicate = await checkEmailDuplicationUseCase.execute(email);

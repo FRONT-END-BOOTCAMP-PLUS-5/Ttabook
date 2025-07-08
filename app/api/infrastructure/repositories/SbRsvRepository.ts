@@ -1,3 +1,4 @@
+import { SupabaseClient } from '@supabase/supabase-js';
 import { Room } from '../../domain/entities/Room';
 import { Rsv } from '../../domain/entities/Rsv';
 import { RsvRoomSub } from '../../domain/entities/RsvRoomSub';
@@ -8,9 +9,14 @@ import {
   SaveRequest,
   UpdateRequest,
 } from '../../domain/repository/rsvRequest';
-import { supabaseAdmin as supabase } from '@/app/api/infrastructure/supabase/client';
 
 export class SbRsvRepository implements RsvRepository {
+  private supabase: SupabaseClient;
+
+  constructor(supabase: SupabaseClient) {
+    this.supabase = supabase;
+  }
+
   private static mapToRsv(rsv: {
     space_id: number;
     room_id: number;
@@ -67,7 +73,7 @@ export class SbRsvRepository implements RsvRepository {
   }
 
   async findAll(): Promise<Rsv[]> {
-    const query = supabase.from('reservation').select(`
+    const query = this.supabase.from('reservation').select(`
       user_id,
       room_id,
       space_id,

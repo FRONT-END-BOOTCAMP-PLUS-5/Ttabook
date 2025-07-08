@@ -9,6 +9,8 @@ import { PutSpaceUsecase } from '../application/usecases/PutSpaceUsecase';
 import { PutSpaceQueryDto } from '../application/dto/PutSpaceQueryDto';
 import { PutRoomUsecase } from '../application/usecases/PutRoomUsecase';
 import { PutRoomQueryDto } from '../application/dto/PutRoomQueryDto';
+import { createClient } from '@/app/api/infrastructure/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 export async function POST(request: NextRequest) {
   const token = request.headers.get('Authorization');
@@ -21,10 +23,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
 
-  const spaceRepository = new SbSpaceRepository(); 
+	const supabase: SupabaseClient = await createClient();
+
+  const spaceRepository = new SbSpaceRepository(supabase); 
   const postSpaceUsecase = new PostSpaceUsecase(spaceRepository);
 
-  const roomRepository = new SbRoomRepository(); 
+  const roomRepository = new SbRoomRepository(supabase); 
   const postRoomUsecase = new PostRoomUsecase(roomRepository)
 
   try {
@@ -47,10 +51,12 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
 
-  const spaceRepository = new SbSpaceRepository(); 
+	const supabase: SupabaseClient = await createClient();
+
+  const spaceRepository = new SbSpaceRepository(supabase); 
   const putSpaceUsecase = new PutSpaceUsecase(spaceRepository);
 
-  const roomRepository = new SbRoomRepository(); 
+  const roomRepository = new SbRoomRepository(supabase); 
   const putRoomUsecase = new PutRoomUsecase(roomRepository);
 
   try {
