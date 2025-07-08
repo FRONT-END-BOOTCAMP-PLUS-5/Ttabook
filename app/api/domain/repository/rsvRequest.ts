@@ -10,8 +10,8 @@ export class SaveRequest {
 
 export class UpdateRequest {
   constructor(
-    public rsvId: number,
-    public userId: number,
+    public rsvId: string,
+    public userId: string,
     public startTime: Date,
     public endTime: Date,
   ) {}

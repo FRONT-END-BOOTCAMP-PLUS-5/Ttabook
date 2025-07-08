@@ -160,7 +160,22 @@ export class SbRsvRepository implements RsvRepository {
     }
   }
 
-  async update(reservation: UpdateRequest): Promise<void> {}
+  async update(reservation: UpdateRequest): Promise<void> {
+    const query = supabase
+      .from('reservation')
+      .update({
+        start_time: reservation.startTime,
+        end_time: reservation.endTime,
+      })
+      .eq('id', reservation.rsvId)
+      .eq('user_id', reservation.userId);
+
+    const { error } = await query;
+
+    if (error) {
+      throw new Error(`Error updating reservation: ${error.message}`);
+    }
+  }
 
   async delete(reservation: DeleteRequest): Promise<void> {
     const query = supabase

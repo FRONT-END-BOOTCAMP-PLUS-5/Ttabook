@@ -6,6 +6,8 @@ import { PostUserRsvUsecase } from '../application/usecases/PostUserRsvUsecase';
 import { PostUserRsvDto } from '../application/dto/PostUserRsvDto';
 import { DeleteUserRsvUsecase } from '../application/usecases/DeleteUserRsvUsecase';
 import { DeleteUserRsvDto } from '../application/dto/DeleteUserRsvDto';
+import { UpdateUserRsvDto } from '../application/dto/UpdateUserRsvDto';
+import { UpdateUserRsvUsecase } from '../application/usecases/UpdateUserRsvUsecase';
 
 export async function GET(
     request: NextRequest,
@@ -62,6 +64,36 @@ export async function POST(
     }
 }
 
+export async function PUT(
+    request: NextRequest
+) {
+    try {
+        const body = await request.json();
+        const { rsvId, userId, startTime, endTime } = body;
+
+        if (!rsvId || !userId || !startTime || !endTime) {
+            return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+        }
+
+        const rsvRepository = new SbRsvRepository();
+        const updateUserRsvUsecase = new UpdateUserRsvUsecase(rsvRepository);
+
+        await updateUserRsvUsecase.execute(
+            new UpdateUserRsvDto(
+                rsvId,
+                userId,
+                new Date(startTime),
+                new Date(endTime)
+            )
+        );
+        return NextResponse.json({ message: 'success' });
+
+    } catch (error) {
+        console.error('Error updating reservation:', error);
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    }
+}
+
 export async function DELETE(
     request: NextRequest
 ) {
@@ -83,7 +115,7 @@ export async function DELETE(
             )
         );
         return NextResponse.json({ message: 'success' });
-        
+
     } catch (error) {
         console.error('Error deleting reservation:', error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
