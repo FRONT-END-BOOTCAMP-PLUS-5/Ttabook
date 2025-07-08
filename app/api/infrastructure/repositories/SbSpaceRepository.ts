@@ -1,23 +1,19 @@
-import { SpaceRoomView } from '../../domain/entities/SpaceRoomView';
-import {
-  SaveRequest,
-  UpdateRequest,
-} from '../../domain/repository/spaceRequest';
+import { Space } from '../../domain/entities/Space';
 import { SpaceRepository } from '../../domain/repository/SpaceRepository';
-import { SupabaseClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '../supabase/client';
 
 export class SbSpaceRepository implements SpaceRepository {
-  private supabase;
+  async findById(id: number): Promise<Space> {
+    const { data, error } = await supabaseAdmin
+      .from('space')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-  constructor(supabase: SupabaseClient) {
-    this.supabase = supabase;
+    if (error) {
+      throw new Error(`공간 조회 중 오류 발생: ${error.message}`);
+    }
+
+    return data;
   }
-
-  async findById(id: number): Promise<SpaceRoomView[]> {
-    return [];
-  }
-
-  async save(space: SaveRequest): Promise<void> {}
-
-  async update(space: UpdateRequest): Promise<void> {}
 }

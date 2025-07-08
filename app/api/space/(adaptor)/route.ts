@@ -1,8 +1,6 @@
-import { SbSpaceRepository } from '@/app/api/infrastructure/repositories/SbSpaceRepository';
 import { NextRequest, NextResponse } from 'next/server';
-import { GetSpaceUsecase } from '../usecases/GetSpaceUsecase';
-// import { SbSpaceRepository } from '../../infrastructure/repositories/SbSpaceRepository';
-// import { GetSpaceUsecase } from '../../admin/space/usecases/GetSpaceUsecase';
+import { SbSpaceRepository } from '../../infrastructure/repositories/SbSpaceRepository';
+import { GetSpaceUsecase } from '../../admin/space/usecases/GetSpaceUsecase';
 
 // 관리자를 위한 공간 조회 API
 export async function GET(request: NextRequest) {

@@ -1,9 +1,5 @@
-import { SpaceRoomView } from "../entities/SpaceRoomView";
-import { SaveRequest, UpdateRequest } from "./spaceRequest";
+import { Space } from '../entities/Space';
 
 export interface SpaceRepository {
-  findById(id: number): Promise<SpaceRoomView[]>;
-  
-  save(space: SaveRequest): Promise<void>;
-  update(space: UpdateRequest): Promise<void>;
+  findById(id: number): Promise<Space>;
 }
