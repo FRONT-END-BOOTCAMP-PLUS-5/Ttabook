@@ -101,11 +101,14 @@ export class SbRsvRepository implements RsvRepository {
   }
 
   async findByUserId(id: string): Promise<RsvUserView[] | null> {
-    return null;
+    void id;
+    throw new Error("SbRsvRepository.findByUserId not implemented.");
   }
 
   async findByRoomId(spaceId: number, roomId: number): Promise<RsvRoomSub[]> {
-    return [];
+    void spaceId
+    void roomId;
+    throw new Error("SbRsvRepository.findByRoomId not implemented.");
   }
 
   async save(reservation: SaveRequest): Promise<void> {}

@@ -1,8 +1,7 @@
-import { UserType } from '../types/UserType';
+import { UserType } from "@/app/api/domain/types/UserType"; 
 
-export class User {
+export class SignupRequest {
   constructor(
-    public id: string, // UUID
     public email: string,
     public password: string,
     public type: UserType,

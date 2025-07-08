@@ -9,7 +9,8 @@ import { supabaseAdmin as supabase } from '../supabase/client';
 export class SbSpaceRepository implements SpaceRepository {
 
   async findById(id: number): Promise<SpaceRoomView[]> {
-    return [];
+    void id;
+    throw new Error('SbSpaceRepository.findById not implemented.');
   }
 
   async save(space: SaveRequest): Promise<void> {

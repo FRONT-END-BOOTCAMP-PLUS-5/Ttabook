@@ -62,26 +62,38 @@
 ### 5.1. 백엔드: API 라우트 (Next.js)
 
 -   **파일 규칙:** 모든 API 엔드포인트는 `app/api/` 디렉터리 내에 위치하며, 파일명은 반드시 `route.ts`여야 합니다. (참고: [Next.js Route Conventions](https://nextjs.org/docs/app/api-reference/file-conventions/route))
--   **폴더 구조:** RESTful API 디자인 원칙에 따라 리소스 기반으로 폴더 구조를 설계합니다.
-    ```
-    app/api/
-    └── users/
-        ├── route.ts                // GET /api/users, POST /api/users
-        └── [userId]/
-            └── route.ts            // GET /api/users/[userId], PUT /api/users/[userId]
-    ```
+
+#### 5.1.1. 클린 아키텍처 기반 폴더 구조
+
+프로젝트는 클린 아키텍처 원칙을 따라 다음과 같은 폴더 구조를 사용합니다:
+
+```
+api/
+├── user/reservation/          // 실제 API 호출 URL이 됨
+│   ├── (adapter)/            // 어댑터 레이어
+│   │   └── route.ts          // Next.js API 라우트 파일
+│   └── application/          // 애플리케이션 레이어
+│       ├── usecase/          // 유스케이스 (비즈니스 로직)
+│       └── dto/              // 데이터 전송 객체
+├── domain/                   // 도메인 레이어
+│   ├── entity/              // 엔티티 (데이터베이스 테이블)
+│   └── repository/          // 레포지토리 인터페이스
+└── infrastructure/          // 인프라 레이어
+    └── repository/          // 레포지토리 구현체
+```
+
 -   **함수 명명:** `route.ts` 파일 내에서 export 되는 함수는 반드시 HTTP 메서드 이름(대문자)을 사용해야 합니다.
     ```typescript
-    // app/api/users/route.ts
+    // app/api/user/reservation/(adapter)/route.ts
     import { NextResponse } from 'next/server';
 
     export async function GET(request: Request) {
-      // ... 유저 목록 조회 로직
+      // ... 예약 목록 조회 로직
       return NextResponse.json({ data: ... });
     }
 
     export async function POST(request: Request) {
-      // ... 유저 생성 로직
+      // ... 예약 생성 로직
       return NextResponse.json({ data: ... });
     }
     ```

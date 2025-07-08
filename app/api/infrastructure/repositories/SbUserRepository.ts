@@ -1,11 +1,12 @@
 import { UserRepository } from '../../domain/repository/UserRepository';
-import { User, CreateUserData } from '../../domain/entities/UserEntity';
+import { User } from '../../domain/entities/User';
+import { SignupRequest } from '../../auth/signup/application/dto/SignupRequest';
 import { supabaseAdmin } from '../supabase/client';
 
 export class SupabaseUserRepository implements UserRepository {
   async findByEmail(email: string): Promise<User | null> {
     const { data, error } = await supabaseAdmin
-      .from('users')
+      .from('user')
       .select('*')
       .eq('email', email)
       .single();
@@ -22,7 +23,7 @@ export class SupabaseUserRepository implements UserRepository {
 
   async findById(id: string): Promise<User | null> {
     const { data, error } = await supabaseAdmin
-      .from('users')
+      .from('user')
       .select('*')
       .eq('id', id)
       .single();
@@ -37,9 +38,9 @@ export class SupabaseUserRepository implements UserRepository {
     return data;
   }
 
-  async save(userData: CreateUserData): Promise<User> {
+  async save(userData: SignupRequest): Promise<User> {
     const { data, error } = await supabaseAdmin
-      .from('users')
+      .from('user')
       .insert([userData])
       .select()
       .single();
@@ -53,7 +54,7 @@ export class SupabaseUserRepository implements UserRepository {
 
   async update(id: string, userData: Partial<User>): Promise<User> {
     const { data, error } = await supabaseAdmin
-      .from('users')
+      .from('user')
       .update(userData)
       .eq('id', id)
       .select()
@@ -68,7 +69,7 @@ export class SupabaseUserRepository implements UserRepository {
 
   async delete(id: string): Promise<void> {
     const { error } = await supabaseAdmin
-      .from('users')
+      .from('user')
       .delete()
       .eq('id', id);
 

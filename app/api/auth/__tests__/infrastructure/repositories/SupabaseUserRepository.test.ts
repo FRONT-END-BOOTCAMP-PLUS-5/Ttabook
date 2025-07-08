@@ -1,17 +1,19 @@
 import '../../__mocks__/supabase.mock';
 import { SupabaseUserRepository } from '../../../../infrastructure/repositories/SbUserRepository';
 import { mockSupabaseClient } from '../../__mocks__/supabase.mock';
-import { User, CreateUserData } from '../../../../domain/entities/UserEntity';
+import { User } from '../../../../domain/entities/User';
+import { SignupRequest } from '../../signup/application/dto/SignupRequest';
 
 describe('SupabaseUserRepository', () => {
   let repository: SupabaseUserRepository;
 
-  const mockUser: User = {
-    id: '123e4567-e89b-12d3-a456-426614174000',
-    email: 'test@example.com',
-    password: 'hashedpassword123',
-    type: 'user',
-  };
+  const mockUser: User = new User(
+    '123e4567-e89b-12d3-a456-426614174000',
+    'test@example.com',
+    'hashedpassword123',
+    'user',
+    'Test User'
+  );
 
   beforeEach(() => {
     repository = new SupabaseUserRepository();
@@ -31,7 +33,7 @@ describe('SupabaseUserRepository', () => {
 
       const result = await repository.findByEmail('test@example.com');
 
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('users');
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('user');
       expect(mockChain.eq).toHaveBeenCalledWith('email', 'test@example.com');
       expect(result).toEqual(mockUser);
     });
@@ -84,7 +86,7 @@ describe('SupabaseUserRepository', () => {
 
       const result = await repository.findById('123e4567-e89b-12d3-a456-426614174000');
 
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('users');
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('user');
       expect(mockChain.eq).toHaveBeenCalledWith('id', '123e4567-e89b-12d3-a456-426614174000');
       expect(result).toEqual(mockUser);
     });
@@ -92,10 +94,11 @@ describe('SupabaseUserRepository', () => {
 
   describe('create', () => {
     it('새로운 사용자를 생성해야 한다', async () => {
-      const userData: CreateUserData = {
+      const userData: SignupRequest = {
         email: 'test@example.com',
         password: 'hashedpassword123',
         type: 'user',
+        name: 'Test User',
       };
 
       const mockChain = {
@@ -109,16 +112,17 @@ describe('SupabaseUserRepository', () => {
 
       const result = await repository.save(userData);
 
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('users');
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('user');
       expect(mockChain.select).toHaveBeenCalled();
       expect(result).toEqual(mockUser);
     });
 
     it('사용자 생성 실패 시 에러를 발생시켜야 한다', async () => {
-      const userData: CreateUserData = {
+      const userData: SignupRequest = {
         email: 'test@example.com',
         password: 'hashedpassword123',
         type: 'user',
+        name: 'Test User',
       };
 
       const mockChain = {
@@ -154,7 +158,7 @@ describe('SupabaseUserRepository', () => {
 
       const result = await repository.update('123e4567-e89b-12d3-a456-426614174000', updateData);
 
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('users');
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('user');
       expect(mockChain.eq).toHaveBeenCalledWith('id', '123e4567-e89b-12d3-a456-426614174000');
       expect(result).toEqual(updatedUser);
     });
@@ -172,7 +176,7 @@ describe('SupabaseUserRepository', () => {
 
       await repository.delete('123e4567-e89b-12d3-a456-426614174000');
 
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('users');
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('user');
       expect(mockChain.eq).toHaveBeenCalledWith('id', '123e4567-e89b-12d3-a456-426614174000');
     });
 
