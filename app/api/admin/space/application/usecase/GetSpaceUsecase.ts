@@ -1,6 +1,6 @@
 import { Space } from '@/app/api/domain/entities/Space';
 import { SpaceRepository } from '@/app/api/domain/repository/SpaceRepository';
-import { GetSpaceDto } from '../application/dto/GetSpaceDto';
+import { GetSpaceDto } from '../dto/GetSpaceDto';
 
 export class GetSpaceUsecase {
   constructor(private spaceRepository: SpaceRepository) {}

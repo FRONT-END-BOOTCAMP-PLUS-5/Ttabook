@@ -1,6 +1,6 @@
 import { SbSpaceRepository } from '@/app/api/infrastructure/repositories/SbSpaceRepository';
 import { NextRequest, NextResponse } from 'next/server';
-import { GetSpaceUsecase } from '../usecases/GetSpaceUsecase';
+import { GetSpaceUsecase } from '../application/usecase/GetSpaceUsecase';
 // import { SbSpaceRepository } from '../../infrastructure/repositories/SbSpaceRepository';
 // import { GetSpaceUsecase } from '../../admin/space/usecases/GetSpaceUsecase';
 
