@@ -1,10 +1,14 @@
 import { Space } from '../../domain/entities/Space';
 import { SpaceRepository } from '../../domain/repository/SpaceRepository';
-import { supabaseAdmin } from '../supabase/client';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 export class SbSpaceRepository implements SpaceRepository {
+  private supabase: SupabaseClient;
+  constructor(supabase: SupabaseClient) {
+    this.supabase = supabase;
+  }
   async findById(id: number): Promise<Space> {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await this.supabase
       .from('space')
       .select('*')
       .eq('id', id)
@@ -15,5 +19,16 @@ export class SbSpaceRepository implements SpaceRepository {
     }
 
     return data;
+  }
+
+  async save(space: SaveRequest): Promise<void> {
+    await this.supabase.from('space').insert({ name: space.name });
+  }
+
+  async update(space: UpdateRequest): Promise<void> {
+    await this.supabase
+      .from('space')
+      .update({ name: space.name })
+      .eq('id', space.id);
   }
 }
