@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SbSpaceRepository } from '../../infrastructure/repositories/SbSpaceRepository';
-import { GetSpaceUsecase } from '../../admin/space/application/usecase/GetSpaceUsecase';
+import { GetSpaceUsecase } from '../application/usecase/GetSpaceUsecase';
 import { createClient } from '../../infrastructure/supabase/server';
 
 // 관리자를 위한 공간 조회 API
