@@ -1,5 +1,5 @@
 import { SbRsvRepository } from '@/app/api/infrastructure/repositories/SbRsvRepository';
-import { createClient } from '@supabase/supabase-js';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { GetUserRsvUsecase } from '../application/usecases/GetUserRsvUsecase';
 import { PostUserRsvUsecase } from '../application/usecases/PostUserRsvUsecase';
@@ -8,6 +8,8 @@ import { DeleteUserRsvUsecase } from '../application/usecases/DeleteUserRsvUseca
 import { DeleteUserRsvDto } from '../application/dto/DeleteUserRsvDto';
 import { UpdateUserRsvDto } from '../application/dto/UpdateUserRsvDto';
 import { UpdateUserRsvUsecase } from '../application/usecases/UpdateUserRsvUsecase';
+import { createClient } from '@/app/api/infrastructure/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 export async function GET(
     request: NextRequest,
@@ -16,7 +18,8 @@ export async function GET(
     try {
         const { id } = params;
 
-        const rsvRepository = new SbRsvRepository();
+        const supabase:SupabaseClient = await createClient();
+        const rsvRepository = new SbRsvRepository(supabase);
         const getUserRsvUsecase = new GetUserRsvUsecase(rsvRepository);
         const reservations = await getUserRsvUsecase.execute(id);
 
@@ -44,7 +47,8 @@ export async function POST(
             return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
         }
 
-        const rsvRepository = new SbRsvRepository();
+        const supabase:SupabaseClient = await createClient();
+        const rsvRepository = new SbRsvRepository(supabase);
         const postUserRsvUsecase = new PostUserRsvUsecase(rsvRepository);
 
         await postUserRsvUsecase.execute(
@@ -75,7 +79,8 @@ export async function PUT(
             return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
         }
 
-        const rsvRepository = new SbRsvRepository();
+        const supabase:SupabaseClient = await createClient();
+        const rsvRepository = new SbRsvRepository(supabase);
         const updateUserRsvUsecase = new UpdateUserRsvUsecase(rsvRepository);
 
         await updateUserRsvUsecase.execute(
@@ -105,7 +110,8 @@ export async function DELETE(
             return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
         }
 
-        const rsvRepository = new SbRsvRepository();
+        const supabase:SupabaseClient = await createClient();
+        const rsvRepository = new SbRsvRepository(supabase);
         const deleteUserRsvUsecase = new DeleteUserRsvUsecase(rsvRepository);
 
         await deleteUserRsvUsecase.execute(

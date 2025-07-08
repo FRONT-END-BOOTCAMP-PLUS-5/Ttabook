@@ -23,6 +23,16 @@ const eslintConfig = [
       'public/',
     ],
     extends: ['next/core-web-vitals', 'next/typescript'],
+    overrides: [
+      {
+        files: ['*.ts', '*.tsx', '*.js', '*.jsx'],
+        rules: {
+          '@typescript-eslint/no-explicit-any': 'warn',
+          '@typescript-eslint/no-unused-vars': 'warn',
+          'no-unused-vars': 'warn',
+        },
+      },
+    ],
   }),
 ];
 

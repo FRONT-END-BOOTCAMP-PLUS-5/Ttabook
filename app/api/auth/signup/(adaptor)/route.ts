@@ -5,16 +5,19 @@ import { SignupResponse, SignupErrorResponse } from '../application/dto/SignupRe
 import { DuplicateEmailError } from '../application/dto/DuplicateEmailError';
 import { ValidationError } from '../application/dto/ValidationError';
 import { AuthError } from '../application/dto/AuthError'; 
+import { SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@/app/api/infrastructure/supabase/server';
 
 // 의존성 생성 팩토리 - 테스트하기 쉽고 이해하기 명확함
-function createRegisterUseCase(): RegisterUseCase {
-  const userRepository = new SupabaseUserRepository();
+async function createRegisterUseCase(): Promise<RegisterUseCase> {
+  const supabase: SupabaseClient = await createClient();
+  const userRepository = new SupabaseUserRepository(supabase);
   return new RegisterUseCase(userRepository);
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const registerUseCase = createRegisterUseCase();
+    const registerUseCase = await createRegisterUseCase();
     
     const body = await request.json();
     
