@@ -1,6 +1,6 @@
 export class SaveRequest {
   constructor(
-    public userId: number,
+    public userId: string,
     public roomId: number,
     public spaceId: number,
     public startTime: Date,
@@ -10,8 +10,8 @@ export class SaveRequest {
 
 export class UpdateRequest {
   constructor(
-    public rsvId: number,
-    public userId: number,
+    public rsvId: string,
+    public userId: string,
     public startTime: Date,
     public endTime: Date,
   ) {}
@@ -19,7 +19,7 @@ export class UpdateRequest {
 
 export class DeleteRequest {
   constructor(
-    public rsvId: number,
+    public rsvId: string,
     public userId: string
   ) {}
 }
