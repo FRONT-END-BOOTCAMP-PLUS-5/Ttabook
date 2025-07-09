@@ -1,7 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Room } from '../../domain/entities/Room';
 import { Rsv } from '../../domain/entities/Rsv';
-import { RsvRoomSub } from '../../domain/entities/RsvRoomSub';
 import { RsvRepository } from '../../domain/repository/RsvRepository';
 import {
   DeleteRequest,
@@ -116,9 +115,10 @@ export class SbRsvRepository implements RsvRepository {
   }
 
   async findByUserId(id: string): Promise<Rsv[] | null> {
-    const query  = this.supabase
-    .from('reservation')
-    .select(`
+    const query = this.supabase
+      .from('reservation')
+      .select(
+        `
       id,
       user_id,
       space_id,
@@ -127,9 +127,10 @@ export class SbRsvRepository implements RsvRepository {
       room:room_id(name),
       start_time,
       end_time,
-    `)
-    .eq('user_id', id)
-    
+    `
+      )
+      .eq('user_id', id);
+
     const { data, error } = await query;
 
     if (error) throw new Error(error.message);
@@ -148,16 +149,28 @@ export class SbRsvRepository implements RsvRepository {
     ).map((rsv) => SbRsvRepository.mapToRsv(rsv));
   }
 
-  async findByRoomId(spaceId: number, roomId: number): Promise<RsvRoomSub[]> {
-    void spaceId;
-    void roomId;
-    throw new Error('SbRsvRepository.findByRoomId not implemented.');
+  async findByRoomId(spaceId: number, roomId: number): Promise<Rsv[]> {
+    const query = this.supabase
+      .from('reservation')
+      .select('*')
+      .eq('space_id', spaceId)
+      .eq('room_id', roomId);
+
+    const { error, data } = await query;
+
+    if (error) {
+      throw new Error('SbRsvRepository.findByRoomId not implemented.');
+    }
+
+    if (!data || data.length === 0) {
+      return [];
+    }
+
+    return data;
   }
 
   async save(reservation: SaveRequest): Promise<void> {
-    const query = this.supabase
-      .from('reservation')
-      .insert([reservation])
+    const query = this.supabase.from('reservation').insert([reservation]);
 
     const { error } = await query;
 
