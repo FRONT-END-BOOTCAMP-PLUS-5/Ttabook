@@ -1,6 +1,9 @@
 import { RoomRepository } from '@/app/api/domain/repository/RoomRepository';
 import { Room } from '../../domain/entities/Room';
-import { SaveRequest, UpdateRequest } from '../../domain/repository/roomRequest';
+import {
+  SaveRequest,
+  UpdateRequest,
+} from '../../domain/repository/roomRequest';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export class SbRoomRepository implements RoomRepository {
@@ -9,7 +12,7 @@ export class SbRoomRepository implements RoomRepository {
   constructor(supabase: SupabaseClient) {
     this.supabase = supabase;
   }
-  
+
   async save(room: SaveRequest): Promise<void> {
     await this.supabase.from('room').insert({
       supply_id: room.supplyId,
@@ -21,10 +24,10 @@ export class SbRoomRepository implements RoomRepository {
       scale_y: room.scaleY,
     });
   }
-  
+
   async saveAll(rooms: SaveRequest[]): Promise<void> {
     const { error } = await this.supabase.from('room').insert(
-      rooms.map(room => ({
+      rooms.map((room) => ({
         supply_id: room.supplyId,
         room_name: room.roomName,
         room_detail: room.roomDetail,
@@ -41,7 +44,8 @@ export class SbRoomRepository implements RoomRepository {
   }
 
   async update(room: UpdateRequest): Promise<void> {
-    await this.supabase.from('room')
+    await this.supabase
+      .from('room')
       .update({
         supply_id: room.supplyId,
         room_name: room.roomName,
@@ -55,7 +59,7 @@ export class SbRoomRepository implements RoomRepository {
   }
 
   async upsert(rooms: UpdateRequest[]): Promise<void> {
-    const updates = rooms.map(room => ({
+    const updates = rooms.map((room) => ({
       id: room.id,
       supply_id: room.supplyId,
       room_name: room.roomName,
@@ -74,7 +78,21 @@ export class SbRoomRepository implements RoomRepository {
   }
 
   async findById(id: number): Promise<Room | null> {
-    
     return null;
+  }
+
+  async findBySpaceId(spaceId: number): Promise<Room[]> {
+    const { data, error } = await this.supabase
+      .from('room')
+      .select('*')
+      .eq('space_id', spaceId);
+
+    if (error) {
+      throw new Error(
+        `Failed to fetch rooms for space ${spaceId}: ${error.message}`
+      );
+    }
+
+    return data;
   }
 }

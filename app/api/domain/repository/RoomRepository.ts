@@ -1,5 +1,5 @@
-import { Room } from "../entities/Room";
-import { SaveRequest, UpdateRequest } from "./roomRequest";
+import { Room } from '../entities/Room';
+import { SaveRequest, UpdateRequest } from './roomRequest';
 
 export interface RoomRepository {
   save(room: SaveRequest): Promise<void>;
@@ -7,4 +7,5 @@ export interface RoomRepository {
   update(room: UpdateRequest): Promise<void>;
   upsert(rooms: UpdateRequest[]): Promise<void>;
   findById(id: number): Promise<Room | null>;
+  findBySpaceId(spaceId: number): Promise<Room[]>;
 }
