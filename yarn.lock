@@ -5157,6 +5157,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"konva@npm:^9.3.21":
+  version: 9.3.21
+  resolution: "konva@npm:9.3.21"
+  checksum: 10c0/bd38418018fe03bcf2dde1673730ae113355dd202fac9dac3e26e2b56a5bc603ed8f6724fdaf7951e09dcbf1ef1b0942c5ff3091d32e3fd0da7f8b77bf561717
+  languageName: node
+  linkType: hard
+
 "language-subtag-registry@npm:^0.3.20":
   version: 0.3.23
   resolution: "language-subtag-registry@npm:0.3.23"
@@ -7116,6 +7123,7 @@ __metadata:
     jest: "npm:^30.0.3"
     jest-environment-jsdom: "npm:^30.0.2"
     jose: "npm:^6.0.11"
+    konva: "npm:^9.3.21"
     next: "npm:15.3.4"
     next-auth: "npm:^4.24.11"
     prettier: "npm:^3.6.2"

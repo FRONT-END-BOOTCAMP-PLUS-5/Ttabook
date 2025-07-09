@@ -8,7 +8,7 @@ export class GetSpaceUsecase {
   async execute(id: number): Promise<GetSpaceDto> {
     try {
       const space = await this.spaceRepository.findById(id);
-      return new GetSpaceDto(space.id, space.name, space.rooms);
+      return new GetSpaceDto(space.id, space.name, space.room);
     } catch (error) {
       console.error('Error fetching space:', error);
       throw new Error('Failed to fetch space');

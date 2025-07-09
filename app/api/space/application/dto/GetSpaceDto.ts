@@ -1,7 +1,7 @@
 export class GetSpaceDto {
   id: number;
   name: string;
-  rooms: {
+  room: {
     id: number;
     name: string;
     description?: string;
@@ -12,7 +12,7 @@ export class GetSpaceDto {
   constructor(
     id: number,
     name: string,
-    rooms: {
+    room: {
       id: number;
       name: string;
       description?: string;
@@ -22,6 +22,6 @@ export class GetSpaceDto {
   ) {
     this.id = id;
     this.name = name;
-    this.rooms = rooms;
+    this.room = room || [];
   }
 }
