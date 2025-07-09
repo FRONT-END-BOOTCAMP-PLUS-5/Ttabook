@@ -1,6 +1,7 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Room } from '../../domain/entities/Room';
 import { Rsv } from '../../domain/entities/Rsv';
+import { Space } from '../../domain/entities/Space';
 import { RsvRoomSub } from '../../domain/entities/RsvRoomSub';
 import { RsvRepository } from '../../domain/repository/RsvRepository';
 import {
@@ -41,6 +42,7 @@ export class SbRsvRepository implements RsvRepository {
     space?: {
       id?: number;
       name?: string;
+      room?: Room[];
     };
   }): Rsv {
     const createdAt = rsv.created_at ? rsv.created_at : null;
@@ -61,10 +63,11 @@ export class SbRsvRepository implements RsvRepository {
         )
       : null;
     const space = rsv.space
-      ? {
-          id: rsv.space.id ? rsv.space.id : 0,
-          name: rsv.space.name ? rsv.space.name : '',
-        }
+      ? new Space (
+          rsv.space.id ? rsv.space.id : 0,
+          rsv.space.name ? rsv.space.name : '',
+          rsv.space.room ? rsv.space.room : []
+        )
       : null;
     return new Rsv(
       rsv.id,
