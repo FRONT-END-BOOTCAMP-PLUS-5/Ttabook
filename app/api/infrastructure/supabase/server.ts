@@ -5,9 +5,10 @@ export async function createClient() {
   const cookieStore = await cookies();
 
   const supabaseUrl = process.env.NEXT_SUPABASE_URL!;
-  const supabaseRoleKey = process.env.NEXT_SUPABASE_ROLE_KEY!;
+  const supabaseAnonKey = process.env.NEXT_SUPABASE_ANON_KEY!;
 
-  return createServerClient(supabaseUrl, supabaseRoleKey, {
+  return createServerClient(supabaseUrl, supabaseAnonKey, {
+
     cookies: {
       getAll() {
         return cookieStore.getAll();
