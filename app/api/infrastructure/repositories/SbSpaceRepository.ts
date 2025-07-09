@@ -1,28 +1,34 @@
-import { SpaceRoomView } from '../../domain/entities/SpaceRoomView';
-import {
-  SaveRequest,
-  UpdateRequest,
-} from '../../domain/repository/spaceRequest';
+import { Space } from '../../domain/entities/Space';
 import { SpaceRepository } from '../../domain/repository/SpaceRepository';
 import { SupabaseClient } from '@supabase/supabase-js';
-
 
 export class SbSpaceRepository implements SpaceRepository {
   private supabase: SupabaseClient;
   constructor(supabase: SupabaseClient) {
     this.supabase = supabase;
   }
+  async findById(id: number): Promise<Space> {
+    const { data, error } = await this.supabase
+      .from('space')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-  async findById(id: number): Promise<SpaceRoomView[]> {
-    void id;
-    throw new Error('SbSpaceRepository.findById not implemented.');
+    if (error) {
+      throw new Error(`공간 조회 중 오류 발생: ${error.message}`);
+    }
+
+    return data;
   }
 
   async save(space: SaveRequest): Promise<void> {
-    await this.supabase.from('space').insert({name: space.name});
+    await this.supabase.from('space').insert({ name: space.name });
   }
 
   async update(space: UpdateRequest): Promise<void> {
-    await this.supabase.from('space').update({name: space.name}).eq('id', space.id);
+    await this.supabase
+      .from('space')
+      .update({ name: space.name })
+      .eq('id', space.id);
   }
 }
