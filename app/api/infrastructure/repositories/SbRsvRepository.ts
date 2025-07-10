@@ -2,6 +2,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { Room } from '../../domain/entities/Room';
 import { Rsv } from '../../domain/entities/Rsv';
 import { RsvRepository } from '../../domain/repository/RsvRepository';
+import { Space } from '../../domain/entities/Space';
 import {
   DeleteRequest,
   SaveRequest,
