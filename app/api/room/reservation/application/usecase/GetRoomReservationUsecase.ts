@@ -13,7 +13,11 @@ export class GetRoomReservationUsecase {
         spaceId,
         roomId
       );
-      return new GetRoomReservationDto(spaceId, roomId);
+      
+      return reservations.map((e) => ({
+        startTime: e.startTime,
+        endTime: e.endTime,
+      }));
     } catch (error) {
       console.error('Error fetching room reservations:', error);
       throw new Error('Failed to fetch room reservations');

@@ -2,7 +2,6 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { Room } from '../../domain/entities/Room';
 import { Rsv } from '../../domain/entities/Rsv';
 import { Space } from '../../domain/entities/Space';
-import { RsvRoomSub } from '../../domain/entities/RsvRoomSub';
 import { RsvRepository } from '../../domain/repository/RsvRepository';
 import {
   DeleteRequest,
@@ -151,7 +150,7 @@ export class SbRsvRepository implements RsvRepository {
     ).map((rsv) => SbRsvRepository.mapToRsv(rsv));
   }
 
-  async findByRoomId(spaceId: number, roomId: number): Promise<RsvRoomSub[]> {
+  async findByRoomId(spaceId: number, roomId: number): Promise<Rsv[]> {
     void spaceId;
     void roomId;
     throw new Error('SbRsvRepository.findByRoomId not implemented.');
