@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { RegisterUseCase } from '../application/usecase/RegisterUseCase'; 
-import { SupabaseUserRepository } from '../../../infrastructure/repositories/SbUserRepository';
-import { SignupResponse, SignupErrorResponse } from '../application/dto/SignupResponse';
-import { DuplicateEmailError } from '../application/dto/DuplicateEmailError';
-import { ValidationError } from '../application/dto/ValidationError';
-import { AuthError } from '../application/dto/AuthError'; 
+import { RegisterUseCase } from '@/backend/auth/signup/usecase/RegisterUseCase'; 
+import { SupabaseUserRepository } from '@/backend/common/infrastructure/repositories/SbUserRepository';
+import { SignupResponse, SignupErrorResponse } from '@/backend/auth/signup/dto/SignupResponse';
+import { DuplicateEmailError } from '@/backend/auth/signup/dto/DuplicateEmailError';
+import { ValidationError } from '@/backend/auth/signup/dto/ValidationError';
+import { AuthError } from '@/backend/auth/signup/dto/AuthError'; 
 import { SupabaseClient } from '@supabase/supabase-js';
-import { createClient } from '@/app/api/infrastructure/supabase/server';
+import { createClient } from '@/backend/common/infrastructure/supabase/server';
 
 // 의존성 생성 팩토리 - 테스트하기 쉽고 이해하기 명확함
 async function createRegisterUseCase(): Promise<RegisterUseCase> {
