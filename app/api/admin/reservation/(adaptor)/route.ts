@@ -1,8 +1,8 @@
-import { SbRsvRepository } from '@/app/api/infrastructure/repositories/SbRsvRepository';
+import { SbRsvRepository } from '@/backend/common/infrastructure/repositories/SbRsvRepository';
 import { NextRequest, NextResponse } from 'next/server';
-import { GetRsvListUsecase } from '../application/usecases/GetRsvListUsecase';
+import { GetRsvListUsecase } from '@/backend/admin/reservation/usecases/GetRsvListUsecase';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { createClient } from '@/app/api/infrastructure/supabase/server';
+import { createClient } from '@/backend/common/infrastructure/supabase/server';
 
 export async function GET(request: NextRequest) {
   const token = request.headers.get('Authorization');
