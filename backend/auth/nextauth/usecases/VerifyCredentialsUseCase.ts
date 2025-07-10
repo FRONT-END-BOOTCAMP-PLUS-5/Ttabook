@@ -1,5 +1,5 @@
-import { UserRepository } from '@/backend/common/domain/repository/UserRepository';
-import { User } from '@/backend/common/domain/entities/User';
+import { UserRepository } from '@/backend/common/domains/repositories/UserRepository';
+import { User } from '@/backend/common/domains/entities/User';
 import { InvalidCredentialsError, ValidationError } from '../dtos';
 import { LoginUseCase } from './LoginUseCase';
 

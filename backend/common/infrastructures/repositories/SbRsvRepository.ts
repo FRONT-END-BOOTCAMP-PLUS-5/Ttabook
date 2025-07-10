@@ -1,13 +1,13 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Room } from '../../domain/entities/Room';
-import { Rsv } from '../../domain/entities/Rsv';
-import { RsvRepository } from '../../domain/repository/RsvRepository';
-import { Space } from '../../domain/entities/Space';
+import { Room } from '../../domains/entities/Room';
+import { Rsv } from '../../domains/entities/Rsv';
+import { RsvRepository } from '../../domains/repositories/RsvRepository';
+import { Space } from '../../domains/entities/Space';
 import {
   DeleteRequest,
   SaveRequest,
   UpdateRequest,
-} from '../../domain/repository/rsvRequest';
+} from '../../domains/repositories/rsvRequest';
 
 export class SbRsvRepository implements RsvRepository {
   private supabase: SupabaseClient;

@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PostSpaceQueryDto } from '@/backend/admin/spaces/dtos/PostSpaceQueryDto';
-import { SbSpaceRepository } from '@/backend/common/infrastructure/repositories/SbSpaceRepository';
+import { SbSpaceRepository } from '@/backend/common/infrastructures/repositories/SbSpaceRepository';
 import { PostSpaceUsecase } from '@/backend/admin/spaces/usecases/PostSpaceUsecase';
 import { PostRoomUsecase } from '@/backend/admin/spaces/usecases/PostRoomUsecase';
-import { SbRoomRepository } from '@/backend/common/infrastructure/repositories/SbRoomRepository';
+import { SbRoomRepository } from '@/backend/common/infrastructures/repositories/SbRoomRepository';
 import { PostRoomQueryDto } from '@/backend/admin/spaces/dtos/PostRoomQueryDto';
 import { PutSpaceUsecase } from '@/backend/admin/spaces/usecases/PutSpaceUsecase';
 import { PutSpaceQueryDto } from '@/backend/admin/spaces/dtos/PutSpaceQueryDto';
 import { PutRoomUsecase } from '@/backend/admin/spaces/usecases/PutRoomUsecase';
 import { PutRoomQueryDto } from '@/backend/admin/spaces/dtos/PutRoomQueryDto';
-import { createClient } from '@/backend/common/infrastructure/supabase/server';
+import { createClient } from '@/backend/common/infrastructures/supabase/server';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export async function POST(request: NextRequest) {

@@ -1,4 +1,4 @@
-import { UserType } from "@/backend/common/domain/types/UserType"; 
+import { UserType } from "@/backend/common/domains/types/UserType"; 
 
 // 회원가입 성공 응답 DTO
 export class SignupResponse {

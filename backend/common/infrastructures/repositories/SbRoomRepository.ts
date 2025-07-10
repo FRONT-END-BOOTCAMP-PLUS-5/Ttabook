@@ -1,6 +1,6 @@
-import { RoomRepository } from '@/backend/common/domain/repository/RoomRepository';
-import { Room } from '../../domain/entities/Room';
-import { SaveRequest, UpdateRequest } from '../../domain/repository/roomRequest';
+import { RoomRepository } from '@/backend/common/domains/repositories/RoomRepository';
+import { Room } from '../../domains/entities/Room';
+import { SaveRequest, UpdateRequest } from '../../domains/repositories/roomRequest';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export class SbRoomRepository implements RoomRepository {

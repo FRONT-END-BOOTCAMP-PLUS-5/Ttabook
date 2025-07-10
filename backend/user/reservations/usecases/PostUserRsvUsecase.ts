@@ -1,4 +1,4 @@
-import { RsvRepository } from "@/backend/common/domain/repository/RsvRepository";
+import { RsvRepository } from "@/backend/common/domains/repositories/RsvRepository";
 import { PostUserRsvDto } from "../dtos/PostUserRsvDto";
 
 export class PostUserRsvUsecase {

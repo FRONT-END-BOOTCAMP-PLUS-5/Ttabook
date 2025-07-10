@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SbSpaceRepository } from '@/backend/common/infrastructure/repositories/SbSpaceRepository';
+import { SbSpaceRepository } from '@/backend/common/infrastructures/repositories/SbSpaceRepository';
 import { GetSpaceUsecase } from '@/backend/spaces/usecases/GetSpaceUsecase';
-import { createClient } from '@/backend/common/infrastructure/supabase/server';
+import { createClient } from '@/backend/common/infrastructures/supabase/server';
 
 // 관리자를 위한 공간 조회 API
 export async function GET(request: NextRequest) {

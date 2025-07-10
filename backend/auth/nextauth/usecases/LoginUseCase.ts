@@ -1,7 +1,7 @@
-import { UserRepository } from '@/backend/common/domain/repository/UserRepository';
-import { User } from '@/backend/common/domain/entities/User';
+import { UserRepository } from '@/backend/common/domains/repositories/UserRepository';
+import { User } from '@/backend/common/domains/entities/User';
 import { LoginRequest } from '../dtos/LoginRequest';
-import { PasswordUtil } from '@/backend/common/infrastructure/utils/PasswordUtil';
+import { PasswordUtil } from '@/backend/common/infrastructures/utils/PasswordUtil';
 import { InvalidCredentialsError } from '../dtos/InvalidCredentialsError';
 import { ValidationError } from '../dtos/ValidationError';
 import { validateLoginRequest } from './LoginValidation';

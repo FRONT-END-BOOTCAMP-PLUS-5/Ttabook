@@ -1,4 +1,4 @@
-import { SpaceRepository } from '@/backend/common/domain/repository/SpaceRepository';
+import { SpaceRepository } from '@/backend/common/domains/repositories/SpaceRepository';
 import { GetSpaceDto } from '../dtos/GetSpaceDto';
 
 export class GetSpaceUsecase {

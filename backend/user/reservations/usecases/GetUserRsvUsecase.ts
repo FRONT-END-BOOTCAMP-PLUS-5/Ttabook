@@ -1,5 +1,5 @@
-import { Rsv } from "@/backend/common/domain/entities/Rsv";
-import { RsvRepository } from "@/backend/common/domain/repository/RsvRepository";
+import { Rsv } from "@/backend/common/domains/entities/Rsv";
+import { RsvRepository } from "@/backend/common/domains/repositories/RsvRepository";
 import { GetUserRsvDto } from "../dtos/GetUserRsvDto";
 
 export class GetUserRsvUsecase {

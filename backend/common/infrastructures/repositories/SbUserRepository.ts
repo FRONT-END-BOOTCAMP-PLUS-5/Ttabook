@@ -1,5 +1,5 @@
-import { UserRepository } from '../../domain/repository/UserRepository';
-import { User } from '../../domain/entities/User';
+import { UserRepository } from '../../domains/repositories/UserRepository';
+import { User } from '../../domains/entities/User';
 import { SignupRequest } from '@/backend/auth/signup/dtos/SignupRequest';
 import { SupabaseClient } from '@supabase/supabase-js';
 

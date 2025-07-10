@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { UserType } from '@/backend/common/domain/types/UserType';
+import { UserType } from '@/backend/common/domains/types/UserType';
 
 export const userTypeField = z
   .enum(['user', 'admin'] as const, {

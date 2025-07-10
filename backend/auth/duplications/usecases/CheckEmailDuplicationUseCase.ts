@@ -1,4 +1,4 @@
-import { UserRepository } from '@/backend/common/domain/repository/UserRepository';
+import { UserRepository } from '@/backend/common/domains/repositories/UserRepository';
 import { ValidationError } from '../dtos/ValidationError';
 import { ZodError, z } from 'zod';
 

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SbRsvRepository } from '@/backend/common/infrastructure/repositories/SbRsvRepository';
+import { SbRsvRepository } from '@/backend/common/infrastructures/repositories/SbRsvRepository';
 import { GetRoomRsvUsecase } from '@/backend/rooms/reservations/usecases/GetRoomRsvUsecase';
-import { createClient } from '@/backend/common/infrastructure/supabase/server';
+import { createClient } from '@/backend/common/infrastructures/supabase/server';
 
 export async function GET(request: NextRequest) {
   try {

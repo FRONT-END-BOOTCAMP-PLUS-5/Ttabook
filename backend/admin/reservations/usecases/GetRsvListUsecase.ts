@@ -1,6 +1,6 @@
 import { GetRsvListDto } from '../dtos/GetRsvListDto';
-import { RsvRepository } from '@/backend/common/domain/repository/RsvRepository';
-import { Rsv } from '@/backend/common/domain/entities/Rsv';
+import { RsvRepository } from '@/backend/common/domains/repositories/RsvRepository';
+import { Rsv } from '@/backend/common/domains/entities/Rsv';
 
 export class GetRsvListUsecase {
   private repository: RsvRepository;

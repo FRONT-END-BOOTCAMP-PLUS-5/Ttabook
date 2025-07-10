@@ -1,4 +1,4 @@
-import { SpaceRepository } from "@/backend/common/domain/repository/SpaceRepository";
+import { SpaceRepository } from "@/backend/common/domains/repositories/SpaceRepository";
 import { PutSpaceQueryDto } from "../dtos/PutSpaceQueryDto";
 
 

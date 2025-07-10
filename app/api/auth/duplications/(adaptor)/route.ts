@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CheckEmailDuplicationUseCase } from '@/backend/auth/duplications/usecases/CheckEmailDuplicationUseCase';
-import { SupabaseUserRepository } from '@/backend/common/infrastructure/repositories/SbUserRepository';
+import { SupabaseUserRepository } from '@/backend/common/infrastructures/repositories/SbUserRepository';
 import { EmailCheckResponse, EmailCheckErrorResponse } from '@/backend/auth/duplications/dtos/EmailCheckResponse';
 import { ValidationError } from '@/backend/auth/duplications/dtos/ValidationError';
-import { createClient } from '@/backend/common/infrastructure/supabase/server';
+import { createClient } from '@/backend/common/infrastructures/supabase/server';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 // 의존성 생성 팩토리 - 테스트하기 쉽고 이해하기 명확함

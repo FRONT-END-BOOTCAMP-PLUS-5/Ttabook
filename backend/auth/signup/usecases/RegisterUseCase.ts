@@ -1,7 +1,7 @@
-import { UserRepository } from '@/backend/common/domain/repository/UserRepository'; 
-import { User } from '@/backend/common/domain/entities/User'; 
+import { UserRepository } from '@/backend/common/domains/repositories/UserRepository'; 
+import { User } from '@/backend/common/domains/entities/User'; 
 import { SignupRequest } from '../dtos/SignupRequest';
-import { PasswordUtil } from '@/backend/common/infrastructure/utils/PasswordUtil';
+import { PasswordUtil } from '@/backend/common/infrastructures/utils/PasswordUtil';
 import { DuplicateEmailError } from '../dtos/DuplicateEmailError';
 import { ValidationError } from '../dtos/ValidationError';
 import { validateSignupRequest } from './SignupValidation';

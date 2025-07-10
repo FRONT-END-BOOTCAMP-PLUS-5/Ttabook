@@ -1,4 +1,4 @@
-import { UserType } from "@/backend/common/domain/types/UserType"; 
+import { UserType } from "@/backend/common/domains/types/UserType"; 
 
 export class SignupRequest {
   constructor(

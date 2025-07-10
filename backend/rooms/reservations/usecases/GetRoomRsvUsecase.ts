@@ -1,4 +1,4 @@
-import { RsvRepository } from '@/backend/common/domain/repository/RsvRepository';
+import { RsvRepository } from '@/backend/common/domains/repositories/RsvRepository';
 import { GetRoomReservationDto } from '../dtos/GetRoomRsvDto';
 
 export class GetRoomRsvUsecase {

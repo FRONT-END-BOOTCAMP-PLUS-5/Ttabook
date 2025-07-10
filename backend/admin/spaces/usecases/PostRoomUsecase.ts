@@ -1,5 +1,5 @@
-import { RoomRepository } from "@/backend/common/domain/repository/RoomRepository";
-import { SaveRequest } from "@/backend/common/domain/repository/roomRequest";
+import { RoomRepository } from "@/backend/common/domains/repositories/RoomRepository";
+import { SaveRequest } from "@/backend/common/domains/repositories/roomRequest";
 import { PostRoomQueryDto, RoomDto } from "../dtos/PostRoomQueryDto";
 
 

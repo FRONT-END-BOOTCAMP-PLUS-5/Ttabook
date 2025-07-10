@@ -1,10 +1,10 @@
 import {
   SaveRequest,
   UpdateRequest,
-} from '../../domain/repository/spaceRequest';
-import { SpaceRepository } from '../../domain/repository/SpaceRepository';
+} from '../../domains/repositories/spaceRequest';
+import { SpaceRepository } from '../../domains/repositories/SpaceRepository';
 import SupabaseClient from '@supabase/supabase-js/dist/module/SupabaseClient';
-import { Space } from '../../domain/entities/Space';
+import { Space } from '../../domains/entities/Space';
 
 export class SbSpaceRepository implements SpaceRepository {
   private supabase: SupabaseClient;

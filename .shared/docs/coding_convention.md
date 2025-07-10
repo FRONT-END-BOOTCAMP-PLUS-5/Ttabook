@@ -70,7 +70,7 @@
 **API 라우트 구조 (`app/api/`)**
 ```
 app/api/
-├── user/reservation/          // 실제 API 호출 URL이 됨
+├── user/reservations/        // 실제 API 호출 URL이 됨 (복수형)
 │   └── (adaptor)/            // 어댑터 레이어 (Next.js 라우트만 포함)
 │       └── route.ts          // Next.js API 라우트 파일
 └── admin/spaces/
@@ -82,11 +82,11 @@ app/api/
 ```
 backend/
 ├── common/                   // 공통 도메인 및 인프라
-│   ├── domain/              // 도메인 레이어
+│   ├── domains/             // 도메인 레이어 (복수형)
 │   │   ├── entities/        // 엔티티 (데이터베이스 테이블)
-│   │   ├── repository/      // 레포지토리 인터페이스
+│   │   ├── repositories/    // 레포지토리 인터페이스 (복수형)
 │   │   └── types/           // 공통 타입 정의
-│   └── infrastructure/      // 인프라 레이어
+│   └── infrastructures/     // 인프라 레이어 (복수형)
 │       ├── repositories/    // 레포지토리 구현체
 │       ├── supabase/        // Supabase 설정
 │       ├── next-auth/       // NextAuth 설정
@@ -124,13 +124,16 @@ backend/
 
 **주요 구조 원칙:**
 - **분리된 관심사**: API 라우트(`app/api/`)와 비즈니스 로직(`backend/`)을 분리
-- **복수형 폴더명**: 비즈니스 도메인 폴더는 복수형 사용 (예: `spaces`, `rooms`)
-- **dto/usecase 승격**: `application/` 폴더를 제거하고 `dto/`와 `usecase/` 폴더를 상위로 승격
+- **일관된 복수형 명명**: 모든 폴더는 복수형 사용을 원칙으로 함
+  - ✅ `domains/`, `repositories/`, `infrastructures/`, `dtos/`, `usecases/`
+  - ✅ `spaces/`, `rooms/`, `reservations/`, `duplications/`
+  - ❌ `domain/`, `repository/`, `infrastructure/`, `dto/`, `usecase/`
+- **dto/usecase 승격**: `application/` 폴더를 제거하고 `dtos/`와 `usecases/` 폴더를 상위로 승격
 - **공통 레이어**: `backend/common/`에 도메인과 인프라 공통 요소 집중
 
 -   **함수 명명:** `route.ts` 파일 내에서 export 되는 함수는 반드시 HTTP 메서드 이름(대문자)을 사용해야 합니다.
     ```typescript
-    // app/api/user/reservation/(adaptor)/route.ts
+    // app/api/user/reservations/(adaptor)/route.ts
     import { NextResponse } from 'next/server';
 
     export async function GET(request: Request) {

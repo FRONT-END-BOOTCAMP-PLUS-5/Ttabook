@@ -1,4 +1,4 @@
-import { SbRsvRepository } from '@/backend/common/infrastructure/repositories/SbRsvRepository';
+import { SbRsvRepository } from '@/backend/common/infrastructures/repositories/SbRsvRepository';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { GetUserRsvUsecase } from '@/backend/user/reservations/usecases/GetUserRsvUsecase';
@@ -8,7 +8,7 @@ import { DeleteUserRsvUsecase } from '@/backend/user/reservations/usecases/Delet
 import { DeleteUserRsvDto } from '@/backend/user/reservations/dtos/DeleteUserRsvDto';
 import { UpdateUserRsvDto } from '@/backend/user/reservations/dtos/UpdateUserRsvDto';
 import { UpdateUserRsvUsecase } from '@/backend/user/reservations/usecases/UpdateUserRsvUsecase';
-import { createClient } from '@/backend/common/infrastructure/supabase/server';
+import { createClient } from '@/backend/common/infrastructures/supabase/server';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export async function GET(
