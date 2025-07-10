@@ -1,18 +1,11 @@
-import { createClient } from '@supabase/supabase-js';
+import { createBrowserClient } from "@supabase/ssr";
+import { Database } from "./supabase";
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseUrl = process.env.SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
-if (!supabaseUrl || !supabaseServiceKey) {
-  throw new Error(
-    'Supabase URL과 Service Role Key가 환경 변수에 설정되어야 합니다.'
+export const createClient = () =>
+  createBrowserClient<Database>(
+    supabaseUrl!,
+    supabaseServiceKey!,
   );
-}
-
-// 서버 사이드에서 사용하는 Supabase 클라이언트
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
-});
