@@ -6,7 +6,7 @@ import { PostRoomQueryDto, RoomDto } from "../dto/PostRoomQueryDto";
 export class PostRoomUsecase {
   constructor(private repository: RoomRepository) {}
 
-  async execute(roomData: PostRoomQueryDto): Promise<any> {
+  async execute(roomData: PostRoomQueryDto): Promise<void> {
     // roomData.token 처리
 
     const saveRequests: SaveRequest[] = roomData.rooms.map((room: RoomDto) => {

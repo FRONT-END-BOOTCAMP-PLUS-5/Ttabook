@@ -9,7 +9,7 @@ export class PutRoomUsecase {
     this.roomRepository = roomRepository;
   }
 
-  async execute(roomData: PutRoomQueryDto): Promise<any> {
+  async execute(roomData: PutRoomQueryDto): Promise<void> {
     // roomData.token 처리
     const updateDatas = roomData.rooms.map((room: RoomDto) => {
       return new UpdateRequest(

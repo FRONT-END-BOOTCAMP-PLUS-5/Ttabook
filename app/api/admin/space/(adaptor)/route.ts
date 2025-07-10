@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     );
     await postRoomUsecase.execute(new PostRoomQueryDto(token, body.rooms));
     return NextResponse.json({ message: 'success' });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to create space' },
       { status: 500 }
@@ -76,7 +76,7 @@ export async function PUT(request: NextRequest) {
     );
     await putRoomUsecase.execute(new PutRoomQueryDto(token, body.rooms));
     return NextResponse.json({ message: 'success' });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to create space' },
       { status: 500 }

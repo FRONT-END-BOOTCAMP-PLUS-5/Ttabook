@@ -74,7 +74,7 @@ export class SbRoomRepository implements RoomRepository {
   }
 
   async findById(id: number): Promise<Room | null> {
-    
+    void id;
     return null;
   }
 }

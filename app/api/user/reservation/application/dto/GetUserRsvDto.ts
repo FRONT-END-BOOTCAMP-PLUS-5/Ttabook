@@ -1,10 +1,10 @@
 export class GetUserRsvDto {
     constructor(
-        space_id: number,
-        space_name: string,
-        room_id: number,
-        room_name: string,
-        start_time: Date,
-        end_time: Date
+        public space_id: number,
+        public space_name: string,
+        public room_id: number,
+        public room_name: string,
+        public start_time: Date,
+        public end_time: Date
     ) {}
 }
