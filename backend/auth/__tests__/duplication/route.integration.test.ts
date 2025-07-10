@@ -1,8 +1,8 @@
 import { NextRequest } from 'next/server';
-import { GET } from '../../duplication/(adaptor)/route';
+import { GET } from '../../duplications/(adaptor)/route';
 
 // 통합 테스트를 위한 최소한의 모킹
-jest.mock('../../../infrastructure/repositories/SbUserRepository', () => ({
+jest.mock('../../../common/infrastructures/repositories/SbUserRepository', () => ({
   SupabaseUserRepository: jest.fn().mockImplementation(() => ({
     findByEmail: jest.fn().mockResolvedValue(null), // 기본적으로 사용 가능한 이메일로 설정
   })),

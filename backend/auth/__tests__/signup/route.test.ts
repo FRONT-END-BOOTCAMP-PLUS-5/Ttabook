@@ -1,13 +1,13 @@
 import { NextRequest } from 'next/server';
 import { POST } from '../../signup/(adaptor)/route';
-import { RegisterUseCase } from '../../signup/application/usecase/RegisterUseCase';
-import { SupabaseUserRepository } from '../../../infrastructure/repositories/SbUserRepository';
-import { DuplicateEmailError, ValidationError } from '../../signup/application/dto';
-import { User } from '../../../domain/entities/User';
+import { RegisterUseCase } from '../../signup/usecases/RegisterUseCase';
+import { SupabaseUserRepository } from '../../../common/infrastructures/repositories/SbUserRepository';
+import { DuplicateEmailError, ValidationError } from '../../signup/dtos';
+import { User } from '../../../common/domains/entities/User';
 
 // RegisterUseCase와 SupabaseUserRepository 모킹
-jest.mock('../../signup/application/usecase/RegisterUseCase');
-jest.mock('../../../infrastructure/repositories/SbUserRepository');
+jest.mock('../../signup/usecases/RegisterUseCase');
+jest.mock('../../../common/infrastructures/repositories/SbUserRepository');
 
 describe('POST /api/auth/signup', () => {
   let mockRegisterUseCase: jest.Mocked<RegisterUseCase>;

@@ -1,15 +1,15 @@
-import { RegisterUseCase } from '../../../signup/application/usecase/RegisterUseCase';
-import { UserRepository } from '../../../../domain/repository/UserRepository';
-import { User } from '../../../../domain/entities/User';
+import { RegisterUseCase } from '../../../signup/usecases/RegisterUseCase';
+import { UserRepository } from '../../../../common/domains/repositories/UserRepository';
+import { User } from '../../../../common/domains/entities/User';
 import { SignupRequest } from '../../../signup/dtos/SignupRequest';
-import { PasswordUtil } from '../../../../infrastructure/utils/PasswordUtil';
+import { PasswordUtil } from '../../../../common/infrastructures/utils/PasswordUtil';
 import {
   DuplicateEmailError,
   ValidationError,
 } from '../../../signup/dtos';
 
 // PasswordUtil 모킹
-jest.mock('../../../../infrastructure/utils/PasswordUtil');
+jest.mock('../../../../common/infrastructures/utils/PasswordUtil');
 
 describe('RegisterUseCase', () => {
   let registerUseCase: RegisterUseCase;

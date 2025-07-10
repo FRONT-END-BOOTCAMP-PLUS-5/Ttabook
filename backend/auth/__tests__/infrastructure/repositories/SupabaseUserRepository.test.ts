@@ -1,7 +1,7 @@
 import '../../__mocks__/supabase.mock';
-import { SupabaseUserRepository } from '../../../../infrastructure/repositories/SbUserRepository';
+import { SupabaseUserRepository } from '../../../../common/infrastructures/repositories/SbUserRepository';
 import { mockSupabaseClient } from '../../__mocks__/supabase.mock';
-import { User } from '../../../../domain/entities/User';
+import { User } from '../../../../common/domains/entities/User';
 import { SignupRequest } from '../../signup/dtos/SignupRequest';
 import { SupabaseClient } from '@supabase/supabase-js';
 

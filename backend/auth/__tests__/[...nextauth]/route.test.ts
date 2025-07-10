@@ -4,15 +4,15 @@ jest.mock('next-auth', () => {
   return jest.fn(() => mockHandler);
 });
 
-jest.mock('../../../infrastructure/next-auth/AuthConfig', () => ({
+jest.mock('../../../common/infrastructures/next-auth/AuthConfig', () => ({
   authOptions: {}
 }));
 
-import { GET, POST } from '../../[...nextauth]/route';
+import { GET, POST } from '../../nextauth/route';
 import NextAuth from 'next-auth';
 import { NextRequest } from 'next/server';
 
-describe('/api/auth/[...nextauth]', () => {
+describe('/api/auth/nextauth', () => {
   const mockRequest = {} as NextRequest;
   let mockHandler: jest.Mock;
 

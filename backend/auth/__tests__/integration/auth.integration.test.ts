@@ -1,11 +1,11 @@
 import '../__mocks__/supabase.mock';
 import '../__mocks__/bcrypt.mock';
-import { RegisterUseCase } from '../../signup/application/usecase/RegisterUseCase';
-import { LoginUseCase } from '../../[...nextauth]/application/usecase/LoginUseCase';
-import { SupabaseUserRepository } from '../../../infrastructure/repositories/SbUserRepository';
+import { RegisterUseCase } from '../../signup/usecases/RegisterUseCase';
+import { LoginUseCase } from '../../nextauth/usecases/LoginUseCase';
+import { SupabaseUserRepository } from '../../../common/infrastructures/repositories/SbUserRepository';
 import { mockSupabaseClient } from '../__mocks__/supabase.mock';
 import { mockBcrypt } from '../__mocks__/bcrypt.mock';
-import { User } from '../../../domain/entities/User';
+import { User } from '../../../common/domains/entities/User';
 
 describe('Auth Integration Tests', () => {
   let registerUseCase: RegisterUseCase;

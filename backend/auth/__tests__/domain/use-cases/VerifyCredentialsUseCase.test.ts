@@ -1,11 +1,11 @@
-import { VerifyCredentialsUseCase } from '../../../[...nextauth]/application/usecase/VerifyCredentialsUseCase';
-import { UserRepository } from '../../../../domain/repository/UserRepository';
-import { User } from '../../../../domain/entities/User';
+import { VerifyCredentialsUseCase } from '../../../nextauth/usecases/VerifyCredentialsUseCase';
+import { UserRepository } from '../../../../common/domains/repositories/UserRepository';
+import { User } from '../../../../common/domains/entities/User';
 import { LoginRequest } from '../../../nextauth/dtos/LoginRequest';
-import { PasswordUtil } from '../../../../infrastructure/utils/PasswordUtil';
+import { PasswordUtil } from '../../../../common/infrastructures/utils/PasswordUtil';
 
 // PasswordUtil 모킹
-jest.mock('../../../../infrastructure/utils/PasswordUtil');
+jest.mock('../../../../common/infrastructures/utils/PasswordUtil');
 
 describe('VerifyCredentialsUseCase', () => {
   let verifyCredentialsUseCase: VerifyCredentialsUseCase;

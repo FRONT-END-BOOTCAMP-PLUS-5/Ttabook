@@ -1,14 +1,14 @@
-import { LoginUseCase } from '../../../[...nextauth]/application/usecase/LoginUseCase';
-import { UserRepository } from '../../../../domain/repository/UserRepository';
-import { User } from '../../../../domain/entities/User';
+import { LoginUseCase } from '../../../nextauth/usecases/LoginUseCase';
+import { UserRepository } from '../../../../common/domains/repositories/UserRepository';
+import { User } from '../../../../common/domains/entities/User';
 import { LoginRequest } from '../../../nextauth/dtos/LoginRequest';
-import { PasswordUtil } from '../../../../infrastructure/utils/PasswordUtil';
+import { PasswordUtil } from '../../../../common/infrastructures/utils/PasswordUtil';
 import {
   InvalidCredentialsError,
 } from '../../../nextauth/dtos';
 
 // PasswordUtil 모킹
-jest.mock('../../../../infrastructure/utils/PasswordUtil');
+jest.mock('../../../../common/infrastructures/utils/PasswordUtil');
 
 describe('LoginUseCase', () => {
   let loginUseCase: LoginUseCase;

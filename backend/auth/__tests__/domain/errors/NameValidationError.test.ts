@@ -1,11 +1,11 @@
-import { RegisterUseCase } from '../../../signup/application/usecase/RegisterUseCase';
-import { UserRepository } from '../../../../domain/repository/UserRepository';
-import { SignupRequest } from '../../../signup/application/dto'; 
+import { RegisterUseCase } from '../../../signup/usecases/RegisterUseCase';
+import { UserRepository } from '../../../../common/domains/repositories/UserRepository';
+import { SignupRequest } from '../../../signup/dtos'; 
 
-import { ValidationError } from '../../../signup/application/dto';
+import { ValidationError } from '../../../signup/dtos';
 
 // 모킹
-jest.mock('../../../../infrastructure/utils/PasswordUtil');
+jest.mock('../../../../common/infrastructures/utils/PasswordUtil');
 
 // 테스팅 타입
 type SignupOmitName = Omit<SignupRequest, "name">

@@ -1,4 +1,4 @@
-import { SignupResponse } from "../../../signup/application/dto";
+import { SignupResponse } from "../../../signup/dtos";
 
 describe('SignupResponse DTO', () => {
   it('user 객체에 name 속성이 포함되어야 한다', () => {
