@@ -10,6 +10,7 @@ export class GetRsvListUsecase {
 
   async execute(token: string): Promise<GetRsvListDto[]> {
     // Todo: token 관리자인지 확인 로직 필요
+    void token;
 
     // if admin
     const rsvList: Rsv[] = await this.repository.findAll();
