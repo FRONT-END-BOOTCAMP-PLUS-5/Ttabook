@@ -11,7 +11,7 @@ export class SbRoomRepository implements RoomRepository {
   }
   
   async save(room: SaveRequest): Promise<void> {
-    await this.supabase.from('room').insert({
+    await this.supabase.from('rooms').insert({
       supply_id: room.supplyId,
       room_name: room.roomName,
       room_detail: room.roomDetail,
@@ -23,7 +23,7 @@ export class SbRoomRepository implements RoomRepository {
   }
   
   async saveAll(rooms: SaveRequest[]): Promise<void> {
-    const { error } = await this.supabase.from('room').insert(
+    const { error } = await this.supabase.from('rooms').insert(
       rooms.map(room => ({
         supply_id: room.supplyId,
         room_name: room.roomName,
@@ -41,7 +41,7 @@ export class SbRoomRepository implements RoomRepository {
   }
 
   async update(room: UpdateRequest): Promise<void> {
-    await this.supabase.from('room')
+    await this.supabase.from('rooms')
       .update({
         supply_id: room.supplyId,
         room_name: room.roomName,
@@ -66,7 +66,7 @@ export class SbRoomRepository implements RoomRepository {
       scale_y: room.scaleY,
     }));
 
-    const { error } = await this.supabase.from('room').upsert(updates);
+    const { error } = await this.supabase.from('rooms').upsert(updates);
 
     if (error) {
       throw new Error(`Failed to update rooms: ${error.message}`);

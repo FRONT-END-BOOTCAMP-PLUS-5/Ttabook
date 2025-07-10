@@ -3,6 +3,7 @@ import { SupabaseUserRepository } from '../../../../infrastructure/repositories/
 import { mockSupabaseClient } from '../../__mocks__/supabase.mock';
 import { User } from '../../../../domain/entities/User';
 import { SignupRequest } from '../../signup/application/dto/SignupRequest';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 describe('SupabaseUserRepository', () => {
   let repository: SupabaseUserRepository;
@@ -16,7 +17,7 @@ describe('SupabaseUserRepository', () => {
   );
 
   beforeEach(() => {
-    repository = new SupabaseUserRepository();
+    repository = new SupabaseUserRepository(mockSupabaseClient as unknown as SupabaseClient);
     jest.clearAllMocks();
   });
 
@@ -33,7 +34,7 @@ describe('SupabaseUserRepository', () => {
 
       const result = await repository.findByEmail('test@example.com');
 
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('user');
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('users');
       expect(mockChain.eq).toHaveBeenCalledWith('email', 'test@example.com');
       expect(result).toEqual(mockUser);
     });
@@ -86,7 +87,7 @@ describe('SupabaseUserRepository', () => {
 
       const result = await repository.findById('123e4567-e89b-12d3-a456-426614174000');
 
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('user');
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('users');
       expect(mockChain.eq).toHaveBeenCalledWith('id', '123e4567-e89b-12d3-a456-426614174000');
       expect(result).toEqual(mockUser);
     });
@@ -112,7 +113,7 @@ describe('SupabaseUserRepository', () => {
 
       const result = await repository.save(userData);
 
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('user');
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('users');
       expect(mockChain.select).toHaveBeenCalled();
       expect(result).toEqual(mockUser);
     });
@@ -158,7 +159,7 @@ describe('SupabaseUserRepository', () => {
 
       const result = await repository.update('123e4567-e89b-12d3-a456-426614174000', updateData);
 
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('user');
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('users');
       expect(mockChain.eq).toHaveBeenCalledWith('id', '123e4567-e89b-12d3-a456-426614174000');
       expect(result).toEqual(updatedUser);
     });
@@ -176,7 +177,7 @@ describe('SupabaseUserRepository', () => {
 
       await repository.delete('123e4567-e89b-12d3-a456-426614174000');
 
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('user');
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('users');
       expect(mockChain.eq).toHaveBeenCalledWith('id', '123e4567-e89b-12d3-a456-426614174000');
     });
 

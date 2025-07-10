@@ -84,7 +84,7 @@ export class SbRsvRepository implements RsvRepository {
   }
 
   async findAll(): Promise<Rsv[]> {
-    const query = this.supabase.from('reservation').select(`
+    const query = this.supabase.from('reservations').select(`
       user_id,
       room_id,
       space_id,
@@ -119,7 +119,7 @@ export class SbRsvRepository implements RsvRepository {
 
   async findByUserId(id: string): Promise<Rsv[] | null> {
     const query = this.supabase
-      .from('reservation')
+      .from('reservations')
       .select(
         `
       id,
@@ -154,7 +154,7 @@ export class SbRsvRepository implements RsvRepository {
 
   async findByRoomId(spaceId: number, roomId: number): Promise<Rsv[]> {
     const query = this.supabase
-      .from('reservation')
+      .from('reservations')
       .select('*')
       .eq('space_id', spaceId)
       .eq('room_id', roomId);
@@ -173,7 +173,7 @@ export class SbRsvRepository implements RsvRepository {
   }
 
   async save(reservation: SaveRequest): Promise<void> {
-    const query = this.supabase.from('reservation').insert([reservation]);
+    const query = this.supabase.from('reservations').insert([reservation]);
 
     const { error } = await query;
 
@@ -184,7 +184,7 @@ export class SbRsvRepository implements RsvRepository {
 
   async update(reservation: UpdateRequest): Promise<void> {
     const query = this.supabase
-      .from('reservation')
+      .from('reservations')
       .update({
         start_time: reservation.startTime,
         end_time: reservation.endTime,
@@ -201,7 +201,7 @@ export class SbRsvRepository implements RsvRepository {
 
   async delete(reservation: DeleteRequest): Promise<void> {
     const query = this.supabase
-      .from('reservation')
+      .from('reservations')
       .delete()
       .eq('id', reservation.rsvId)
       .eq('user_id', reservation.userId);

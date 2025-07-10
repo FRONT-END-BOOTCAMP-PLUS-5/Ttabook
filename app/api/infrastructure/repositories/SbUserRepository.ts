@@ -11,7 +11,7 @@ export class SupabaseUserRepository implements UserRepository {
 
   async findByEmail(email: string): Promise<User | null> {
     const { data, error } = await this.supabase
-      .from('user')
+      .from('users')
       .select('*')
       .eq('email', email)
       .single();
@@ -28,7 +28,7 @@ export class SupabaseUserRepository implements UserRepository {
 
   async findById(id: string): Promise<User | null> {
     const { data, error } = await this.supabase
-      .from('user')
+      .from('users')
       .select('*')
       .eq('id', id)
       .single();
@@ -45,7 +45,7 @@ export class SupabaseUserRepository implements UserRepository {
 
   async save(userData: SignupRequest): Promise<User> {
     const { data, error } = await this.supabase
-      .from('user')
+      .from('users')
       .insert([userData])
       .select()
       .single();
@@ -59,7 +59,7 @@ export class SupabaseUserRepository implements UserRepository {
 
   async update(id: string, userData: Partial<User>): Promise<User> {
     const { data, error } = await this.supabase
-      .from('user')
+      .from('users')
       .update(userData)
       .eq('id', id)
       .select()
@@ -74,7 +74,7 @@ export class SupabaseUserRepository implements UserRepository {
 
   async delete(id: string): Promise<void> {
     const { error } = await this.supabase
-      .from('user')
+      .from('users')
       .delete()
       .eq('id', id);
 

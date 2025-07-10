@@ -15,7 +15,7 @@ export class SbSpaceRepository implements SpaceRepository {
 
   async findById(id: number): Promise<Space> {
     const { data, error } = await this.supabase
-      .from('space')
+      .from('spaces')
       .select('*')
       .eq('id', id)
       .single();
@@ -28,12 +28,12 @@ export class SbSpaceRepository implements SpaceRepository {
   }
 
   async save(space: SaveRequest): Promise<void> {
-    await this.supabase.from('space').insert({ name: space.name });
+    await this.supabase.from('spaces').insert({ name: space.name });
   }
 
   async update(space: UpdateRequest): Promise<void> {
     await this.supabase
-      .from('space')
+      .from('spaces')
       .update({ name: space.name })
       .eq('id', space.id);
   }
