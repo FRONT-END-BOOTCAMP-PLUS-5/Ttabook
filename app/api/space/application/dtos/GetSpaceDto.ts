@@ -4,9 +4,11 @@ export class GetSpaceDto {
   room: {
     id: number;
     name: string;
-    description?: string;
-    createdAt?: Date;
-    updatedAt?: Date;
+    detail?: string;
+    positionX?: number;
+    positionY?: number;
+    scaleX: number;
+    scaleY: number;
   }[];
 
   constructor(
@@ -16,8 +18,10 @@ export class GetSpaceDto {
       id: number;
       name: string;
       description?: string;
-      createdAt?: Date;
-      updatedAt?: Date;
+      positionX?: number;
+      positionY?: number;
+      scaleX: number;
+      scaleY: number;
     }[]
   ) {
     this.id = id;
