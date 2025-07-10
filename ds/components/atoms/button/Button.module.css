@@ -1,0 +1,121 @@
+.ttabook-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 500;
+}
+
+.ttabook-btn--sm {
+  font-size: var(--button-size-sm-font-size);
+  padding: var(--button-size-sm-padding);
+  height: var(--button-size-sm-height);
+  border-radius: var(--button-size-sm-border-radius);
+  min-width: var(--button-size-sm-min-width);
+}
+
+.ttabook-btn--md {
+  font-size: var(--button-size-md-font-size);
+  padding: var(--button-size-md-padding);
+  height: var(--button-size-md-height);
+  border-radius: var(--button-size-md-border-radius);
+  min-width: var(--button-size-md-min-width);
+}
+
+.ttabook-btn--lg {
+  font-size: var(--button-size-lg-font-size);
+  padding: var(--button-size-lg-padding);
+  height: var(--button-size-lg-height);
+  border-radius: var(--button-size-lg-border-radius);
+  min-width: var(--button-size-lg-min-width);
+}
+
+.ttabook-btn--primary {
+  background: var(--button-variant-primary-bg);
+  color: var(--button-variant-primary-color);
+  border: var(--button-variant-primary-border);
+}
+.ttabook-btn--primary:hover {
+  opacity: 0.8;
+}
+.ttabook-btn--primary:disabled,
+.ttabook-btn--primary[aria-disabled='true'] {
+  background: var(--button-variant-primary-disabled-bg);
+  color: var(--button-variant-primary-disabled-color);
+  border: var(--button-variant-primary-disabled-border);
+  cursor: not-allowed;
+}
+
+.ttabook-btn--secondary {
+  background: var(--button-variant-secondary-bg);
+  color: var(--button-variant-secondary-color);
+  border: var(--button-variant-secondary-border);
+}
+.ttabook-btn--secondary:hover {
+  opacity: 0.8;
+}
+
+.ttabook-btn--secondary:disabled,
+.ttabook-btn--secondary[aria-disabled='true'] {
+  background: var(--button-variant-secondary-disabled-bg);
+  color: var(--button-variant-secondary-disabled-color);
+  border: var(--button-variant-secondary-disabled-border);
+  cursor: not-allowed;
+}
+
+.ttabook-btn--outline {
+  background: var(--button-variant-outline-bg);
+  color: var(--button-variant-outline-color);
+  border: var(--button-variant-outline-border);
+}
+.ttabook-btn--outline:hover {
+  opacity: 0.8;
+}
+.ttabook-btn--outline:disabled,
+.ttabook-btn--outline[aria-disabled='true'] {
+  background: var(--button-variant-outline-disabled-bg);
+  color: var(--button-variant-outline-disabled-color);
+  border: var(--button-variant-outline-disabled-border);
+  cursor: not-allowed;
+}
+
+.ttabook-btn--ghost {
+  background: var(--button-variant-ghost-bg);
+  color: var(--button-variant-ghost-color);
+  border: var(--button-variant-ghost-border);
+}
+.ttabook-btn--ghost:hover {
+  opacity: 0.8;
+}
+.ttabook-btn--ghost:disabled,
+.ttabook-btn--ghost[aria-disabled='true'] {
+  background: var(--button-variant-ghost-disabled-bg);
+  color: var(--button-variant-ghost-disabled-color);
+  border: var(--button-variant-ghost-disabled-border);
+  cursor: not-allowed;
+}
+
+.ttabook-btn--danger {
+  background: var(--button-variant-danger-bg);
+  color: var(--button-variant-danger-color);
+  border: var(--button-variant-danger-border);
+}
+.ttabook-btn--danger:hover {
+  opacity: 0.8;
+}
+.ttabook-btn--danger:disabled,
+.ttabook-btn--danger[aria-disabled='true'] {
+  background: var(--button-variant-danger-disabled-bg);
+  color: var(--button-variant-danger-disabled-color);
+  border: var(--button-variant-danger-disabled-border);
+  cursor: not-allowed;
+}
+
+.ttabook-btn--fullwidth {
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
