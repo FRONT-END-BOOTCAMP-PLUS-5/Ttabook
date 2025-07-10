@@ -40,6 +40,7 @@ export class SbRsvRepository implements RsvRepository {
     space?: {
       id?: number;
       name?: string;
+      room?: Room[];
     };
   }): Rsv {
     const createdAt = rsv.created_at ? rsv.created_at : null;
@@ -60,10 +61,11 @@ export class SbRsvRepository implements RsvRepository {
         )
       : null;
     const space = rsv.space
-      ? {
-          id: rsv.space.id ? rsv.space.id : 0,
-          name: rsv.space.name ? rsv.space.name : '',
-        }
+      ? new Space(
+          rsv.space.id ? rsv.space.id : 0,
+          rsv.space.name ? rsv.space.name : '',
+          rsv.space.room ? rsv.space.room : []
+        )
       : null;
     return new Rsv(
       rsv.id,
