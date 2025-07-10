@@ -1,6 +1,6 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { VerifyCredentialsUseCase } from '../../auth/[...nextauth]/application/usecase';
+import { VerifyCredentialsUseCase } from '@/backend/auth/nextauth/usecases/VerifyCredentialsUseCase';
 import { SupabaseUserRepository } from '../repositories/SbUserRepository';
 import { createClient } from '../supabase/server';
 

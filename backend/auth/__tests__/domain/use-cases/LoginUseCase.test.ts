@@ -1,11 +1,11 @@
 import { LoginUseCase } from '../../../[...nextauth]/application/usecase/LoginUseCase';
 import { UserRepository } from '../../../../domain/repository/UserRepository';
 import { User } from '../../../../domain/entities/User';
-import { LoginRequest } from '../../../[...nextauth]/application/dto/LoginRequest';
+import { LoginRequest } from '../../../nextauth/dtos/LoginRequest';
 import { PasswordUtil } from '../../../../infrastructure/utils/PasswordUtil';
 import {
   InvalidCredentialsError,
-} from '../../../[...nextauth]/application/dto';
+} from '../../../nextauth/dtos';
 
 // PasswordUtil 모킹
 jest.mock('../../../../infrastructure/utils/PasswordUtil');

@@ -1,4 +1,4 @@
-import { RoomRepository } from '@/app/api/domain/repository/RoomRepository';
+import { RoomRepository } from '@/backend/common/domain/repository/RoomRepository';
 import { Room } from '../../domain/entities/Room';
 import { SaveRequest, UpdateRequest } from '../../domain/repository/roomRequest';
 import { SupabaseClient } from '@supabase/supabase-js';

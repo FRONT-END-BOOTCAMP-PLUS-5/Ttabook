@@ -1,12 +1,12 @@
 import { RegisterUseCase } from '../../../signup/application/usecase/RegisterUseCase';
 import { UserRepository } from '../../../../domain/repository/UserRepository';
 import { User } from '../../../../domain/entities/User';
-import { SignupRequest } from '../../../signup/application/dto/SignupRequest';
+import { SignupRequest } from '../../../signup/dtos/SignupRequest';
 import { PasswordUtil } from '../../../../infrastructure/utils/PasswordUtil';
 import {
   DuplicateEmailError,
   ValidationError,
-} from '../../../signup/application/dto';
+} from '../../../signup/dtos';
 
 // PasswordUtil 모킹
 jest.mock('../../../../infrastructure/utils/PasswordUtil');

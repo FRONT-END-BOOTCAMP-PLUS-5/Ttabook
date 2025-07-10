@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { RegisterUseCase } from '@/backend/auth/signup/usecase/RegisterUseCase'; 
+import { RegisterUseCase } from '@/backend/auth/signup/usecases/RegisterUseCase'; 
 import { SupabaseUserRepository } from '@/backend/common/infrastructure/repositories/SbUserRepository';
-import { SignupResponse, SignupErrorResponse } from '@/backend/auth/signup/dto/SignupResponse';
-import { DuplicateEmailError } from '@/backend/auth/signup/dto/DuplicateEmailError';
-import { ValidationError } from '@/backend/auth/signup/dto/ValidationError';
-import { AuthError } from '@/backend/auth/signup/dto/AuthError'; 
+import { SignupResponse, SignupErrorResponse } from '@/backend/auth/signup/dtos/SignupResponse';
+import { DuplicateEmailError } from '@/backend/auth/signup/dtos/DuplicateEmailError';
+import { ValidationError } from '@/backend/auth/signup/dtos/ValidationError';
+import { AuthError } from '@/backend/auth/signup/dtos/AuthError'; 
 import { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/backend/common/infrastructure/supabase/server';
 
