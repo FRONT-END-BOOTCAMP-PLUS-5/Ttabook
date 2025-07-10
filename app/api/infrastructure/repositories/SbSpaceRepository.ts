@@ -3,7 +3,6 @@ import {
   UpdateRequest,
 } from '../../domain/repository/spaceRequest';
 import { SpaceRepository } from '../../domain/repository/SpaceRepository';
-import { supabaseAdmin as supabase } from '../supabase/client';
 import SupabaseClient from '@supabase/supabase-js/dist/module/SupabaseClient';
 import { Space } from '../../domain/entities/Space';
 
@@ -29,12 +28,11 @@ export class SbSpaceRepository implements SpaceRepository {
   }
 
   async save(space: SaveRequest): Promise<void> {
-    await supabase.from('space').insert({ name: space.name });
+    await this.supabase.from('space').insert({ name: space.name });
   }
 
   async update(space: UpdateRequest): Promise<void> {
-    await supabase
-
+    await this.supabase
       .from('space')
       .update({ name: space.name })
       .eq('id', space.id);
