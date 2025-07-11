@@ -12,3 +12,17 @@ if (typeof TextEncoder === 'undefined') {
 if (typeof TextDecoder === 'undefined') {
   global.TextDecoder = util.TextDecoder;
 }
+
+// structuredClone 폴리필 (Node.js 18+에서 필요)
+if (typeof structuredClone === 'undefined') {
+  global.structuredClone = (obj) => JSON.parse(JSON.stringify(obj));
+}
+
+// Request/Response 폴리필 (jsdom 환경용)
+import { Request, Response } from 'whatwg-fetch';
+if (typeof global.Request === 'undefined') {
+  global.Request = Request;
+}
+if (typeof global.Response === 'undefined') {
+  global.Response = Response;
+}

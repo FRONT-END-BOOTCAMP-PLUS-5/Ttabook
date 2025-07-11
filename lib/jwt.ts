@@ -74,3 +74,29 @@ export async function verifyAccessToken(token: string): Promise<UserJWTPayload> 
     throw new Error(`토큰 검증 실패: ${errorMessage}`);
   }
 }
+
+/**
+ * 리프레시 토큰을 검증하고 사용자 정보를 반환합니다
+ */
+export async function verifyRefreshToken(token: string): Promise<UserJWTPayload> {
+  if (!token || token.trim() === '') {
+    throw new Error('토큰이 제공되지 않았습니다');
+  }
+
+  const secret = getSecretKey();
+  
+  try {
+    const { payload } = await jwtVerify(token, secret);
+    
+    return {
+      id: payload.id as number,
+      email: payload.email as string,
+      role: payload.role as string,
+      exp: payload.exp as number,
+      iat: payload.iat as number,
+    };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
+    throw new Error(`토큰 검증 실패: ${errorMessage}`);
+  }
+}
