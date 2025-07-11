@@ -5,7 +5,7 @@ import Text from './Text';
 import { TitleText, SubTitleText, DescText, CaptionText } from './textWrapper';
 
 const meta = {
-  title: 'Example/Text',
+  title: 'Components/Atoms/Text',
   component: Text,
   parameters: {
     layout: 'centered',
