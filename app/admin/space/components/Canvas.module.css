@@ -1,0 +1,28 @@
+.canvasContainer {
+  position: relative;
+  border: 2px dashed #ccc;
+}
+
+.editingForm {
+  position: absolute;
+  z-index: 20;
+  background: white;
+  padding: 4px;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 200px;
+  min-height: 200px;
+}
+
+.editingTextarea {
+  flex-grow: 1;
+  resize: none;
+  min-height: 40px;
+}
+
+.editingButton {
+  align-self: flex-end;
+}
