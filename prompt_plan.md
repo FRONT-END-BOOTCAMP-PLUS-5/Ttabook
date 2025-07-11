@@ -141,7 +141,7 @@ Unit-test navigation.
 ```
 
 ```text
-### prompt-10-integration-flow
+### prompt-10-integration-flow ✅ COMPLETED
 Write end-to-end Jest test:
 - Start test Postgres
 - Call signup → signin → me → refresh → logout
