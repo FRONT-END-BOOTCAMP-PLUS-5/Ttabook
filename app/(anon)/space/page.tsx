@@ -8,29 +8,31 @@ const STAGE_WIDTH = 800;
 const STAGE_HEIGHT = 700;
 
 type Room = {
-  id: string;
+  id: number; // 백엔드 Room 엔티티에 맞춰 number로 변경
   x: number;
   y: number;
   width: number;
   height: number;
+  scaleX: number; // 백엔드 Room 엔티티의 scaleX에 매핑
+  scaleY: number; // 백엔드 Room 엔티티의 scaleY에 매핑
   name?: string;
   description?: string;
 };
 
 const CreateRoomCanvas: React.FC = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedPosition, setSelectedPosition] = useState<{
     x: number;
     y: number;
   } | null>(null);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [editingPos, setEditingPos] = useState<{ x: number; y: number }>({
     x: 0,
     y: 0,
   });
 
-  const stageRef = useRef<any>(null);
+  const stageRef = useRef<Konva.Stage | null>(null);
   const transformerRef = useRef<Konva.Transformer>(null);
 
   const handleDragStart = (e: React.DragEvent) => {
@@ -40,6 +42,7 @@ const CreateRoomCanvas: React.FC = () => {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
 
+    if (!stageRef.current) return;
     const stage = stageRef.current.getStage();
     const stageBox = stage.container().getBoundingClientRect();
 
@@ -47,11 +50,13 @@ const CreateRoomCanvas: React.FC = () => {
     const dropY = e.clientY - stageBox.top;
 
     const newRoom: Room = {
-      id: Date.now().toString(),
+      id: Date.now(), // number로 변경
       x: dropX,
       y: dropY,
       width: 120,
       height: 100,
+      scaleX: 1, // 초기값 추가
+      scaleY: 1, // 초기값 추가
       name: '',
       description: '',
     };
@@ -68,7 +73,7 @@ const CreateRoomCanvas: React.FC = () => {
     setSelectedPosition({ x: room.x, y: room.y });
   };
 
-  const handleDragEnd = (id: string, x: number, y: number) => {
+  const handleDragEnd = (id: number, x: number, y: number) => {
     setRooms((prev) =>
       prev.map((room) => (room.id === id ? { ...room, x, y } : room))
     );
@@ -88,6 +93,8 @@ const CreateRoomCanvas: React.FC = () => {
       y: node.y(),
       width: Math.max(30, node.width() * scaleX),
       height: Math.max(30, node.height() * scaleY),
+      scaleX: scaleX, // scaleX 저장
+      scaleY: scaleY, // scaleY 저장
     };
 
     node.scaleX(1);
@@ -131,10 +138,41 @@ const CreateRoomCanvas: React.FC = () => {
     }
   };
 
-  const handleSave = () => {
-    console.log("저장할 Rooms 데이터:", rooms);
-    // 여기에 백엔드 API 호출 로직을 추가할 수 있습니다.
-    // 예: fetch('/api/save-rooms', { method: 'POST', body: JSON.stringify(rooms) });
+  const handleSave = async () => {
+    // 백엔드 Room 엔티티에 맞게 데이터 변환
+    const roomsToSave = rooms.map((room) => ({
+      id: room.id,
+      // supplyId, roomItemId, spaceId는 백엔드에서 처리
+      name: room.name || '',
+      detail: room.description || null, // description을 detail로 매핑
+      positionX: room.x,
+      positionY: room.y,
+      scaleX: room.scaleX || 1,
+      scaleY: room.scaleY || 1,
+    }));
+
+    console.log('저장할 Rooms 데이터 (변환 후):', roomsToSave);
+
+    try {
+      const response = await fetch('/api/space/save-rooms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ rooms: roomsToSave }), // 변환된 데이터 전송
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('저장 성공:', result);
+      alert('레이아웃이 성공적으로 저장되었습니다!');
+    } catch (error) {
+      console.error('레이아웃 저장 실패:', error);
+      alert('레이아웃 저장에 실패했습니다.');
+    }
   };
 
   const handleEditStart = (room: Room) => {
@@ -312,7 +350,7 @@ const CreateRoomCanvas: React.FC = () => {
             {rooms.map((room) => (
               <Group
                 key={room.id}
-                id={room.id}
+                id={room.id.toString()}
                 x={room.x}
                 y={room.y}
                 width={room.width}
