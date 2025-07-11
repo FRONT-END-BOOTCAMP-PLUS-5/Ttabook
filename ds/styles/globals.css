@@ -10,7 +10,7 @@
   --color-text-primary: #2d3748;
   --color-text-secondary: #718096;
   --color-error: #e87a74;
-  --color-error-dark: #D96459;
+  --color-error-dark: #d96459;
 
   /* Spacing Tokens */
   --spacing-0: 0px;
@@ -72,7 +72,6 @@
   --text-size-xl-font-size: 24px;
   --text-size-xl-font-weight: 800;
   --text-size-xl-line-height: 32px;
-  
 
   /* Button Variant Tokens */
   /* Primary */
@@ -114,24 +113,44 @@
   --button-variant-danger-disabled-bg: var(--color-background);
   --button-variant-danger-disabled-color: var(--color-text-secondary);
   --button-variant-danger-disabled-border: 1px solid var(--color-error);
-}
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Input Variant Tokens */
+  /* Primary */
+  --input-variant-primary-background: var(--color-background);
+  --input-variant-primary-color: var(--color-text-primary);
+  --input-variant-primary-border: 1px solid var(--color-primary);
+  --input-variant-primary-placeholder: var(--color-text-secondary);
+  --input-variant-primary-focus-border: 1.5px solid var(--color-primary-dark);
+  --input-variant-primary-focus-box-shadow: 0 0 0 2px var(--color-primary-light);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+  /* Secondary */
+  --input-variant-secondary-background: var(--color-background);
+  --input-variant-secondary-color: var(--color-text-secondary);
+  --input-variant-secondary-border: 1px solid var(--color-secondary);
+  --input-variant-secondary-placeholder: var(--color-text-secondary);
+  --input-variant-secondary-focus-border: 1.5px solid var(--color-secondary);
+  --input-variant-secondary-focus-box-shadow: 0 0 0 2px var(--color-secondary);
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Danger */
+  --input-variant-danger-background: var(--color-background);
+  --input-variant-danger-color: var(--color-error);
+  --input-variant-danger-border: 1px solid var(--color-error);
+  --input-variant-danger-placeholder: var(--color-error);
+  --input-variant-danger-focus-border: 1.5px solid var(--color-error-dark);
+  --input-variant-danger-focus-box-shadow: 0 0 0 2px var(--color-error);
+
+  /* Outline */
+  --input-variant-outline-background: var(--color-background);
+  --input-variant-outline-color: var(--color-text-primary);
+  --input-variant-outline-border: 2px solid var(--color-primary);
+  --input-variant-outline-border-radius: 5px;
+  --input-variant-outline-placeholder: var(--color-text-secondary);
+  --input-variant-outline-focus-border: 1.5px solid var(--color-primary);
+  --input-variant-outline-focus-box-shadow: 0 0 0 2px var(--color-primary-light);
+
+  /* Disabled */
+  --input-variant-disabled-background: var(--color-background);
+  --input-variant-disabled-color: var(--color-text-secondary);
+  --input-variant-disabled-border: 1px solid var(--color-text-secondary);
+  --input-variant-disabled-placeholder: var(--color-text-secondary);
 }
