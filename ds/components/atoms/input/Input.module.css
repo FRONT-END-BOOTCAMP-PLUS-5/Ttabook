@@ -61,18 +61,21 @@
 }
 
 .ttabook-input--lg {
+  width: var(--input-size-lg-width);
   height: var(--input-size-lg-height);
   padding: var(--input-size-lg-padding);
   font-size: var(--input-size-lg-font-size);
 }
 
 .ttabook-input--md {
+  width: var(--input-size-md-width);
   height: var(--input-size-md-height);
   padding: var(--input-size-md-padding);
   font-size: var(--input-size-md-font-size);
 }
 
 .ttabook-input--sm {
+  width: var(--input-size-sm-width);
   height: var(--input-size-sm-height);
   padding: var(--input-size-sm-padding);
   font-size: var(--input-size-sm-font-size);
