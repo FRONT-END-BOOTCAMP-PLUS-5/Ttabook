@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from '@jest/globals';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 
 describe('config.ts', () => {
   const originalEnv = process.env;
@@ -14,66 +14,64 @@ describe('config.ts', () => {
   });
 
   describe('환경 변수 검증', () => {
-    it('JWT_SECRET이 누락되면 에러를 발생시켜야 한다', () => {
+    it('JWT_SECRET이 누락되면 에러를 발생시켜야 한다', async () => {
       delete process.env.JWT_SECRET;
       process.env.BCRYPT_ROUNDS = '12';
 
-      expect(() => {
+      await expect(async () => {
         // config 모듈을 다시 import하여 환경 변수 검증 로직 실행
         jest.resetModules();
-        require('../../lib/config');
-      }).toThrow('JWT_SECRET environment variable is required');
+        await import('../../lib/config');
+      }).rejects.toThrow('JWT_SECRET environment variable is required');
     });
 
-    it('BCRYPT_ROUNDS가 누락되면 에러를 발생시켜야 한다', () => {
+    it('BCRYPT_ROUNDS가 누락되면 에러를 발생시켜야 한다', async () => {
       process.env.JWT_SECRET = 'test-secret-key-that-is-long-enough';
       delete process.env.BCRYPT_ROUNDS;
 
-      expect(() => {
+      await expect(async () => {
         jest.resetModules();
-        require('../../lib/config');
-      }).toThrow('BCRYPT_ROUNDS environment variable is required');
+        await import('../../lib/config');
+      }).rejects.toThrow('BCRYPT_ROUNDS environment variable is required');
     });
 
-    it('BCRYPT_ROUNDS가 숫자가 아니면 에러를 발생시켜야 한다', () => {
+    it('BCRYPT_ROUNDS가 숫자가 아니면 에러를 발생시켜야 한다', async () => {
       process.env.JWT_SECRET = 'test-secret-key-that-is-long-enough';
       process.env.BCRYPT_ROUNDS = 'not-a-number';
 
-      expect(() => {
+      await expect(async () => {
         jest.resetModules();
-        require('../../lib/config');
-      }).toThrow('BCRYPT_ROUNDS must be a valid number');
+        await import('../../lib/config');
+      }).rejects.toThrow('BCRYPT_ROUNDS must be a valid number');
     });
 
-    it('모든 환경 변수가 올바르게 설정되면 성공해야 한다', () => {
+    it('모든 환경 변수가 올바르게 설정되면 성공해야 한다', async () => {
       process.env.JWT_SECRET = 'test-secret-key-that-is-long-enough';
       process.env.BCRYPT_ROUNDS = '12';
 
-      expect(() => {
-        jest.resetModules();
-        const config = require('../../lib/config');
-        expect(config.JWT_SECRET).toBe('test-secret-key-that-is-long-enough');
-        expect(config.BCRYPT_ROUNDS).toBe(12);
-      }).not.toThrow();
+      jest.resetModules();
+      const config = await import('../../lib/config');
+      expect(config.JWT_SECRET).toBe('test-secret-key-that-is-long-enough');
+      expect(config.BCRYPT_ROUNDS).toBe(12);
     });
 
-    it('NODE_ENV가 설정되지 않으면 기본값 development를 사용해야 한다', () => {
+    it('NODE_ENV가 설정되지 않으면 기본값 development를 사용해야 한다', async () => {
       process.env.JWT_SECRET = 'test-secret-key-that-is-long-enough';
       process.env.BCRYPT_ROUNDS = '12';
       delete process.env.NODE_ENV;
 
       jest.resetModules();
-      const config = require('../../lib/config');
+      const config = await import('../../lib/config');
       expect(config.NODE_ENV).toBe('development');
     });
 
-    it('PORT가 설정되지 않으면 기본값 3000을 사용해야 한다', () => {
+    it('PORT가 설정되지 않으면 기본값 3000을 사용해야 한다', async () => {
       process.env.JWT_SECRET = 'test-secret-key-that-is-long-enough';
       process.env.BCRYPT_ROUNDS = '12';
       delete process.env.PORT;
 
       jest.resetModules();
-      const config = require('../../lib/config');
+      const config = await import('../../lib/config');
       expect(config.PORT).toBe('3000');
     });
   });

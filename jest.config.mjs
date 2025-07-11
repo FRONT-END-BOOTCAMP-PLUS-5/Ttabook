@@ -9,6 +9,8 @@ const config = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testEnvironment: 'jest-environment-node',
   testMatch: ["**/?(*.)+(spec|test).[jt]s?(x)"],
+  extensionsToTreatAsEsm: ['.ts'],
+  transform: {},
   collectCoverageFrom: [
     'lib/**/*.{js,ts}',
     '!**/*.d.ts',
