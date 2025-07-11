@@ -1,6 +1,5 @@
 import { UserRepository } from '../../domains/repositories/UserRepository';
 import { User } from '../../domains/entities/User';
-import { SignupRequest } from '@/backend/auth/signup/dtos/SignupRequest';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export class SupabaseUserRepository implements UserRepository {
@@ -43,7 +42,7 @@ export class SupabaseUserRepository implements UserRepository {
     return data;
   }
 
-  async save(userData: SignupRequest): Promise<User> {
+  async save(userData: Omit<User, 'id'>): Promise<User> {
     const { data, error } = await this.supabase
       .from('users')
       .insert([userData])
