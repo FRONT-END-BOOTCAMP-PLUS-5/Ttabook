@@ -18,6 +18,7 @@
     "axios": "^1.10.0",
     "bcryptjs": "^3.0.2",
     "jose": "^6.0.11",
+    "js-cookie": "^3.0.5",
     "konva": "^9.3.21",
     "next": "15.3.4",
     "react": "^19.0.0",
@@ -34,8 +35,10 @@
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/bcryptjs": "^3.0.0",
     "@types/jest": "^30.0.0",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -48,7 +51,8 @@
     "jest-environment-jsdom": "^30.0.2",
     "prettier": "^3.6.2",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.35.1"
+    "typescript-eslint": "^8.35.1",
+    "whatwg-fetch": "^3.6.20"
   },
   "packageManager": "yarn@4.9.2"
 }

@@ -13,6 +13,12 @@ if (typeof TextDecoder === 'undefined') {
   global.TextDecoder = util.TextDecoder;
 }
 
+// crypto 모듈 polyfill
+import { webcrypto } from 'node:crypto';
+if (typeof global.crypto === 'undefined') {
+  global.crypto = webcrypto;
+}
+
 // structuredClone 폴리필 (Node.js 18+에서 필요)
 if (typeof structuredClone === 'undefined') {
   global.structuredClone = (obj) => JSON.parse(JSON.stringify(obj));
