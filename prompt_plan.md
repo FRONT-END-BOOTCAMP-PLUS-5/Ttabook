@@ -133,7 +133,7 @@ Add Jest/RTL tests (mock fetch).
 ```
 
 ```text
-### prompt-09-protected-route
+### prompt-09-protected-route ✅ COMPLETED
 Add `components/ProtectedRoute.tsx`:
 - Redirect unauth to `/login?next=…`
 - Enforce optional `role`
