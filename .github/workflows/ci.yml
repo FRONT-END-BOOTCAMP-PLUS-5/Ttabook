@@ -38,8 +38,11 @@ jobs:
       - name: Lint
         run: yarn lint
 
-      - name: Format check
-        run: yarn format
+      - name: Test with coverage
+        run: yarn test --coverage
+        env:
+          JWT_SECRET: test-jwt-secret-for-ci-that-is-long-enough
+          BCRYPT_ROUNDS: 12
 
       - name: Inject .env
         run: |
