@@ -44,14 +44,17 @@
 
   /* Input Size Tokens */
   --input-size-lg-height: 48px;
+  --input-size-lg-width: 200px;
   --input-size-lg-padding: 0 var(--spacing-5);
   --input-size-lg-font-size: 18px;
   --input-size-lg-border-radius: 10px;
   --input-size-md-height: 40px;
+  --input-size-md-width: 130px;
   --input-size-md-padding: 0 var(--spacing-4);
   --input-size-md-font-size: 16px;
   --input-size-md-border-radius: 8px;
   --input-size-sm-height: 32px;
+  --input-size-sm-width: 90px;
   --input-size-sm-padding: 0 var(--spacing-3);
   --input-size-sm-font-size: 14px;
   --input-size-sm-border-radius: 6px;
