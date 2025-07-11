@@ -67,24 +67,73 @@
 
 프로젝트는 클린 아키텍처 원칙을 따라 다음과 같은 폴더 구조를 사용합니다:
 
+**API 라우트 구조 (`app/api/`)**
 ```
-api/
-├── user/reservation/          // 실제 API 호출 URL이 됨
-│   ├── (adapter)/            // 어댑터 레이어
-│   │   └── route.ts          // Next.js API 라우트 파일
-│   └── application/          // 애플리케이션 레이어
-│       ├── usecase/          // 유스케이스 (비즈니스 로직)
-│       └── dto/              // 데이터 전송 객체
-├── domain/                   // 도메인 레이어
-│   ├── entity/              // 엔티티 (데이터베이스 테이블)
-│   └── repository/          // 레포지토리 인터페이스
-└── infrastructure/          // 인프라 레이어
-    └── repository/          // 레포지토리 구현체
+app/api/
+├── user/reservations/        // 실제 API 호출 URL이 됨 (복수형)
+│   └── (adaptor)/            // 어댑터 레이어 (Next.js 라우트만 포함)
+│       └── route.ts          // Next.js API 라우트 파일
+└── admin/spaces/
+    └── (adaptor)/
+        └── route.ts
 ```
+
+**백엔드 비즈니스 로직 구조 (`backend/`)**
+```
+backend/
+├── common/                   // 공통 도메인 및 인프라
+│   ├── domains/             // 도메인 레이어 (복수형)
+│   │   ├── entities/        // 엔티티 (데이터베이스 테이블)
+│   │   ├── repositories/    // 레포지토리 인터페이스 (복수형)
+│   │   └── types/           // 공통 타입 정의
+│   └── infrastructures/     // 인프라 레이어 (복수형)
+│       ├── repositories/    // 레포지토리 구현체
+│       ├── supabase/        // Supabase 설정
+│       ├── next-auth/       // NextAuth 설정
+│       └── utils/           // 유틸리티 함수
+├── user/                    // 사용자 관련 기능
+│   └── reservations/        // 복수형 사용
+│       ├── dtos/            // 데이터 전송 객체 (복수형)
+│       └── usecases/        // 유스케이스 (복수형)
+├── admin/                   // 관리자 관련 기능
+│   ├── reservations/        // 복수형 사용
+│   │   ├── dtos/            // 복수형 사용
+│   │   └── usecases/        // 복수형 사용
+│   └── spaces/              // 복수형 사용
+│       ├── dtos/            // 복수형 사용
+│       └── usecases/        // 복수형 사용
+├── spaces/                  // 공간 관련 기능 (복수형)
+│   ├── dtos/                // 복수형 사용
+│   └── usecases/            // 복수형 사용
+├── rooms/                   // 방 관련 기능 (복수형)
+│   └── reservations/        // 복수형 사용
+│       ├── dtos/            // 복수형 사용
+│       └── usecases/        // 복수형 사용
+└── auth/                    // 인증 관련 기능
+    ├── dtos/                // 복수형 사용
+    ├── signup/
+    │   ├── dtos/            // 복수형 사용
+    │   └── usecases/        // 복수형 사용
+    ├── nextauth/
+    │   ├── dtos/            // 복수형 사용
+    │   └── usecases/        // 복수형 사용
+    └── duplications/        // 복수형 사용
+        ├── dtos/            // 복수형 사용
+        └── usecases/        // 복수형 사용
+```
+
+**주요 구조 원칙:**
+- **분리된 관심사**: API 라우트(`app/api/`)와 비즈니스 로직(`backend/`)을 분리
+- **일관된 복수형 명명**: 모든 폴더는 복수형 사용을 원칙으로 함
+  - ✅ `domains/`, `repositories/`, `infrastructures/`, `dtos/`, `usecases/`
+  - ✅ `spaces/`, `rooms/`, `reservations/`, `duplications/`
+  - ❌ `domain/`, `repository/`, `infrastructure/`, `dto/`, `usecase/`
+- **dto/usecase 승격**: `application/` 폴더를 제거하고 `dtos/`와 `usecases/` 폴더를 상위로 승격
+- **공통 레이어**: `backend/common/`에 도메인과 인프라 공통 요소 집중
 
 -   **함수 명명:** `route.ts` 파일 내에서 export 되는 함수는 반드시 HTTP 메서드 이름(대문자)을 사용해야 합니다.
     ```typescript
-    // app/api/user/reservation/(adapter)/route.ts
+    // app/api/user/reservations/(adaptor)/route.ts
     import { NextResponse } from 'next/server';
 
     export async function GET(request: Request) {
