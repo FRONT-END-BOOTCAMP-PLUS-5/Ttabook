@@ -150,5 +150,19 @@ Assert cookies & status codes per spec.
 
 ---
 
+## 3. Additional Cleanup Tasks
+
+```text
+### prompt-11-folder-structure-fix
+Fix API folder structure to follow coding conventions:
+- Move `app/api/duplicates/route.ts` to `app/api/duplicates/(adaptor)/route.ts`
+- Move `app/api/signup/route.ts` to `app/api/signup/(adaptor)/route.ts`
+- Update all import paths in tests accordingly
+- Ensure all tests still pass after folder restructuring
+Follow TDD: run tests before/after to ensure nothing breaks.
+```
+
+---
+
 **Continue producing prompts** chunk-by-chunk until all Phase 4 tasks are covered.
 **Always**: write failing test → implement → make tests green → commit.
