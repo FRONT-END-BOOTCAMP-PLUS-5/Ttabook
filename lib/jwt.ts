@@ -84,9 +84,16 @@ export async function verifyAccessToken(token: string): Promise<UserJWTPayload> 
   try {
     const { payload } = await jwtVerify(token, secret);
     
+    // 토큰 마이그레이션: originalId가 없는 기존 토큰 호환성 처리
+    const originalId = payload.originalId as string | undefined;
+    const numericId = payload.id as number;
+    
+    // originalId가 없으면 숫자 ID를 문자열로 변환 (기존 토큰 호환성)
+    const userId = originalId || numericId.toString();
+    
     return {
-      id: payload.id as number,
-      originalId: payload.originalId as string,
+      id: numericId,
+      originalId: userId,
       email: payload.email as string,
       role: payload.role as string,
       exp: payload.exp as number,
@@ -111,9 +118,16 @@ export async function verifyRefreshToken(token: string): Promise<UserJWTPayload>
   try {
     const { payload } = await jwtVerify(token, secret);
     
+    // 토큰 마이그레이션: originalId가 없는 기존 토큰 호환성 처리
+    const originalId = payload.originalId as string | undefined;
+    const numericId = payload.id as number;
+    
+    // originalId가 없으면 숫자 ID를 문자열로 변환 (기존 토큰 호환성)
+    const userId = originalId || numericId.toString();
+    
     return {
-      id: payload.id as number,
-      originalId: payload.originalId as string,
+      id: numericId,
+      originalId: userId,
       email: payload.email as string,
       role: payload.role as string,
       exp: payload.exp as number,
