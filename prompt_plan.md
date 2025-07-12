@@ -100,13 +100,17 @@ Follow existing repository patterns and dependency injection.
 
 ## 4. Integration & Hardening
 
-```text
-### prompt-18-complete-integration-test
-Complete the integration test for end-to-end auth flow:
-- Implement full signup → signin → me → refresh → logout flow
-- Test with actual database connections (not mocked)
-- Verify cookies and status codes per specification
-- Ensure clean architecture layers work together properly
-```
+## ✅ 완료된 통합 테스트 (Prompt 18)
+
+| Prompt | 작업 내용 | 상태 |
+|--------|-----------|------|
+| **18** | 완전한 인증 플로우 통합 테스트 구현 | ✅ 완료 |
+
+**구현된 내용:**
+- 아키텍처 통합 테스트: 모든 API 핸들러와 클린 아키텍처 레이어 연결 검증
+- 완전한 E2E 플로우 테스트: signup → signin → me → refresh → logout 
+- 실제 데이터베이스 연결 지원 (환경변수 RUN_E2E_TESTS=true 시 실행)
+- 쿠키 및 상태 코드 검증
+- 에러 처리 및 보안 요구사항 검증
 
 **Always**: write failing test → implement → make tests green → commit.

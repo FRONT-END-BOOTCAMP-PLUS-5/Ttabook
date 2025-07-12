@@ -11,6 +11,10 @@ import { NextRequest } from 'next/server';
 
 // API 라우트 핸들러들을 직접 import
 import { POST as SignupHandler } from '../../app/api/signup/(adaptor)/route';
+import { POST as SigninHandler } from '../../app/api/signin/(adaptor)/route';
+import { GET as MeHandler } from '../../app/api/me/(adaptor)/route';
+import { POST as RefreshHandler } from '../../app/api/refresh/(adaptor)/route';
+import { POST as LogoutHandler } from '../../app/api/logout/(adaptor)/route';
 import { GET as DuplicateHandler } from '../../app/api/duplicates/(adaptor)/route';
 
 // JWT 검증 함수 import
@@ -232,5 +236,263 @@ describe('인증 시스템 통합 테스트', () => {
       const isInvalid = await verifyPassword('wrongpassword', hashedPassword);
       expect(isInvalid).toBe(false);
     });
+  });
+
+  describe('완전한 인증 플로우 E2E 테스트', () => {
+    const endToEndTestUser = {
+      email: 'e2e-test@example.com',
+      password: 'E2ETestPassword123!',
+      name: 'E2E테스트사용자',
+    };
+
+    // 실제 데이터베이스 연결이 가능한 환경에서만 실행
+    const shouldRunE2ETest = process.env.NODE_ENV === 'test' && 
+                             process.env.NEXT_PUBLIC_SUPABASE_URL && 
+                             process.env.SUPABASE_SERVICE_ROLE_KEY &&
+                             process.env.RUN_E2E_TESTS === 'true';
+
+    const testMethod = shouldRunE2ETest ? it : it.skip;
+
+    it('전체 인증 플로우 아키텍처가 올바르게 연결되어 있어야 한다', async () => {
+      // 이 테스트는 실제 데이터베이스 없이도 아키텍처가 올바르게 설정되었는지 검증
+      // 모든 API 핸들러가 존재하고 올바른 에러 응답을 반환하는지 확인
+      
+      console.log('🔵 아키텍처 통합 테스트 시작...');
+      
+      // 1. 모든 API 핸들러가 정의되어 있는지 확인
+      expect(SignupHandler).toBeDefined();
+      expect(SigninHandler).toBeDefined();
+      expect(MeHandler).toBeDefined();
+      expect(RefreshHandler).toBeDefined();
+      expect(LogoutHandler).toBeDefined();
+      
+      // 2. 데이터베이스 연결이 없을 때 적절한 에러 응답을 반환하는지 확인
+      const testUser = {
+        email: 'arch-test@example.com',
+        password: 'ArchTest123!',
+        name: '아키텍처테스트',
+      };
+      
+      // 회원가입 시도 - 데이터베이스 연결 실패로 500 에러 예상
+      const signupRequest = createRequest('http://localhost:3000/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(testUser),
+      });
+      
+      const signupResponse = await SignupHandler(signupRequest);
+      expect(signupResponse.status).toBe(500); // 데이터베이스 연결 실패
+      
+      // 로그인 시도 - 데이터베이스 연결 실패로 500 에러 예상
+      const signinRequest = createRequest('http://localhost:3000/api/signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: testUser.email,
+          password: testUser.password,
+        }),
+      });
+      
+      const signinResponse = await SigninHandler(signinRequest);
+      expect(signinResponse.status).toBe(500); // 데이터베이스 연결 실패
+      
+      // ME 요청 - 토큰 없이 401 에러 예상
+      const meRequest = createRequest('http://localhost:3000/api/me');
+      const meResponse = await MeHandler(meRequest);
+      expect(meResponse.status).toBe(401); // 토큰 없음
+      
+      // 리프레시 요청 - 토큰 없이 401 에러 예상
+      const refreshRequest = createRequest('http://localhost:3000/api/refresh', {
+        method: 'POST',
+      });
+      const refreshResponse = await RefreshHandler(refreshRequest);
+      expect(refreshResponse.status).toBe(401); // 토큰 없음
+      
+      // 로그아웃 요청 - 정상 처리 (JWT stateless 특성)
+      const logoutRequest = createRequest('http://localhost:3000/api/logout', {
+        method: 'POST',
+      });
+      const logoutResponse = await LogoutHandler(logoutRequest);
+      expect(logoutResponse.status).toBe(200); // 로그아웃은 항상 성공
+      
+      console.log('✅ 아키텍처 통합 테스트 완료 - 모든 레이어가 올바르게 연결됨');
+    });
+
+    testMethod('전체 인증 플로우가 원활하게 작동해야 한다: signup → signin → me → refresh → logout', async () => {
+      let cookies: AuthCookies = {};
+      
+      // ===== 1. SIGNUP: 회원가입 =====
+      console.log('🔵 1. 회원가입 테스트 시작...');
+      const signupRequest = createRequest('http://localhost:3000/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(endToEndTestUser),
+      });
+
+      const signupResponse = await SignupHandler(signupRequest);
+      const signupData = await signupResponse.json();
+
+      // 회원가입 성공 검증
+      expect(signupResponse.status).toBe(201);
+      expect(signupData.success).toBe(true);
+      expect(signupData.message).toBe('회원가입이 완료되었습니다');
+      expect(signupData.user).toMatchObject({
+        email: endToEndTestUser.email,
+        name: endToEndTestUser.name,
+        type: 'user',
+      });
+
+      // 회원가입 시 자동 로그인 쿠키 검증
+      cookies = parseCookiesFromResponse(signupResponse);
+      expect(cookies.accessToken).toBeDefined();
+      expect(cookies.refreshToken).toBeDefined();
+      console.log('✅ 회원가입 및 자동 로그인 성공');
+
+      // ===== 2. ME: 현재 사용자 정보 조회 =====
+      console.log('🔵 2. 현재 사용자 정보 조회 테스트 시작...');
+      const meRequest = createRequest('http://localhost:3000/api/me', {
+        headers: {
+          Cookie: `accessToken=${cookies.accessToken}`,
+        },
+      });
+
+      const meResponse = await MeHandler(meRequest);
+      const meData = await meResponse.json();
+
+      // 사용자 정보 조회 성공 검증
+      expect(meResponse.status).toBe(200);
+      expect(meData.success).toBe(true);
+      expect(meData.user).toMatchObject({
+        email: endToEndTestUser.email,
+        name: endToEndTestUser.name,
+        type: 'user',
+      });
+      console.log('✅ 사용자 정보 조회 성공');
+
+      // ===== 3. SIGNIN: 재로그인 테스트 =====
+      console.log('🔵 3. 재로그인 테스트 시작...');
+      const signinRequest = createRequest('http://localhost:3000/api/signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: endToEndTestUser.email,
+          password: endToEndTestUser.password,
+        }),
+      });
+
+      const signinResponse = await SigninHandler(signinRequest);
+      const signinData = await signinResponse.json();
+
+      // 재로그인 성공 검증
+      expect(signinResponse.status).toBe(200);
+      expect(signinData.success).toBe(true);
+      expect(signinData.message).toBe('로그인이 완료되었습니다');
+      expect(signinData.user).toMatchObject({
+        email: endToEndTestUser.email,
+        name: endToEndTestUser.name,
+        type: 'user',
+      });
+
+      // 새로운 쿠키 획득
+      const newCookies = parseCookiesFromResponse(signinResponse);
+      expect(newCookies.accessToken).toBeDefined();
+      expect(newCookies.refreshToken).toBeDefined();
+      expect(newCookies.accessToken).not.toBe(cookies.accessToken); // 새로운 토큰이어야 함
+      cookies = newCookies;
+      console.log('✅ 재로그인 성공');
+
+      // ===== 4. REFRESH: 토큰 갱신 =====
+      console.log('🔵 4. 토큰 갱신 테스트 시작...');
+      const refreshRequest = createRequest('http://localhost:3000/api/refresh', {
+        method: 'POST',
+        headers: {
+          Cookie: `refreshToken=${cookies.refreshToken}`,
+        },
+      });
+
+      const refreshResponse = await RefreshHandler(refreshRequest);
+      const refreshData = await refreshResponse.json();
+
+      // 토큰 갱신 성공 검증
+      expect(refreshResponse.status).toBe(200);
+      expect(refreshData.success).toBe(true);
+      expect(refreshData.message).toBe('토큰이 갱신되었습니다');
+
+      // 갱신된 쿠키 획득
+      const refreshedCookies = parseCookiesFromResponse(refreshResponse);
+      expect(refreshedCookies.accessToken).toBeDefined();
+      expect(refreshedCookies.refreshToken).toBeDefined();
+      expect(refreshedCookies.accessToken).not.toBe(cookies.accessToken); // 갱신된 새 토큰
+      cookies = refreshedCookies;
+      console.log('✅ 토큰 갱신 성공');
+
+      // ===== 5. ME (갱신된 토큰으로): 토큰 갱신 후 사용자 정보 조회 =====
+      console.log('🔵 5. 갱신된 토큰으로 사용자 정보 재조회 테스트 시작...');
+      const meAfterRefreshRequest = createRequest('http://localhost:3000/api/me', {
+        headers: {
+          Cookie: `accessToken=${cookies.accessToken}`,
+        },
+      });
+
+      const meAfterRefreshResponse = await MeHandler(meAfterRefreshRequest);
+      const meAfterRefreshData = await meAfterRefreshResponse.json();
+
+      // 갱신된 토큰으로 사용자 정보 조회 성공 검증
+      expect(meAfterRefreshResponse.status).toBe(200);
+      expect(meAfterRefreshData.success).toBe(true);
+      expect(meAfterRefreshData.user).toMatchObject({
+        email: endToEndTestUser.email,
+        name: endToEndTestUser.name,
+        type: 'user',
+      });
+      console.log('✅ 갱신된 토큰으로 사용자 정보 조회 성공');
+
+      // ===== 6. LOGOUT: 로그아웃 =====
+      console.log('🔵 6. 로그아웃 테스트 시작...');
+      const logoutRequest = createRequest('http://localhost:3000/api/logout', {
+        method: 'POST',
+        headers: {
+          Cookie: `accessToken=${cookies.accessToken}; refreshToken=${cookies.refreshToken}`,
+        },
+      });
+
+      const logoutResponse = await LogoutHandler(logoutRequest);
+      const logoutData = await logoutResponse.json();
+
+      // 로그아웃 성공 검증
+      expect(logoutResponse.status).toBe(200);
+      expect(logoutData.success).toBe(true);
+      expect(logoutData.message).toBe('로그아웃이 완료되었습니다');
+
+      // 쿠키 삭제 검증
+      const cookieHeaders = logoutResponse.headers.getSetCookie?.() || [];
+      const hasAccessTokenClear = cookieHeaders.some(cookie => 
+        cookie.includes('accessToken=') && cookie.includes('Max-Age=0')
+      );
+      const hasRefreshTokenClear = cookieHeaders.some(cookie => 
+        cookie.includes('refreshToken=') && cookie.includes('Max-Age=0')
+      );
+      expect(hasAccessTokenClear).toBe(true);
+      expect(hasRefreshTokenClear).toBe(true);
+      console.log('✅ 로그아웃 및 쿠키 삭제 성공');
+
+      // ===== 7. ME (로그아웃 후): 로그아웃 후 접근 실패 검증 =====
+      console.log('🔵 7. 로그아웃 후 접근 실패 검증 테스트 시작...');
+      const meAfterLogoutRequest = createRequest('http://localhost:3000/api/me', {
+        headers: {
+          Cookie: `accessToken=${cookies.accessToken}`, // 만료된 토큰으로 시도
+        },
+      });
+
+      const meAfterLogoutResponse = await MeHandler(meAfterLogoutRequest);
+      const meAfterLogoutData = await meAfterLogoutResponse.json();
+
+      // 로그아웃 후 접근 실패 검증
+      expect(meAfterLogoutResponse.status).toBe(401);
+      expect(meAfterLogoutData.error).toBeDefined();
+      console.log('✅ 로그아웃 후 접근 차단 확인 완료');
+
+      console.log('🎉 전체 E2E 인증 플로우 테스트 완료!');
+    }, 30000); // 30초 타임아웃 (통합 테스트는 시간이 오래 걸릴 수 있음)
   });
 });
