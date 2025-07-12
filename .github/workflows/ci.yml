@@ -38,14 +38,23 @@ jobs:
       - name: Lint
         run: yarn lint
 
-      - name: Format check
-        run: yarn format
+      - name: Test with coverage
+        run: yarn test --coverage
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET_TEST }}
+          BCRYPT_ROUNDS: ${{ secrets.BCRYPT_ROUNDS }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NODE_ENV: test
 
       - name: Inject .env
         run: |
           cat <<EOF > .env
           SUPABASE_URL=${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          JWT_SECRET=${{ secrets.JWT_SECRET_BUILD }}
+          BCRYPT_ROUNDS=${{ secrets.BCRYPT_ROUNDS }}
+          NODE_ENV=production
           EOF
 
       - name: Build
