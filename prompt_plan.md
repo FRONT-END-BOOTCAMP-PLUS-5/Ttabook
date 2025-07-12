@@ -59,16 +59,20 @@ Extend existing User repository with auth-specific methods:
 Follow existing repository patterns and dependency injection.
 ```
 
-```text
-### prompt-16-implement-auth-usecases
-Implement auth use cases with proper dependency injection:
-- SigninUsecase: Handle authentication flow with password verification
-- RefreshTokenUsecase: Token refresh logic with validation
-- GetCurrentUserUsecase: Extract user info from JWT token
-- LogoutUsecase: Handle logout business logic
-Each use case should have comprehensive unit tests.
-Follow existing use case patterns in the codebase.
-```
+## ✅ 완료된 유스케이스 구현 (Prompt 16)
+
+| Prompt | 작업 내용 | 상태 |
+|--------|-----------|------|
+| **16** | 인증 유스케이스 포괄적 단위 테스트 (의존성 주입 검증) | ✅ 완료 (3b95eb7) |
+
+**구현된 유스케이스 테스트:**
+- SigninUsecase: 171개 테스트 중 성공/실패/보안 케이스 검증
+- RefreshTokenUsecase: 토큰 갱신, 하위 호환성, role→type 변환
+- GetCurrentUserUsecase: 사용자 정보 조회, 데이터 무결성
+- LogoutUsecase: JWT stateless 특성 검증
+
+**추가 개선사항:**
+- RefreshTokenUsecase 하위 호환성: originalId 미존재 시 id 사용
 
 ```text
 ### prompt-17-refactor-api-routes
