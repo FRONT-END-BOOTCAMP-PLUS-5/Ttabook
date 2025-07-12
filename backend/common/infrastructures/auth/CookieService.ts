@@ -23,7 +23,7 @@ export class CookieService implements ICookieService {
     const cookiePairs = cookieHeader.split(';');
     
     for (const pair of cookiePairs) {
-      const [cookieName, cookieValue] = pair.trim().split('=');
+      const [cookieName, cookieValue] = pair.trim().split('=').map(part => part.trim());
       if (cookieName === tokenName) {
         return cookieValue || null;
       }
