@@ -10,6 +10,7 @@ export interface IAuthService {
   verifyRefreshToken(token: string): Promise<UserJWTPayload>;
   
   // 패스워드 관련
+  hashPassword(plainPassword: string): Promise<string>;
   verifyPassword(plainPassword: string, hashedPassword: string): Promise<boolean>;
 }
 

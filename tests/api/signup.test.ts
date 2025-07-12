@@ -29,11 +29,32 @@ jest.unstable_mockModule('../../lib/jwt', () => ({
   UserForJWT: {},
 }));
 
-// 패스워드 유틸리티 모킹
-const mockHashPassword = jest.fn();
+// Clean Architecture 모킹
+const mockSignupUsecase = {
+  execute: jest.fn(),
+};
 
-jest.unstable_mockModule('../../lib/password', () => ({
-  hashPassword: mockHashPassword,
+const mockUserRepository = {};
+const mockAuthService = {};
+const mockCookieService = {
+  setAuthCookies: jest.fn(),
+};
+
+jest.unstable_mockModule('../../backend/auth/signup/usecases', () => ({
+  SignupUsecase: jest.fn().mockImplementation(() => mockSignupUsecase),
+}));
+
+jest.unstable_mockModule('../../backend/auth/signup/dtos', () => ({
+  SignupRequestDto: jest.fn().mockImplementation((email, password, name) => ({ email, password, name })),
+}));
+
+jest.unstable_mockModule('../../backend/common/infrastructures/repositories/SbUserRepository', () => ({
+  SupabaseUserRepository: jest.fn().mockImplementation(() => mockUserRepository),
+}));
+
+jest.unstable_mockModule('../../backend/common/infrastructures/auth', () => ({
+  AuthService: jest.fn().mockImplementation(() => mockAuthService),
+  CookieService: jest.fn().mockImplementation(() => mockCookieService),
 }));
 
 describe('/api/signup API 라우트', () => {
@@ -45,18 +66,6 @@ describe('/api/signup API 라우트', () => {
     process.env.BCRYPT_ROUNDS = '12';
     process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
-
-    // Mock 체인 설정
-    mockSupabaseClient.from.mockReturnValue({
-      insert: mockInsert,
-      select: mockSelect,
-    });
-    mockInsert.mockReturnValue({
-      select: mockSelect,
-    });
-    mockSelect.mockReturnValue({
-      single: mockSingle,
-    });
 
     // 모든 mock 초기화
     jest.clearAllMocks();
@@ -75,24 +84,29 @@ describe('/api/signup API 라우트', () => {
 
     it('유효한 데이터로 회원가입이 성공해야 한다', async () => {
       // Mock 설정
-      const hashedPassword = 'hashed_password_123';
       const newUser = {
         id: 'user_123',
         email: validSignupData.email,
         name: validSignupData.name,
         type: 'user',
-        created_at: '2024-01-01T00:00:00.000Z',
       };
       const accessToken = 'access_token_123';
       const refreshToken = 'refresh_token_123';
+      
+      const expectedResult = {
+        response: {
+          success: true,
+          message: '회원가입이 완료되었습니다',
+          user: newUser,
+        },
+        tokens: { accessToken, refreshToken },
+      };
 
-      mockHashPassword.mockResolvedValue(hashedPassword);
-      mockSingle.mockResolvedValue({
-        data: newUser,
-        error: null,
+      mockSignupUsecase.execute.mockResolvedValue(expectedResult);
+      mockCookieService.setAuthCookies.mockReturnValue({
+        accessToken: 'access-cookie',
+        refreshToken: 'refresh-cookie',
       });
-      mockSignAccessToken.mockResolvedValue(accessToken);
-      mockSignRefreshToken.mockResolvedValue(refreshToken);
 
       const { POST } = await import('../../app/api/signup/(adaptor)/route');
 
@@ -119,36 +133,20 @@ describe('/api/signup API 라우트', () => {
         },
       });
 
-      // 패스워드 해싱 검증
-      expect(mockHashPassword).toHaveBeenCalledWith(validSignupData.password);
-
-      // Supabase 사용자 삽입 검증
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('users');
-      expect(mockInsert).toHaveBeenCalledWith({
+      // SignupUsecase가 올바른 데이터로 호출되었는지 검증
+      expect(mockSignupUsecase.execute).toHaveBeenCalledWith({
         email: validSignupData.email,
-        password: hashedPassword,
+        password: validSignupData.password,
         name: validSignupData.name,
-        type: 'user',
       });
 
-      // JWT 토큰 생성 검증
-      expect(mockSignAccessToken).toHaveBeenCalledWith({
-        id: newUser.id,
-        email: newUser.email,
-        type: newUser.type,
-      });
-      expect(mockSignRefreshToken).toHaveBeenCalledWith({
-        id: newUser.id,
-        email: newUser.email,
-        type: newUser.type,
-      });
-
+      // 쿠키 서비스 호출 검증
+      expect(mockCookieService.setAuthCookies).toHaveBeenCalledWith(accessToken, refreshToken);
+      
       // 쿠키 설정 검증
       const cookies = response.headers.get('Set-Cookie');
-      expect(cookies).toContain('accessToken=' + accessToken);
-      expect(cookies).toContain('refreshToken=' + refreshToken);
-      expect(cookies).toContain('HttpOnly');
-      expect(cookies).toContain('SameSite=strict');
+      expect(cookies).toContain('access-cookie');
+      expect(cookies).toContain('refresh-cookie');
     });
 
     it('이메일이 누락되면 400을 반환해야 한다', async () => {
@@ -293,11 +291,8 @@ describe('/api/signup API 라우트', () => {
     });
 
     it('이미 존재하는 이메일이면 409를 반환해야 한다', async () => {
-      // Supabase에서 이메일 중복 에러 시뮬레이션
-      mockSingle.mockResolvedValue({
-        data: null,
-        error: { code: '23505', message: 'duplicate key value violates unique constraint' },
-      });
+      // SignupUsecase에서 이메일 중복 에러 시뮬레이션
+      mockSignupUsecase.execute.mockRejectedValue(new Error('이미 사용 중인 이메일입니다'));
 
       const { POST } = await import('../../app/api/signup/(adaptor)/route');
 
@@ -318,12 +313,9 @@ describe('/api/signup API 라우트', () => {
       });
     });
 
-    it('Supabase 에러가 발생하면 500을 반환해야 한다', async () => {
-      // Supabase에서 데이터베이스 에러 시뮬레이션
-      mockSingle.mockResolvedValue({
-        data: null,
-        error: { code: 'PGRST301', message: 'Database connection failed' },
-      });
+    it('일반적인 서버 에러가 발생하면 500을 반환해야 한다', async () => {
+      // 일반적인 서버 에러 시뮬레이션
+      mockSignupUsecase.execute.mockRejectedValue(new Error('데이터베이스 연결 실패'));
 
       const { POST } = await import('../../app/api/signup/(adaptor)/route');
 

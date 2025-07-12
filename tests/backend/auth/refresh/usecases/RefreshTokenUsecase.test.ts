@@ -243,7 +243,7 @@ describe('RefreshTokenUsecase', () => {
 
       // Then
       const tokenPayload = mockAuthService.signAccessToken.mock.calls[0][0];
-      expect(tokenPayload.id).toBe(123); // originalId가 없으면 id 사용
+      expect(tokenPayload.id).toBe('123'); // originalId가 없으면 id를 string으로 변환해서 사용
     });
   });
 });

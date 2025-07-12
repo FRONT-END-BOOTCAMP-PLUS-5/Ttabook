@@ -1,6 +1,6 @@
 import { IAuthService } from '../../domains/auth/interfaces/IAuthService';
 import { signAccessToken, signRefreshToken, verifyAccessToken, verifyRefreshToken, UserJWTPayload, UserForJWT } from '@/lib/jwt';
-import { verifyPassword } from '@/lib/password';
+import { hashPassword, verifyPassword } from '@/lib/password';
 
 export class AuthService implements IAuthService {
   async signAccessToken(user: UserForJWT): Promise<string> {
@@ -17,6 +17,10 @@ export class AuthService implements IAuthService {
 
   async verifyRefreshToken(token: string): Promise<UserJWTPayload> {
     return await verifyRefreshToken(token);
+  }
+
+  async hashPassword(plainPassword: string): Promise<string> {
+    return await hashPassword(plainPassword);
   }
 
   async verifyPassword(plainPassword: string, hashedPassword: string): Promise<boolean> {

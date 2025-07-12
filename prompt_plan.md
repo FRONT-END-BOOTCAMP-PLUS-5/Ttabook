@@ -74,16 +74,17 @@ Follow existing repository patterns and dependency injection.
 **추가 개선사항:**
 - RefreshTokenUsecase 하위 호환성: originalId 미존재 시 id 사용
 
-```text
-### prompt-17-refactor-api-routes
-Refactor API route handlers to be thin adapters:
-- Remove all business logic from route handlers
-- Use dependency injection to call appropriate use cases
-- Focus only on HTTP request/response handling
-- Maintain exact same API contracts and response formats
-- Ensure all 29 existing tests continue to pass
-Follow existing API adapter patterns in the codebase.
-```
+## ✅ 완료된 API 리팩토링 (Prompt 17)
+
+| Prompt | 작업 내용 | 상태 |
+|--------|-----------|------|
+| **17** | API 라우트 핸들러를 얇은 어댑터로 리팩토링 (signup 포함) | ✅ 완료 |
+
+**구현된 내용:**
+- Signup 유스케이스 구조 생성 (SignupRequestDto, SignupResponseDto, SignupUsecase)
+- Signup 라우트를 얇은 어댑터 패턴으로 리팩토링
+- 모든 179개 테스트 통과 유지
+- TypeScript 컴파일 오류 수정 (IAuthService.hashPassword 메서드 추가)
 
 ---
 

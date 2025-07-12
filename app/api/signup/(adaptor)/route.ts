@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@supabase/supabase-js';
-import { hashPassword } from '@/lib/password';
-import { signAccessToken, signRefreshToken } from '@/lib/jwt';
+
+// Clean Architecture imports
+import { SignupUsecase } from '@/backend/auth/signup/usecases';
+import { SignupRequestDto } from '@/backend/auth/signup/dtos';
+import { SupabaseUserRepository } from '@/backend/common/infrastructures/repositories/SbUserRepository';
+import { AuthService, CookieService } from '@/backend/common/infrastructures/auth';
 
 // 회원가입 요청 데이터 검증 스키마
 const signupSchema = z.object({
@@ -25,7 +29,7 @@ function getSupabaseClient() {
 
 export async function POST(request: NextRequest) {
   try {
-    // 요청 body 파싱
+    // 1. 요청 body 파싱
     let body;
     try {
       body = await request.json();
@@ -36,7 +40,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 입력 데이터 검증
+    // 2. 입력 데이터 검증
     const validationResult = signupSchema.safeParse(body);
     if (!validationResult.success) {
       const firstIssue = validationResult.error.issues[0];
@@ -63,94 +67,44 @@ export async function POST(request: NextRequest) {
 
     const { email, password, name } = validationResult.data;
 
-    // 패스워드 해싱
-    const hashedPassword = await hashPassword(password);
-
-    // Supabase에 새 사용자 삽입
+    // 3. 의존성 주입 및 Use Case 실행
     const supabase = getSupabaseClient();
-    const { data: newUser, error } = await supabase
-      .from('users')
-      .insert({
-        email,
-        password: hashedPassword,
-        name,
-        type: 'user', // 'role'이 아닌 'type' 필드 사용
-      })
-      .select('id, email, name, type')
-      .single();
+    const userRepository = new SupabaseUserRepository(supabase);
+    const authService = new AuthService();
+    const cookieService = new CookieService();
+    const signupUsecase = new SignupUsecase(userRepository, authService);
 
-    // Supabase 에러 처리
-    if (error) {
-      console.error('Supabase error:', error);
-      
-      // 이메일 중복 에러 (unique constraint violation)
-      if (error.code === '23505') {
-        return NextResponse.json(
-          { error: '이미 사용 중인 이메일입니다' },
-          { status: 409 }
-        );
-      }
+    const signupRequest = new SignupRequestDto(email, password, name);
+    const result = await signupUsecase.execute(signupRequest);
 
-      // 기타 에러
-      return NextResponse.json(
-        { error: '서버 오류가 발생했습니다' },
-        { status: 500 }
-      );
-    }
-
-    if (!newUser) {
-      return NextResponse.json(
-        { error: '서버 오류가 발생했습니다' },
-        { status: 500 }
-      );
-    }
-
-    // JWT 토큰 생성
-    const userForJWT = {
-      id: newUser.id,
-      email: newUser.email,
-      type: newUser.type, // 'role'이 아닌 'type' 필드 사용
-    };
-
-    const accessToken = await signAccessToken(userForJWT);
-    const refreshToken = await signRefreshToken(userForJWT);
-
-    // 응답 생성
+    // 4. HTTP 응답 생성
     const response = NextResponse.json(
       {
-        success: true,
-        message: '회원가입이 완료되었습니다',
-        user: {
-          id: newUser.id,
-          email: newUser.email,
-          name: newUser.name,
-          type: newUser.type, // 'role'이 아닌 'type' 필드 사용
-        },
+        success: result.response.success,
+        message: result.response.message,
+        user: result.response.user,
       },
       { status: 201 }
     );
 
-    // 쿠키 설정 (자동 로그인)
-    response.cookies.set('accessToken', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 15 * 60, // 15분
-      path: '/',
-    });
-
-    response.cookies.set('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 14 * 24 * 60 * 60, // 14일
-      path: '/',
-    });
+    // 5. 쿠키 설정
+    const cookies = cookieService.setAuthCookies(result.tokens.accessToken, result.tokens.refreshToken);
+    response.headers.set('Set-Cookie', [cookies.accessToken, cookies.refreshToken].join(', '));
 
     return response;
 
   } catch (error) {
-    console.error('Unexpected error:', error);
+    console.error('Signup error:', error);
+    
+    // 비즈니스 로직 에러 (이메일 중복 등)는 409로 처리
+    if (error instanceof Error && error.message.includes('이미 사용 중인 이메일입니다')) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 409 }
+      );
+    }
+
+    // 기타 서버 에러
     return NextResponse.json(
       { error: '서버 오류가 발생했습니다' },
       { status: 500 }
