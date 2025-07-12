@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/backend/common/infrastructures/supabase/server';
 
 // Clean Architecture imports
 import { SigninUsecase } from '@/backend/auth/signin/usecases';
@@ -14,17 +14,6 @@ const signinSchema = z.object({
   password: z.string().min(1, '패스워드를 입력해주세요'),
 });
 
-// Supabase 클라이언트 생성
-function getSupabaseClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!supabaseUrl || !supabaseServiceKey) {
-    throw new Error('Supabase 설정이 필요합니다');
-  }
-
-  return createClient(supabaseUrl, supabaseServiceKey);
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -65,7 +54,7 @@ export async function POST(request: NextRequest) {
     const { email, password } = validationResult.data;
 
     // 3. 의존성 주입 및 Use Case 실행
-    const supabase = getSupabaseClient();
+    const supabase = await createClient();
     const userRepository = new SupabaseUserRepository(supabase);
     const authService = new AuthService();
     const cookieService = new CookieService();

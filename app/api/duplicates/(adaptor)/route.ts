@@ -1,23 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/backend/common/infrastructures/supabase/server';
 
 // 이메일 검증 스키마
 const emailSchema = z.object({
   email: z.string().email('유효한 이메일 주소를 입력해주세요'),
 });
 
-// Supabase 클라이언트 생성
-function getSupabaseClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!supabaseUrl || !supabaseServiceKey) {
-    throw new Error('Supabase 설정이 필요합니다');
-  }
-
-  return createClient(supabaseUrl, supabaseServiceKey);
-}
 
 export async function GET(request: NextRequest) {
   try {
@@ -46,7 +35,7 @@ export async function GET(request: NextRequest) {
     const validatedEmail = validationResult.data.email;
 
     // Supabase에서 이메일 중복 체크
-    const supabase = getSupabaseClient();
+    const supabase = await createClient();
     const { data, error } = await supabase
       .from('users')
       .select('id')

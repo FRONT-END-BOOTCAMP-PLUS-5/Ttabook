@@ -1,22 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/backend/common/infrastructures/supabase/server'; 
 
 // Clean Architecture imports
 import { GetCurrentUserUsecase } from '@/backend/auth/me/usecases';
 import { SupabaseUserRepository } from '@/backend/common/infrastructures/repositories/SbUserRepository';
 import { AuthService, CookieService } from '@/backend/common/infrastructures/auth';
 
-// Supabase 클라이언트 생성
-function getSupabaseClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!supabaseUrl || !supabaseServiceKey) {
-    throw new Error('Supabase 설정이 필요합니다');
-  }
-
-  return createClient(supabaseUrl, supabaseServiceKey);
-}
 
 export async function GET(request: NextRequest) {
   try {
@@ -39,7 +28,7 @@ export async function GET(request: NextRequest) {
     }
 
     // 2. 의존성 주입 및 Use Case 실행
-    const supabase = getSupabaseClient();
+    const supabase = await createClient();
     const userRepository = new SupabaseUserRepository(supabase);
     const authService = new AuthService();
     const getCurrentUserUsecase = new GetCurrentUserUsecase(authService, userRepository);

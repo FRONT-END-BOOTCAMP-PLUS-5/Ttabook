@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import util from "node:util";
 
 // 테스트 환경 변수 설정
-process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://mfcpraoswvozanstcguf.supabase.co';
+process.env.SUPABASE_URL = 'https://mfcpraoswvozanstcguf.supabase.co';
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
 process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-purposes-only';
 process.env.BCRYPT_ROUNDS = '10';
