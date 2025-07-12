@@ -4,32 +4,34 @@
 
 ## 1. 포맷팅 (Prettier)
 
--   **규칙:**
-    -   `semi`: `true` (세미콜론 사용)
-    -   `singleQuote`: `true` (작은따옴표 사용)
-    -   `tabWidth`: `2` (공백 2칸 들여쓰기)
-    -   `trailingComma`: `'es5'` (ES5 호환 후행 쉼표)
--   **실행 명령어:**
-    ```bash
-    yarn format
-    ```
+**규칙:**
+- `semi`: `true` (세미콜론 사용)
+- `singleQuote`: `true` (작은따옴표 사용)
+- `tabWidth`: `2` (공백 2칸 들여쓰기)
+- `trailingComma`: `'es5'` (ES5 호환 후행 쉼표)
+
+**실행 명령어:**
+```bash
+yarn format
+```
 
 ## 2. 린팅 (ESLint)
 
--   **규칙:**
-    -   `next/core-web-vitals`와 `next/typescript` 설정 기반
-    -   `eslint-config-prettier`를 통해 Prettier와 충돌하는 규칙 비활성화
--   **실행 명령어:**
-    ```bash
-    yarn lint
-    ```
+**규칙:**
+- `next/core-web-vitals`와 `next/typescript` 설정 기반
+- `eslint-config-prettier`를 통해 Prettier와 충돌하는 규칙 비활성화
+
+**실행 명령어:**
+```bash
+yarn lint
+```
 
 ## 3. 타입스크립트 (TypeScript)
 
--   **주요 설정:**
-    -   `strict`: `true` (엄격 모드)
-    -   `moduleResolution`: `'bundler'`
-    -   `paths`: `'@/*'`는 `./*` (프로젝트 루트) 경로 별칭으로 사용
+**주요 설정:**
+- `strict`: `true` (엄격 모드)
+- `moduleResolution`: `'bundler'`
+- `paths`: `'@/*'`는 `./*` (프로젝트 루트) 경로 별칭으로 사용
 
 ## 4. 명명 규칙 (Naming Convention)
 
@@ -61,7 +63,7 @@
 
 ### 5.1. 백엔드: API 라우트 (Next.js)
 
--   **파일 규칙:** 모든 API 엔드포인트는 `app/api/` 디렉터리 내에 위치하며, 파일명은 반드시 `route.ts`여야 합니다. (참고: [Next.js Route Conventions](https://nextjs.org/docs/app/api-reference/file-conventions/route))
+**파일 규칙:** 모든 API 엔드포인트는 `app/api/` 디렉터리 내에 위치하며, 파일명은 반드시 `route.ts`여야 합니다. (참고: [Next.js Route Conventions](https://nextjs.org/docs/app/api-reference/file-conventions/route))
 
 #### 5.1.1. 클린 아키텍처 기반 폴더 구조
 
@@ -131,46 +133,49 @@ backend/
 - **dto/usecase 승격**: `application/` 폴더를 제거하고 `dtos/`와 `usecases/` 폴더를 상위로 승격
 - **공통 레이어**: `backend/common/`에 도메인과 인프라 공통 요소 집중
 
--   **함수 명명:** `route.ts` 파일 내에서 export 되는 함수는 반드시 HTTP 메서드 이름(대문자)을 사용해야 합니다.
-    ```typescript
-    // app/api/user/reservations/(adaptor)/route.ts
-    import { NextResponse } from 'next/server';
+**함수 명명:** `route.ts` 파일 내에서 export 되는 함수는 반드시 HTTP 메서드 이름(대문자)을 사용해야 합니다.
+```typescript
+// app/api/user/reservations/(adaptor)/route.ts
+import { NextResponse } from 'next/server';
 
-    export async function GET(request: Request) {
-      // ... 예약 목록 조회 로직
-      return NextResponse.json({ data: ... });
-    }
+export async function GET(request: Request) {
+  // ... 예약 목록 조회 로직
+  return NextResponse.json({ data: ... });
+}
 
-    export async function POST(request: Request) {
-      // ... 예약 생성 로직
-      return NextResponse.json({ data: ... });
-    }
-    ```
+export async function POST(request: Request) {
+  // ... 예약 생성 로직
+  return NextResponse.json({ data: ... });
+}
+```
 
 ### 5.2. 프론트엔드: API 클라이언트 (axios & React Query)
 
--   **파일 위치:** 백엔드 API를 호출하는 클라이언트 함수들은 `app/services/api/` 디렉터리에 리소스별로 파일을 분리하여 관리합니다. (예: `user.ts`, `post.ts`)
--   **함수 명명:** `동사 + 리소스명` 형태로 작성합니다. (예: `getUsers`, `createUser`)
--   **함수 구조:** `axios`를 사용한 `async/await` 함수로 작성하며, `response.data`를 반환하는 데 집중합니다.
-    ```typescript
-    // app/services/api/user.ts
-    import axios from 'axios';
+**파일 위치:** 백엔드 API를 호출하는 클라이언트 함수들은 `app/services/api/` 디렉터리에 리소스별로 파일을 분리하여 관리합니다. (예: `user.ts`, `post.ts`)
 
-    export const getUsers = async () => {
-      const response = await axios.get('/api/users');
-      return response.data;
-    };
-    ```
--   **React Query 연동:** API 클라이언트 함수는 `useQuery`, `useMutation`을 사용하는 커스텀 훅 내부에서 호출합니다. 에러 핸들링 등은 이 커스텀 훅 단계에서 처리합니다.
-    ```typescript
-    // app/hooks/queries/useUsersQuery.ts
-    import { useQuery } from '@tanstack/react-query';
-    import { getUsers } from '@/app/services/api/user';
+**함수 명명:** `동사 + 리소스명` 형태로 작성합니다. (예: `getUsers`, `createUser`)
 
-    export const useUsersQuery = () => {
-      return useQuery({ queryKey: ['users'], queryFn: getUsers });
-    };
-    ```
+**함수 구조:** `axios`를 사용한 `async/await` 함수로 작성하며, `response.data`를 반환하는 데 집중합니다.
+```typescript
+// app/services/api/user.ts
+import axios from 'axios';
+
+export const getUsers = async () => {
+  const response = await axios.get('/api/users');
+  return response.data;
+};
+```
+
+**React Query 연동:** API 클라이언트 함수는 `useQuery`, `useMutation`을 사용하는 커스텀 훅 내부에서 호출합니다. 에러 핸들링 등은 이 커스텀 훅 단계에서 처리합니다.
+```typescript
+// app/hooks/queries/useUsersQuery.ts
+import { useQuery } from '@tanstack/react-query';
+import { getUsers } from '@/app/services/api/user';
+
+export const useUsersQuery = () => {
+  return useQuery({ queryKey: ['users'], queryFn: getUsers });
+};
+```
 
 ## 6. 상태 관리 (Zustand)
 
@@ -213,34 +218,39 @@ export const useUserStore = create<UserState & UserActions>((set) => ({
 
 ## 7. 테스팅 (Jest & React Testing Library)
 
--   **프레임워크:** Jest, React Testing Library
--   **실행 명령어:**
-    ```bash
-    yarn test
-    ```
+**프레임워크:** Jest, React Testing Library
+
+**실행 명령어:**
+```bash
+yarn test
+```
 
 ## 8. 패키지 관리 (Yarn Berry)
 
--   **패키지 매니저:** Yarn (v4.x)
--   **주요 명령어:**
-    -   `yarn add <package>`
-    -   `yarn add -D <package>`
-    -   `yarn install`
+**패키지 매니저:** Yarn (v4.x)
+
+**주요 명령어:**
+- `yarn add <package>`
+- `yarn add -D <package>`
+- `yarn install`
 
 ## 9. 커밋 메시지 (권장)
 
--   [Conventional Commits](https://www.conventionalcommits.org/) 형식을 따르는 것을 권장합니다.
--   **형식:** `<type>: <description>`
--   **예시:** `feat: 사용자 인증 기능 추가`, `fix: 로그인 API 버그 수정`
+[Conventional Commits](https://www.conventionalcommits.org/) 형식을 따르는 것을 권장합니다.
+
+**형식:** `<type>: <description>`
+
+**예시:** `feat: 사용자 인증 기능 추가`, `fix: 로그인 API 버그 수정`
 
 ## 10. 언어 및 문서화 (Language & Documentation)
 
 ### 10.1. 기본 작성 언어: 한국어
 
--   **원칙:** 프로젝트의 모든 주석(code comments)과 문서(README, convention docs 등)는 한국어 작성을 원칙으로 합니다.
--   **적용:** 이 규칙은 개발자가 영어로 소통하는 경우에도 동일하게 적용됩니다. Gemini는 대화 언어와 별개로, 프로젝트 산출물의 언어는 한국어로 통일해야 합니다.
+**원칙:** 프로젝트의 모든 주석(code comments)과 문서(README, convention docs 등)는 한국어 작성을 원칙으로 합니다.
 
--   **예외 사항:**
-    -   코드 내의 변수, 함수, 클래스 등의 식별자는 영어를 사용합니다.
-    -   한국어로 번역하기 어색하거나 오해의 소지가 있는 기술 용어(예: `Middleware`, `Props`, `State`)는 영문 그대로 표기할 수 있습니다.
-    -   외부 라이브러리에서 발생하는 에러 메시지나 로그는 원문을 유지합니다.
+**적용:** 이 규칙은 개발자가 영어로 소통하는 경우에도 동일하게 적용됩니다. 대화 언어와 별개로, 프로젝트 산출물의 언어는 한국어로 통일해야 합니다.
+
+**예외 사항:**
+- 코드 내의 변수, 함수, 클래스 등의 식별자는 영어를 사용합니다.
+- 한국어로 번역하기 어색하거나 오해의 소지가 있는 기술 용어(예: `Middleware`, `Props`, `State`)는 영문 그대로 표기할 수 있습니다.
+- 외부 라이브러리에서 발생하는 에러 메시지나 로그는 원문을 유지합니다.
