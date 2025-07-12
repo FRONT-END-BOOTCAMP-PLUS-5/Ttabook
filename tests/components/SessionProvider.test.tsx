@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 
@@ -305,7 +305,9 @@ describe('SessionProvider', () => {
       });
 
       // 로그인 실행
-      screen.getByTestId('login-button').click();
+      act(() => {
+        screen.getByTestId('login-button').click();
+      });
 
       await waitFor(() => {
         expect(screen.getByTestId('authenticated')).toHaveTextContent('true');
@@ -370,7 +372,9 @@ describe('SessionProvider', () => {
       });
 
       // 로그아웃 실행
-      screen.getByTestId('logout-button').click();
+      act(() => {
+        screen.getByTestId('logout-button').click();
+      });
 
       await waitFor(() => {
         expect(screen.getByTestId('authenticated')).toHaveTextContent('false');

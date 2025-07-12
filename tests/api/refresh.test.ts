@@ -129,6 +129,11 @@ describe('/api/refresh API 라우트', () => {
     });
 
     it('유효하지 않은 리프레시 토큰이면 401을 반환해야 한다', async () => {
+      // console.error 모킹 및 캡처
+      const originalConsoleError = console.error;
+      const mockConsoleError = jest.fn();
+      console.error = mockConsoleError;
+
       // JWT 검증 실패 시뮬레이션
       mockVerifyRefreshToken.mockRejectedValue(new Error('Invalid refresh token'));
 
@@ -144,6 +149,17 @@ describe('/api/refresh API 라우트', () => {
       const response = await POST(request);
       const data = await response.json();
 
+      // console.error 복원
+      console.error = originalConsoleError;
+
+      // 에러 로그 검증 - 유효하지 않은 토큰 에러가 로깅되었는지 확인
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        'RefreshToken error:',
+        expect.objectContaining({
+          message: '유효하지 않은 리프레시 토큰입니다'
+        })
+      );
+
       expect(response.status).toBe(401);
       expect(data).toEqual({
         error: '유효하지 않은 리프레시 토큰입니다',
@@ -153,6 +169,11 @@ describe('/api/refresh API 라우트', () => {
     });
 
     it('만료된 리프레시 토큰이면 401을 반환해야 한다', async () => {
+      // console.error 모킹 및 캡처
+      const originalConsoleError = console.error;
+      const mockConsoleError = jest.fn();
+      console.error = mockConsoleError;
+
       // JWT 만료 에러 시뮬레이션
       const expiredError = new Error('Refresh token expired');
       expiredError.name = 'JWTExpired';
@@ -169,6 +190,17 @@ describe('/api/refresh API 라우트', () => {
 
       const response = await POST(request);
       const data = await response.json();
+
+      // console.error 복원
+      console.error = originalConsoleError;
+
+      // 에러 로그 검증 - 만료된 토큰 에러가 로깅되었는지 확인
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        'RefreshToken error:',
+        expect.objectContaining({
+          message: '리프레시 토큰이 만료되었습니다. 다시 로그인해주세요'
+        })
+      );
 
       expect(response.status).toBe(401);
       expect(data).toEqual({
@@ -230,6 +262,11 @@ describe('/api/refresh API 라우트', () => {
     });
 
     it('토큰 생성 중 에러가 발생하면 500을 반환해야 한다', async () => {
+      // console.error 모킹 및 캡처
+      const originalConsoleError = console.error;
+      const mockConsoleError = jest.fn();
+      console.error = mockConsoleError;
+
       const userPayload = {
         id: 'user_123',
         email: 'user@example.com',
@@ -250,6 +287,17 @@ describe('/api/refresh API 라우트', () => {
 
       const response = await POST(request);
       const data = await response.json();
+
+      // console.error 복원
+      console.error = originalConsoleError;
+
+      // 에러 로그 검증 - 토큰 생성 에러가 로깅되었는지 확인
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        'RefreshToken error:',
+        expect.objectContaining({
+          message: 'Token generation failed'
+        })
+      );
 
       expect(response.status).toBe(500);
       expect(data).toEqual({

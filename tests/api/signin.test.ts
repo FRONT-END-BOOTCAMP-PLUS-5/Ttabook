@@ -216,6 +216,11 @@ describe('/api/signin API 라우트', () => {
     });
 
     it('존재하지 않는 이메일이면 401을 반환해야 한다', async () => {
+      // console.error 모킹 및 캡처
+      const originalConsoleError = console.error;
+      const mockConsoleError = jest.fn();
+      console.error = mockConsoleError;
+
       // 사용자가 존재하지 않음을 시뮬레이션
       mockSingle.mockResolvedValue({
         data: null,
@@ -235,6 +240,17 @@ describe('/api/signin API 라우트', () => {
       const response = await POST(request);
       const data = await response.json();
 
+      // console.error 복원
+      console.error = originalConsoleError;
+
+      // 에러 로그 검증 - 이메일 불일치 에러가 로깅되었는지 확인
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        'Signin error:',
+        expect.objectContaining({
+          message: '이메일 또는 패스워드가 올바르지 않습니다'
+        })
+      );
+
       expect(response.status).toBe(401);
       expect(data).toEqual({
         error: '이메일 또는 패스워드가 올바르지 않습니다',
@@ -242,6 +258,11 @@ describe('/api/signin API 라우트', () => {
     });
 
     it('잘못된 패스워드면 401을 반환해야 한다', async () => {
+      // console.error 모킹 및 캡처
+      const originalConsoleError = console.error;
+      const mockConsoleError = jest.fn();
+      console.error = mockConsoleError;
+
       const existingUser = {
         id: 'user_123',
         email: validSigninData.email,
@@ -269,6 +290,17 @@ describe('/api/signin API 라우트', () => {
       const response = await POST(request);
       const data = await response.json();
 
+      // console.error 복원
+      console.error = originalConsoleError;
+
+      // 에러 로그 검증 - 패스워드 불일치 에러가 로깅되었는지 확인
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        'Signin error:',
+        expect.objectContaining({
+          message: '이메일 또는 패스워드가 올바르지 않습니다'
+        })
+      );
+
       expect(response.status).toBe(401);
       expect(data).toEqual({
         error: '이메일 또는 패스워드가 올바르지 않습니다',
@@ -276,6 +308,11 @@ describe('/api/signin API 라우트', () => {
     });
 
     it('Supabase 에러가 발생하면 500을 반환해야 한다', async () => {
+      // console.error 모킹 및 캡처
+      const originalConsoleError = console.error;
+      const mockConsoleError = jest.fn();
+      console.error = mockConsoleError;
+
       // Supabase에서 데이터베이스 에러 시뮬레이션
       mockSingle.mockResolvedValue({
         data: null,
@@ -294,6 +331,17 @@ describe('/api/signin API 라우트', () => {
 
       const response = await POST(request);
       const data = await response.json();
+
+      // console.error 복원
+      console.error = originalConsoleError;
+
+      // 에러 로그 검증 - 데이터베이스 에러가 로깅되었는지 확인
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        'Signin error:',
+        expect.objectContaining({
+          message: expect.stringContaining('사용자 조회 중 오류 발생')
+        })
+      );
 
       expect(response.status).toBe(500);
       expect(data).toEqual({
