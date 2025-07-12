@@ -51,7 +51,7 @@ describe('/api/duplicates API 라우트', () => {
         error: { code: 'PGRST116' }, // 사용자 없음
       });
 
-      const { GET } = await import('../../app/api/duplicates/route');
+      const { GET } = await import('../../app/api/duplicates/(adaptor)/route');
       
       const url = new URL('http://localhost:3000/api/duplicates?email=new@example.com');
       const request = new NextRequest(url);
@@ -78,7 +78,7 @@ describe('/api/duplicates API 라우트', () => {
         error: null,
       });
 
-      const { GET } = await import('../../app/api/duplicates/route');
+      const { GET } = await import('../../app/api/duplicates/(adaptor)/route');
       
       const url = new URL('http://localhost:3000/api/duplicates?email=existing@example.com');
       const request = new NextRequest(url);
@@ -94,7 +94,7 @@ describe('/api/duplicates API 라우트', () => {
     });
 
     it('이메일 쿼리 파라미터가 누락되면 400을 반환해야 한다', async () => {
-      const { GET } = await import('../../app/api/duplicates/route');
+      const { GET } = await import('../../app/api/duplicates/(adaptor)/route');
       
       const url = new URL('http://localhost:3000/api/duplicates');
       const request = new NextRequest(url);
@@ -109,7 +109,7 @@ describe('/api/duplicates API 라우트', () => {
     });
 
     it('잘못된 이메일 형식이면 400을 반환해야 한다', async () => {
-      const { GET } = await import('../../app/api/duplicates/route');
+      const { GET } = await import('../../app/api/duplicates/(adaptor)/route');
       
       const url = new URL('http://localhost:3000/api/duplicates?email=invalid-email');
       const request = new NextRequest(url);
@@ -122,7 +122,7 @@ describe('/api/duplicates API 라우트', () => {
     });
 
     it('빈 이메일이면 400을 반환해야 한다', async () => {
-      const { GET } = await import('../../app/api/duplicates/route');
+      const { GET } = await import('../../app/api/duplicates/(adaptor)/route');
       
       const url = new URL('http://localhost:3000/api/duplicates?email=');
       const request = new NextRequest(url);
@@ -143,7 +143,7 @@ describe('/api/duplicates API 라우트', () => {
         error: { message: 'Database connection failed', code: 'PGRST301' },
       });
 
-      const { GET } = await import('../../app/api/duplicates/route');
+      const { GET } = await import('../../app/api/duplicates/(adaptor)/route');
       
       const url = new URL('http://localhost:3000/api/duplicates?email=test@example.com');
       const request = new NextRequest(url);
@@ -173,7 +173,7 @@ describe('/api/duplicates API 라우트', () => {
         'user@domain',
       ];
 
-      const { GET } = await import('../../app/api/duplicates/route');
+      const { GET } = await import('../../app/api/duplicates/(adaptor)/route');
 
       // 유효한 이메일들 테스트
       for (const email of validEmails) {

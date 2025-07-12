@@ -88,7 +88,7 @@ describe('/api/signup API 라우트', () => {
       mockSignAccessToken.mockResolvedValue(accessToken);
       mockSignRefreshToken.mockResolvedValue(refreshToken);
 
-      const { POST } = await import('../../app/api/signup/route');
+      const { POST } = await import('../../app/api/signup/(adaptor)/route');
 
       const request = new NextRequest('http://localhost:3000/api/signup', {
         method: 'POST',
@@ -146,7 +146,7 @@ describe('/api/signup API 라우트', () => {
     });
 
     it('이메일이 누락되면 400을 반환해야 한다', async () => {
-      const { POST } = await import('../../app/api/signup/route');
+      const { POST } = await import('../../app/api/signup/(adaptor)/route');
 
       const invalidData = {
         password: validSignupData.password,
@@ -169,7 +169,7 @@ describe('/api/signup API 라우트', () => {
     });
 
     it('패스워드가 누락되면 400을 반환해야 한다', async () => {
-      const { POST } = await import('../../app/api/signup/route');
+      const { POST } = await import('../../app/api/signup/(adaptor)/route');
 
       const invalidData = {
         email: validSignupData.email,
@@ -192,7 +192,7 @@ describe('/api/signup API 라우트', () => {
     });
 
     it('이름이 누락되면 400을 반환해야 한다', async () => {
-      const { POST } = await import('../../app/api/signup/route');
+      const { POST } = await import('../../app/api/signup/(adaptor)/route');
 
       const invalidData = {
         email: validSignupData.email,
@@ -215,7 +215,7 @@ describe('/api/signup API 라우트', () => {
     });
 
     it('잘못된 이메일 형식이면 400을 반환해야 한다', async () => {
-      const { POST } = await import('../../app/api/signup/route');
+      const { POST } = await import('../../app/api/signup/(adaptor)/route');
 
       const invalidData = {
         email: 'invalid-email',
@@ -239,7 +239,7 @@ describe('/api/signup API 라우트', () => {
     });
 
     it('너무 짧은 패스워드면 400을 반환해야 한다', async () => {
-      const { POST } = await import('../../app/api/signup/route');
+      const { POST } = await import('../../app/api/signup/(adaptor)/route');
 
       const invalidData = {
         email: validSignupData.email,
@@ -263,7 +263,7 @@ describe('/api/signup API 라우트', () => {
     });
 
     it('빈 이름이면 400을 반환해야 한다', async () => {
-      const { POST } = await import('../../app/api/signup/route');
+      const { POST } = await import('../../app/api/signup/(adaptor)/route');
 
       const invalidData = {
         email: validSignupData.email,
@@ -293,7 +293,7 @@ describe('/api/signup API 라우트', () => {
         error: { code: '23505', message: 'duplicate key value violates unique constraint' },
       });
 
-      const { POST } = await import('../../app/api/signup/route');
+      const { POST } = await import('../../app/api/signup/(adaptor)/route');
 
       const request = new NextRequest('http://localhost:3000/api/signup', {
         method: 'POST',
@@ -319,7 +319,7 @@ describe('/api/signup API 라우트', () => {
         error: { code: 'PGRST301', message: 'Database connection failed' },
       });
 
-      const { POST } = await import('../../app/api/signup/route');
+      const { POST } = await import('../../app/api/signup/(adaptor)/route');
 
       const request = new NextRequest('http://localhost:3000/api/signup', {
         method: 'POST',
@@ -339,7 +339,7 @@ describe('/api/signup API 라우트', () => {
     });
 
     it('잘못된 JSON이면 400을 반환해야 한다', async () => {
-      const { POST } = await import('../../app/api/signup/route');
+      const { POST } = await import('../../app/api/signup/(adaptor)/route');
 
       const request = new NextRequest('http://localhost:3000/api/signup', {
         method: 'POST',

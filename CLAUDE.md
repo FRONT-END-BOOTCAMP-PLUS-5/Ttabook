@@ -107,5 +107,6 @@
 - 현재 작업과 관련 없지만 수정해야 할 부분을 발견했을 때, 즉시 수정하는 대신 저널에 기록하세요.
 
 ## 기술 지식
-- @.shared/docs/yarn_context.md
-- @.shared/docs/coding_convention.md
+- @docs/yarn_context.md
+- @docs/coding_convention.md
+- @docs/clean-code-philosophy.md

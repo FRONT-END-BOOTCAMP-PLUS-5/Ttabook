@@ -10,8 +10,8 @@ import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 
 // API 라우트 핸들러들을 직접 import
-import { POST as SignupHandler } from '../../app/api/signup/route';
-import { GET as DuplicateHandler } from '../../app/api/duplicates/route';
+import { POST as SignupHandler } from '../../app/api/signup/(adaptor)/route';
+import { GET as DuplicateHandler } from '../../app/api/duplicates/(adaptor)/route';
 
 // JWT 검증 함수 import
 import { verifyAccessToken, verifyRefreshToken } from '../../lib/jwt';
