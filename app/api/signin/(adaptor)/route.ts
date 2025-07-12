@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@supabase/supabase-js';
-import { verifyPassword } from '@/lib/password';
-import { signAccessToken, signRefreshToken } from '@/lib/jwt';
+
+// Clean Architecture imports
+import { SigninUsecase } from '@/backend/auth/signin/usecases';
+import { SigninRequestDto } from '@/backend/auth/signin/dtos';
+import { SupabaseUserRepository } from '@/backend/common/infrastructures/repositories/SbUserRepository';
+import { AuthService, CookieService } from '@/backend/common/infrastructures/auth';
 
 // 로그인 요청 데이터 검증 스키마
 const signinSchema = z.object({
@@ -24,7 +28,7 @@ function getSupabaseClient() {
 
 export async function POST(request: NextRequest) {
   try {
-    // 요청 body 파싱
+    // 1. 요청 body 파싱
     let body;
     try {
       body = await request.json();
@@ -35,7 +39,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 입력 데이터 검증
+    // 2. 입력 데이터 검증
     const validationResult = signinSchema.safeParse(body);
     if (!validationResult.success) {
       const firstIssue = validationResult.error.issues[0];
@@ -60,95 +64,46 @@ export async function POST(request: NextRequest) {
 
     const { email, password } = validationResult.data;
 
-    // Supabase에서 사용자 조회
+    // 3. 의존성 주입 및 Use Case 실행
     const supabase = getSupabaseClient();
-    const { data: user, error } = await supabase
-      .from('users')
-      .select('id, email, password, name, role')
-      .eq('email', email)
-      .single();
+    const userRepository = new SupabaseUserRepository(supabase);
+    const authService = new AuthService();
+    const cookieService = new CookieService();
+    const signinUsecase = new SigninUsecase(userRepository, authService);
 
-    // Supabase 에러 처리
-    if (error) {
-      console.error('Supabase error:', error);
-      
-      // 사용자가 존재하지 않는 경우 (보안상 일반적인 인증 실패 메시지 사용)
-      if (error.code === 'PGRST116') {
-        return NextResponse.json(
-          { error: '이메일 또는 패스워드가 올바르지 않습니다' },
-          { status: 401 }
-        );
-      }
+    const signinRequest = new SigninRequestDto(email, password);
+    const result = await signinUsecase.execute(signinRequest);
 
-      // 기타 데이터베이스 에러
-      return NextResponse.json(
-        { error: '서버 오류가 발생했습니다' },
-        { status: 500 }
-      );
-    }
-
-    if (!user) {
-      return NextResponse.json(
-        { error: '이메일 또는 패스워드가 올바르지 않습니다' },
-        { status: 401 }
-      );
-    }
-
-    // 패스워드 검증
-    const isPasswordValid = await verifyPassword(password, user.password);
-    if (!isPasswordValid) {
-      return NextResponse.json(
-        { error: '이메일 또는 패스워드가 올바르지 않습니다' },
-        { status: 401 }
-      );
-    }
-
-    // JWT 토큰 생성
-    const userPayload = {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-    };
-
-    const accessToken = await signAccessToken(userPayload);
-    const refreshToken = await signRefreshToken(userPayload);
-
-    // 응답 생성
+    // 4. HTTP 응답 생성
     const response = NextResponse.json(
       {
-        success: true,
-        message: '로그인이 완료되었습니다',
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-        },
+        success: result.response.success,
+        message: result.response.message,
+        user: result.response.user,
       },
       { status: 200 }
     );
 
-    // 쿠키 설정
-    response.cookies.set('accessToken', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 15 * 60, // 15분
-      path: '/',
-    });
-
-    response.cookies.set('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 14 * 24 * 60 * 60, // 14일
-      path: '/',
-    });
+    // 5. 쿠키 설정
+    const cookies = cookieService.setAuthCookies(result.tokens.accessToken, result.tokens.refreshToken);
+    response.headers.set('Set-Cookie', [cookies.accessToken, cookies.refreshToken].join(', '));
 
     return response;
 
   } catch (error) {
-    console.error('Unexpected error:', error);
+    console.error('Signin error:', error);
+    
+    // 비즈니스 로직 에러 (인증 실패 등)는 401로 처리
+    if (error instanceof Error && 
+        (error.message.includes('이메일 또는 패스워드가 올바르지 않습니다') ||
+         error.message.includes('인증'))) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 401 }
+      );
+    }
+
+    // 기타 서버 에러
     return NextResponse.json(
       { error: '서버 오류가 발생했습니다' },
       { status: 500 }

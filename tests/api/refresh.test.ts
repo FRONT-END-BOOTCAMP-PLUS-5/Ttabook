@@ -2,14 +2,18 @@ import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals
 import { NextRequest } from 'next/server';
 
 // JWT 유틸리티 모킹
-const mockVerifyRefreshToken = jest.fn();
 const mockSignAccessToken = jest.fn();
 const mockSignRefreshToken = jest.fn();
+const mockVerifyAccessToken = jest.fn();
+const mockVerifyRefreshToken = jest.fn();
 
 jest.unstable_mockModule('../../lib/jwt', () => ({
-  verifyRefreshToken: mockVerifyRefreshToken,
   signAccessToken: mockSignAccessToken,
   signRefreshToken: mockSignRefreshToken,
+  verifyAccessToken: mockVerifyAccessToken,
+  verifyRefreshToken: mockVerifyRefreshToken,
+  UserJWTPayload: {},
+  UserForJWT: {},
 }));
 
 describe('/api/refresh API 라우트', () => {
@@ -29,11 +33,14 @@ describe('/api/refresh API 라우트', () => {
 
   describe('POST /api/refresh', () => {
     it('유효한 리프레시 토큰으로 새로운 액세스 토큰을 발급해야 한다', async () => {
-      // Mock 설정
+      // Mock 설정 - JWT payload 형식
       const userPayload = {
-        id: 'user_123',
+        id: 123, // number ID in JWT
+        originalId: 'user_123', // original UUID string
         email: 'user@example.com',
         role: 'user',
+        exp: Math.floor(Date.now() / 1000) + 3600,
+        iat: Math.floor(Date.now() / 1000),
       };
       const newAccessToken = 'new_access_token_123';
       const newRefreshToken = 'new_refresh_token_123';
@@ -63,14 +70,14 @@ describe('/api/refresh API 라우트', () => {
       // JWT 토큰 검증 및 생성 확인
       expect(mockVerifyRefreshToken).toHaveBeenCalledWith('valid_refresh_token_123');
       expect(mockSignAccessToken).toHaveBeenCalledWith({
-        id: userPayload.id,
+        id: userPayload.originalId, // Use original UUID string
         email: userPayload.email,
-        role: userPayload.role,
+        type: userPayload.role, // Map role to type
       });
       expect(mockSignRefreshToken).toHaveBeenCalledWith({
-        id: userPayload.id,
+        id: userPayload.originalId, // Use original UUID string  
         email: userPayload.email,
-        role: userPayload.role,
+        type: userPayload.role, // Map role to type
       });
 
       // 새로운 쿠키 설정 확인

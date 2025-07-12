@@ -148,12 +148,8 @@ Write end-to-end Jest test:
 Assert cookies & status codes per spec.
 ```
 
----
-
-## 3. Additional Cleanup Tasks
-
 ```text
-### prompt-11-folder-structure-fix
+### prompt-11-folder-structure-fix ✅ COMPLETED
 Fix API folder structure to follow coding conventions:
 - Move `app/api/duplicates/route.ts` to `app/api/duplicates/(adaptor)/route.ts`
 - Move `app/api/signup/route.ts` to `app/api/signup/(adaptor)/route.ts`
@@ -162,7 +158,146 @@ Fix API folder structure to follow coding conventions:
 Follow TDD: run tests before/after to ensure nothing breaks.
 ```
 
+```text
+### prompt-12-core-auth-endpoints ✅ COMPLETED
+Implement missing core authentication API endpoints:
+- POST /api/signin - User login with JWT token generation
+- GET /api/me - Current user info from access token
+- POST /api/logout - Clear authentication cookies
+- POST /api/refresh - Refresh access token using refresh token
+All endpoints follow TDD with comprehensive test coverage (29 tests).
+All endpoints use clean architecture (adaptor) folder structure.
+```
+
 ---
 
-**Continue producing prompts** chunk-by-chunk until all Phase 4 tasks are covered.
+## ⚠️ POTENTIAL ISSUES FROM BUILD FIXES
+
+**Priority: HIGH - Review and fix these potential problems introduced during build environment fixes:**
+
+| Issue Category | Description | Files Affected | Risk Level |
+|---------------|-------------|----------------|------------|
+| **JWT Type System Changes** | Modified JWT interface to include `originalId` field and changed UUID→number conversion logic. May break existing user sessions. | `lib/jwt.ts`, `app/providers/SessionProvider.tsx` | HIGH |
+| **API Response Format Changes** | Changed all auth responses from `role` to `type` field. Frontend code expecting `role` will break. | All auth DTOs, API responses | HIGH |
+| **Clean Architecture Dependencies** | Routes now import heavy use case classes. May cause build issues or circular dependencies. | `/api/signin`, `/api/me`, `/api/refresh` routes | MEDIUM |
+| **Test Suite Broken** | All auth tests failing due to changed import patterns and response formats. CI will be red. | `tests/api/*.test.ts` files | HIGH |
+| **SessionProvider Token Compatibility** | Now accesses `originalId` field that may not exist in existing JWT tokens. | `app/providers/SessionProvider.tsx` | HIGH |
+
+**Immediate Actions Needed:**
+1. **🔍 Token Migration Plan** - Audit impact on existing user sessions
+2. **🔍 Frontend Audit** - Find all code using `role` field and update to `type`
+3. **🔧 Test Emergency Fix** - Update test mocks to work with clean architecture
+4. **📋 Rollback Strategy** - Document how to revert JWT changes if needed
+
+---
+
+## 3. Clean Architecture Refactoring
+
+**Current Status:** All core auth endpoints are implemented but violate clean architecture principles. Business logic, validation, and data access are mixed in API route handlers.
+
+```text
+### prompt-13-auth-domain-structure
+Create clean architecture backend structure for auth:
+- backend/auth/signin/dtos/ (SigninRequestDto, SigninResponseDto)
+- backend/auth/signin/usecases/ (SigninUsecase)
+- backend/auth/refresh/dtos/ (RefreshTokenRequestDto, RefreshTokenResponseDto)
+- backend/auth/refresh/usecases/ (RefreshTokenUsecase)
+- backend/auth/me/dtos/ (GetCurrentUserResponseDto)
+- backend/auth/me/usecases/ (GetCurrentUserUsecase)
+- backend/auth/logout/dtos/ (LogoutResponseDto)
+- backend/auth/logout/usecases/ (LogoutUsecase)
+Follow existing coding conventions and folder structure patterns.
+```
+
+```text
+### prompt-14-auth-domain-services
+Create domain services for auth operations:
+- backend/common/infrastructures/auth/AuthService.ts (JWT operations)
+- backend/common/infrastructures/auth/CookieService.ts (HTTP cookie management)
+- backend/common/domains/auth/interfaces/IAuthService.ts (domain interface)
+Extract common utilities from route handlers into reusable services.
+Include comprehensive unit tests for all services.
+```
+
+```text
+### prompt-15-extend-user-repository
+Extend existing User repository with auth-specific methods:
+- Add findByEmail(email: string) method to UserRepository interface
+- Implement in SbUserRepository (Supabase implementation)
+- Add comprehensive unit tests for new repository methods
+Follow existing repository patterns and dependency injection.
+```
+
+```text
+### prompt-16-implement-auth-usecases
+Implement auth use cases with proper dependency injection:
+- SigninUsecase: Handle authentication flow with password verification
+- RefreshTokenUsecase: Token refresh logic with validation
+- GetCurrentUserUsecase: Extract user info from JWT token
+- LogoutUsecase: Handle logout business logic
+Each use case should have comprehensive unit tests.
+Follow existing use case patterns in the codebase.
+```
+
+```text
+### prompt-17-refactor-api-routes
+Refactor API route handlers to be thin adapters:
+- Remove all business logic from route handlers
+- Use dependency injection to call appropriate use cases
+- Focus only on HTTP request/response handling
+- Maintain exact same API contracts and response formats
+- Ensure all 29 existing tests continue to pass
+Follow existing API adapter patterns in the codebase.
+```
+
+---
+
+## 🚨 URGENT FIXES NEEDED
+
+```text
+### prompt-18-emergency-test-fix ⚠️ URGENT
+Fix broken test suite caused by clean architecture refactoring:
+- All auth API tests are failing due to changed import dependencies
+- Update test mocks to work with new use case architecture  
+- Fix response format expectations (role → type field changes)
+- Update SessionProvider tests for JWT field changes (originalId)
+- Ensure all tests pass before continuing development
+This is blocking CI and must be fixed immediately.
+```
+
+```text
+### prompt-19-frontend-compatibility-audit ⚠️ HIGH PRIORITY
+Audit frontend code for compatibility with auth changes:
+- Search for all code using `role` field and update to `type`
+- Check SessionProvider integration with other components
+- Verify existing user sessions won't break with JWT changes
+- Test signup/signin/logout flows end-to-end
+- Update any hardcoded field references
+Critical for preventing production issues.
+```
+
+```text
+### prompt-20-token-migration-strategy ⚠️ HIGH PRIORITY
+Plan and implement token migration strategy:
+- Analyze impact of JWT format changes on existing sessions
+- Implement backward compatibility for old tokens if needed
+- Create migration script or graceful degradation
+- Document rollback procedure if issues arise
+- Test with various token scenarios (old/new format)
+Essential for smooth deployment without user disruption.
+```
+
+---
+
+## 4. Integration & Hardening
+
+```text
+### prompt-18-complete-integration-test
+Complete the integration test for end-to-end auth flow:
+- Implement full signup → signin → me → refresh → logout flow
+- Test with actual database connections (not mocked)
+- Verify cookies and status codes per specification
+- Ensure clean architecture layers work together properly
+```
+
 **Always**: write failing test → implement → make tests green → commit.

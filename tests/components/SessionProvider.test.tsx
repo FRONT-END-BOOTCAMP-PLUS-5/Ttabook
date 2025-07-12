@@ -7,14 +7,18 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 
 // JWT 유틸리티 모킹
+const mockSignAccessToken = jest.fn();
+const mockSignRefreshToken = jest.fn();
 const mockVerifyAccessToken = jest.fn();
 const mockVerifyRefreshToken = jest.fn();
-const mockSignAccessToken = jest.fn();
 
 jest.unstable_mockModule('../../lib/jwt', () => ({
+  signAccessToken: mockSignAccessToken,
+  signRefreshToken: mockSignRefreshToken,
   verifyAccessToken: mockVerifyAccessToken,
   verifyRefreshToken: mockVerifyRefreshToken,
-  signAccessToken: mockSignAccessToken,
+  UserJWTPayload: {},
+  UserForJWT: {},
 }));
 
 // 쿠키 모킹
@@ -61,7 +65,8 @@ describe('SessionProvider', () => {
   describe('세션 초기화', () => {
     it('유효한 accessToken이 있으면 사용자 세션을 설정해야 한다', async () => {
       const mockUser = {
-        id: 'user_123',
+        id: 123, // number ID
+        originalId: 'user_123', // original UUID string
         email: 'test@example.com',
         role: 'user',
         exp: Math.floor(Date.now() / 1000) + 3600,
@@ -116,7 +121,8 @@ describe('SessionProvider', () => {
     it('accessToken이 만료되었으면 refreshToken으로 갱신해야 한다', async () => {
       const expiredError = new Error('Token expired');
       const mockUser = {
-        id: 'user_123',
+        id: 123, // number ID
+        originalId: 'user_123', // original UUID string
         email: 'test@example.com',
         role: 'user',
         exp: Math.floor(Date.now() / 1000) + 3600,
@@ -164,9 +170,9 @@ describe('SessionProvider', () => {
       expect(mockVerifyAccessToken).toHaveBeenCalledWith('expired_access_token');
       expect(mockVerifyRefreshToken).toHaveBeenCalledWith('valid_refresh_token');
       expect(mockSignAccessToken).toHaveBeenCalledWith({
-        id: mockUser.id,
+        id: mockUser.originalId, // Use original UUID string
         email: mockUser.email,
-        role: mockUser.role,
+        type: mockUser.role, // Map role to type
       });
       expect(mockSetCookie).toHaveBeenCalledWith('accessToken', 'new_access_token', expect.objectContaining({
         secure: false, // NODE_ENV이 production이 아니므로 false
@@ -255,7 +261,8 @@ describe('SessionProvider', () => {
   describe('세션 관리 메서드', () => {
     it('login 메서드는 토큰을 쿠키에 저장하고 사용자 정보를 설정해야 한다', async () => {
       const mockUser = {
-        id: 'user_123',
+        id: 123, // number ID
+        originalId: 'user_123', // original UUID string
         email: 'test@example.com',
         role: 'user',
         exp: Math.floor(Date.now() / 1000) + 3600,
@@ -317,7 +324,8 @@ describe('SessionProvider', () => {
 
     it('logout 메서드는 쿠키를 삭제하고 사용자 정보를 초기화해야 한다', async () => {
       const mockUser = {
-        id: 'user_123',
+        id: 123, // number ID
+        originalId: 'user_123', // original UUID string
         email: 'test@example.com',
         role: 'user',
         exp: Math.floor(Date.now() / 1000) + 3600,

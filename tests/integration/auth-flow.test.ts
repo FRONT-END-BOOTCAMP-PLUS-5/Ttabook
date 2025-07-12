@@ -178,9 +178,9 @@ describe('인증 시스템 통합 테스트', () => {
       const { signAccessToken, signRefreshToken } = await import('../../lib/jwt');
       
       const mockUser = {
-        id: 123,
+        id: 'user_123_uuid', // String UUID for UserForJWT
         email: 'test@example.com',
-        role: 'user',
+        type: 'user', // Use 'type' field for UserForJWT
       };
 
       // 액세스 토큰 생성 및 검증
@@ -189,9 +189,9 @@ describe('인증 시스템 통합 테스트', () => {
       expect(typeof accessToken).toBe('string');
 
       const accessPayload = await verifyAccessToken(accessToken);
-      expect(accessPayload.id).toBe(mockUser.id);
+      expect(accessPayload.originalId).toBe(mockUser.id); // Check originalId instead of id
       expect(accessPayload.email).toBe(mockUser.email);
-      expect(accessPayload.role).toBe(mockUser.role);
+      expect(accessPayload.role).toBe(mockUser.type); // role in payload mapped from type in input
 
       // 리프레시 토큰 생성 및 검증
       const refreshToken = await signRefreshToken(mockUser);
@@ -199,9 +199,9 @@ describe('인증 시스템 통합 테스트', () => {
       expect(typeof refreshToken).toBe('string');
 
       const refreshPayload = await verifyRefreshToken(refreshToken);
-      expect(refreshPayload.id).toBe(mockUser.id);
+      expect(refreshPayload.originalId).toBe(mockUser.id); // Check originalId instead of id
       expect(refreshPayload.email).toBe(mockUser.email);
-      expect(refreshPayload.role).toBe(mockUser.role);
+      expect(refreshPayload.role).toBe(mockUser.type); // role in payload mapped from type in input
     });
 
     it('유효하지 않은 토큰에 대해 에러를 발생시켜야 한다', async () => {

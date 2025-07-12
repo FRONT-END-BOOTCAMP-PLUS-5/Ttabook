@@ -17,10 +17,17 @@ jest.unstable_mockModule('@supabase/supabase-js', () => ({
 // JWT 유틸리티 모킹
 const mockSignAccessToken = jest.fn();
 const mockSignRefreshToken = jest.fn();
+const mockVerifyAccessToken = jest.fn();
+const mockVerifyRefreshToken = jest.fn();
 
 jest.unstable_mockModule('../../lib/jwt', () => ({
   signAccessToken: mockSignAccessToken,
   signRefreshToken: mockSignRefreshToken,
+  verifyAccessToken: mockVerifyAccessToken,
+  verifyRefreshToken: mockVerifyRefreshToken,
+  // Mock the interfaces as well
+  UserJWTPayload: {},
+  UserForJWT: {},
 }));
 
 // 패스워드 유틸리티 모킹
@@ -72,7 +79,7 @@ describe('/api/signin API 라우트', () => {
         email: validSigninData.email,
         password: 'hashed_password_123',
         name: '홍길동',
-        role: 'user',
+        type: 'user',
       };
       const accessToken = 'access_token_123';
       const refreshToken = 'refresh_token_123';
@@ -106,13 +113,13 @@ describe('/api/signin API 라우트', () => {
           id: existingUser.id,
           email: existingUser.email,
           name: existingUser.name,
-          role: existingUser.role,
+          type: existingUser.type,
         },
       });
 
       // Supabase 사용자 조회 검증
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('users');
-      expect(mockSelect).toHaveBeenCalledWith('id, email, password, name, role');
+      expect(mockSelect).toHaveBeenCalledWith('*'); // Clean architecture uses select('*')
       expect(mockEq).toHaveBeenCalledWith('email', validSigninData.email);
 
       // 패스워드 검증 확인
@@ -125,12 +132,12 @@ describe('/api/signin API 라우트', () => {
       expect(mockSignAccessToken).toHaveBeenCalledWith({
         id: existingUser.id,
         email: existingUser.email,
-        role: existingUser.role,
+        type: existingUser.type,
       });
       expect(mockSignRefreshToken).toHaveBeenCalledWith({
         id: existingUser.id,
         email: existingUser.email,
-        role: existingUser.role,
+        type: existingUser.type,
       });
 
       // 쿠키 설정 검증
@@ -240,7 +247,7 @@ describe('/api/signin API 라우트', () => {
         email: validSigninData.email,
         password: 'hashed_password_123',
         name: '홍길동',
-        role: 'user',
+        type: 'user',
       };
 
       mockSingle.mockResolvedValue({

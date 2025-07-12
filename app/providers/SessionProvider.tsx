@@ -40,7 +40,7 @@ export function SessionProvider({ children }: SessionProviderProps) {
 
   // JWT 페이로드를 SessionUser로 변환
   const jwtPayloadToUser = (payload: UserJWTPayload): SessionUser => ({
-    id: payload.id.toString(),
+    id: payload.originalId, // Use original UUID string
     email: payload.email,
     role: payload.role,
   });
@@ -75,9 +75,9 @@ export function SessionProvider({ children }: SessionProviderProps) {
         try {
           const payload = await verifyRefreshToken(refreshToken);
           const newAccessToken = await signAccessToken({
-            id: payload.id,
+            id: payload.originalId, // Use original UUID string
             email: payload.email,
-            role: payload.role,
+            type: payload.role, // Map role back to type
           });
 
           // 새 accessToken을 쿠키에 저장

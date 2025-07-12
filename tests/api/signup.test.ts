@@ -17,10 +17,16 @@ jest.unstable_mockModule('@supabase/supabase-js', () => ({
 // JWT 유틸리티 모킹
 const mockSignAccessToken = jest.fn();
 const mockSignRefreshToken = jest.fn();
+const mockVerifyAccessToken = jest.fn();
+const mockVerifyRefreshToken = jest.fn();
 
 jest.unstable_mockModule('../../lib/jwt', () => ({
   signAccessToken: mockSignAccessToken,
   signRefreshToken: mockSignRefreshToken,
+  verifyAccessToken: mockVerifyAccessToken,
+  verifyRefreshToken: mockVerifyRefreshToken,
+  UserJWTPayload: {},
+  UserForJWT: {},
 }));
 
 // 패스워드 유틸리티 모킹
@@ -74,7 +80,7 @@ describe('/api/signup API 라우트', () => {
         id: 'user_123',
         email: validSignupData.email,
         name: validSignupData.name,
-        role: 'user',
+        type: 'user',
         created_at: '2024-01-01T00:00:00.000Z',
       };
       const accessToken = 'access_token_123';
@@ -109,7 +115,7 @@ describe('/api/signup API 라우트', () => {
           id: newUser.id,
           email: newUser.email,
           name: newUser.name,
-          role: newUser.role,
+          type: newUser.type,
         },
       });
 
@@ -122,19 +128,19 @@ describe('/api/signup API 라우트', () => {
         email: validSignupData.email,
         password: hashedPassword,
         name: validSignupData.name,
-        role: 'user',
+        type: 'user',
       });
 
       // JWT 토큰 생성 검증
       expect(mockSignAccessToken).toHaveBeenCalledWith({
         id: newUser.id,
         email: newUser.email,
-        role: newUser.role,
+        type: newUser.type,
       });
       expect(mockSignRefreshToken).toHaveBeenCalledWith({
         id: newUser.id,
         email: newUser.email,
-        role: newUser.role,
+        type: newUser.type,
       });
 
       // 쿠키 설정 검증

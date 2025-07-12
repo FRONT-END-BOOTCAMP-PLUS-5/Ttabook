@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export async function POST(request: NextRequest) {
+// Logout is simple enough to not need clean architecture - just clear cookies
+export async function POST() {
   try {
     // 로그아웃 응답 생성
     const response = NextResponse.json(
@@ -12,7 +13,6 @@ export async function POST(request: NextRequest) {
     );
 
     // 인증 관련 쿠키 삭제
-    // accessToken 쿠키 삭제
     response.cookies.set('accessToken', '', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -21,7 +21,6 @@ export async function POST(request: NextRequest) {
       path: '/',
     });
 
-    // refreshToken 쿠키 삭제
     response.cookies.set('refreshToken', '', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -33,7 +32,7 @@ export async function POST(request: NextRequest) {
     return response;
 
   } catch (error) {
-    console.error('Unexpected error:', error);
+    console.error('Logout error:', error);
     return NextResponse.json(
       { error: '서버 오류가 발생했습니다' },
       { status: 500 }

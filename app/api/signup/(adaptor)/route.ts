@@ -74,9 +74,9 @@ export async function POST(request: NextRequest) {
         email,
         password: hashedPassword,
         name,
-        role: 'user',
+        type: 'user', // 'role'이 아닌 'type' 필드 사용
       })
-      .select('id, email, name, role, created_at')
+      .select('id, email, name, type')
       .single();
 
     // Supabase 에러 처리
@@ -106,14 +106,14 @@ export async function POST(request: NextRequest) {
     }
 
     // JWT 토큰 생성
-    const userPayload = {
+    const userForJWT = {
       id: newUser.id,
       email: newUser.email,
-      role: newUser.role,
+      type: newUser.type, // 'role'이 아닌 'type' 필드 사용
     };
 
-    const accessToken = await signAccessToken(userPayload);
-    const refreshToken = await signRefreshToken(userPayload);
+    const accessToken = await signAccessToken(userForJWT);
+    const refreshToken = await signRefreshToken(userForJWT);
 
     // 응답 생성
     const response = NextResponse.json(
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
           id: newUser.id,
           email: newUser.email,
           name: newUser.name,
-          role: newUser.role,
+          type: newUser.type, // 'role'이 아닌 'type' 필드 사용
         },
       },
       { status: 201 }

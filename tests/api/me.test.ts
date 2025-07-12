@@ -1,11 +1,32 @@
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 
+// Supabase 모킹
+const mockSupabaseClient = {
+  from: jest.fn(),
+};
+
+const mockSelect = jest.fn();
+const mockEq = jest.fn();
+const mockSingle = jest.fn();
+
+jest.unstable_mockModule('@supabase/supabase-js', () => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+}));
+
 // JWT 유틸리티 모킹
+const mockSignAccessToken = jest.fn();
+const mockSignRefreshToken = jest.fn();
 const mockVerifyAccessToken = jest.fn();
+const mockVerifyRefreshToken = jest.fn();
 
 jest.unstable_mockModule('../../lib/jwt', () => ({
+  signAccessToken: mockSignAccessToken,
+  signRefreshToken: mockSignRefreshToken,
   verifyAccessToken: mockVerifyAccessToken,
+  verifyRefreshToken: mockVerifyRefreshToken,
+  UserJWTPayload: {},
+  UserForJWT: {},
 }));
 
 describe('/api/me API 라우트', () => {
@@ -14,6 +35,19 @@ describe('/api/me API 라우트', () => {
   beforeEach(() => {
     process.env = { ...originalEnv };
     process.env.JWT_SECRET = 'test-jwt-secret-for-unit-tests-that-is-long-enough';
+    process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
+    process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
+
+    // Mock 체인 설정
+    mockSupabaseClient.from.mockReturnValue({
+      select: mockSelect,
+    });
+    mockSelect.mockReturnValue({
+      eq: mockEq,
+    });
+    mockEq.mockReturnValue({
+      single: mockSingle,
+    });
 
     // 모든 mock 초기화
     jest.clearAllMocks();
@@ -27,13 +61,26 @@ describe('/api/me API 라우트', () => {
     it('유효한 액세스 토큰으로 사용자 정보를 반환해야 한다', async () => {
       // Mock 설정
       const userPayload = {
-        id: 'user_123',
+        id: 123,
+        originalId: 'user_123',
         email: 'user@example.com',
         role: 'user',
+        exp: Math.floor(Date.now() / 1000) + 900,
+        iat: Math.floor(Date.now() / 1000)
+      };
+
+      const dbUser = {
+        id: 'user_123',
+        email: 'user@example.com',
         name: '홍길동',
+        type: 'user',
       };
 
       mockVerifyAccessToken.mockResolvedValue(userPayload);
+      mockSingle.mockResolvedValue({
+        data: dbUser,
+        error: null,
+      });
 
       const { GET } = await import('../../app/api/me/(adaptor)/route');
 
@@ -49,11 +96,12 @@ describe('/api/me API 라우트', () => {
       expect(response.status).toBe(200);
       expect(data).toEqual({
         success: true,
+        message: '사용자 정보 조회가 완료되었습니다',
         user: {
-          id: userPayload.id,
-          email: userPayload.email,
-          role: userPayload.role,
-          name: userPayload.name,
+          id: dbUser.id,
+          email: dbUser.email,
+          name: dbUser.name,
+          type: dbUser.type,
         },
       });
 
@@ -115,7 +163,7 @@ describe('/api/me API 라우트', () => {
 
       expect(response.status).toBe(401);
       expect(data).toEqual({
-        error: '유효하지 않은 토큰입니다',
+        error: '유효하지 않은 액세스 토큰입니다',
       });
 
       expect(mockVerifyAccessToken).toHaveBeenCalledWith('invalid_token');
@@ -140,7 +188,7 @@ describe('/api/me API 라우트', () => {
 
       expect(response.status).toBe(401);
       expect(data).toEqual({
-        error: '토큰이 만료되었습니다',
+        error: '액세스 토큰이 만료되었습니다. 새로고침하거나 다시 로그인해주세요',
       });
 
       expect(mockVerifyAccessToken).toHaveBeenCalledWith('expired_token');
@@ -188,13 +236,26 @@ describe('/api/me API 라우트', () => {
 
     it('여러 쿠키 중에서 accessToken을 올바르게 추출해야 한다', async () => {
       const userPayload = {
-        id: 'user_456',
+        id: 456,
+        originalId: 'user_456',
         email: 'test@example.com',
         role: 'admin',
+        exp: Math.floor(Date.now() / 1000) + 900,
+        iat: Math.floor(Date.now() / 1000)
+      };
+
+      const dbUser = {
+        id: 'user_456',
+        email: 'test@example.com',
         name: '관리자',
+        type: 'admin',
       };
 
       mockVerifyAccessToken.mockResolvedValue(userPayload);
+      mockSingle.mockResolvedValue({
+        data: dbUser,
+        error: null,
+      });
 
       const { GET } = await import('../../app/api/me/(adaptor)/route');
 
@@ -208,7 +269,16 @@ describe('/api/me API 라우트', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.user).toEqual(userPayload);
+      expect(data).toEqual({
+        success: true,
+        message: '사용자 정보 조회가 완료되었습니다',
+        user: {
+          id: dbUser.id,
+          email: dbUser.email,
+          name: dbUser.name,
+          type: dbUser.type,
+        },
+      });
       expect(mockVerifyAccessToken).toHaveBeenCalledWith('access_456');
     });
   });

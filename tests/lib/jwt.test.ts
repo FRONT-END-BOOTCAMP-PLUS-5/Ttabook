@@ -17,7 +17,7 @@ describe('JWT 유틸리티', () => {
     it('사용자 정보로 15분 만료 액세스 토큰을 생성해야 한다', async () => {
       const { signAccessToken } = await import('../../lib/jwt');
       
-      const user = { id: 1, email: 'test@example.com', role: 'user' };
+      const user = { id: 'test-uuid-123', email: 'test@example.com', type: 'user' };
       const token = await signAccessToken(user);
       
       expect(typeof token).toBe('string');
@@ -29,7 +29,7 @@ describe('JWT 유틸리티', () => {
     it('사용자 정보로 14일 만료 리프레시 토큰을 생성해야 한다', async () => {
       const { signRefreshToken } = await import('../../lib/jwt');
       
-      const user = { id: 1, email: 'test@example.com', role: 'user' };
+      const user = { id: 'test-uuid-123', email: 'test@example.com', type: 'user' };
       const token = await signRefreshToken(user);
       
       expect(typeof token).toBe('string');
@@ -41,14 +41,15 @@ describe('JWT 유틸리티', () => {
     it('유효한 액세스 토큰을 검증하고 사용자 정보를 반환해야 한다', async () => {
       const { signAccessToken, verifyAccessToken } = await import('../../lib/jwt');
       
-      const user = { id: 1, email: 'test@example.com', role: 'user' };
+      const user = { id: 'test-uuid-123', email: 'test@example.com', type: 'user' };
       const token = await signAccessToken(user);
       
       const decoded = await verifyAccessToken(token);
       
-      expect(decoded.id).toBe(user.id);
+      expect(decoded.originalId).toBe(user.id); // 원본 UUID 확인
       expect(decoded.email).toBe(user.email);
-      expect(decoded.role).toBe(user.role);
+      expect(decoded.role).toBe(user.type); // type이 role로 매핑됨
+      expect(typeof decoded.id).toBe('number'); // 해시된 ID는 숫자
     });
 
     it('잘못된 토큰에 대해 에러를 발생시켜야 한다', async () => {
@@ -71,7 +72,7 @@ describe('JWT 유틸리티', () => {
     it('액세스 토큰의 만료 시간이 15분으로 설정되어야 한다', async () => {
       const { signAccessToken, verifyAccessToken } = await import('../../lib/jwt');
       
-      const user = { id: 1, email: 'test@example.com', role: 'user' };
+      const user = { id: 'test-uuid-123', email: 'test@example.com', type: 'user' };
       const token = await signAccessToken(user);
       const decoded = await verifyAccessToken(token);
       
@@ -87,7 +88,7 @@ describe('JWT 유틸리티', () => {
       const { signRefreshToken } = await import('../../lib/jwt');
       const { decodeJwt } = await import('jose');
       
-      const user = { id: 1, email: 'test@example.com', role: 'user' };
+      const user = { id: 'test-uuid-456', email: 'test@example.com', type: 'user' };
       const token = await signRefreshToken(user);
       
       // jose의 decodeJwt로 서명 검증 없이 페이로드만 디코드
@@ -111,7 +112,7 @@ describe('JWT 유틸리티', () => {
       
       await expect(async () => {
         const { signAccessToken } = await import('../../lib/jwt');
-        await signAccessToken({ id: 1, email: 'test@example.com', role: 'user' });
+        await signAccessToken({ id: 'test-uuid-789', email: 'test@example.com', type: 'user' });
       }).rejects.toThrow();
     });
 
