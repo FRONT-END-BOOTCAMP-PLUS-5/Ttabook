@@ -113,6 +113,11 @@
   cursor: not-allowed;
 }
 
+.ttabook-btn--icon {
+  background: transparent;
+  border: none;
+}
+
 .ttabook-btn--fullwidth {
   width: 100%;
   align-items: center;

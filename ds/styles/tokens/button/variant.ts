@@ -107,6 +107,10 @@ export const buttonVariants = {
       border: `1px solid ${color.error}`,
     },
   },
+  icon: {
+    background: 'transparent',
+    border: 'none',
+  },
 } as const;
 
 export type ButtonVariant = keyof typeof buttonVariants;
