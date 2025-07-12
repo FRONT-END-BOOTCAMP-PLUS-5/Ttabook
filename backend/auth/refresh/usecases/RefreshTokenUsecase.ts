@@ -21,8 +21,10 @@ export class RefreshTokenUsecase {
     }
 
     // 새로운 토큰 생성 (JWT payload를 UserForJWT 형태로 변환)
+    // 하위 호환성: originalId가 없으면 id 사용
+    const userId = userPayload.originalId || userPayload.id;
     const tokenPayload = {
-      id: userPayload.originalId, // 원본 UUID 사용
+      id: userId,
       email: userPayload.email,
       type: userPayload.role, // role을 type으로 변환
     };
