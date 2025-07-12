@@ -13,7 +13,7 @@ const Button: React.FC<ButtonProps> = ({
   const className = [
     styles['ttabook-btn'],
     styles[`ttabook-btn--${variant}`],
-    styles[`ttabook-btn--${size}`],
+    variant !== 'icon' ? styles[`ttabook-btn--${size}`] : '',
     isFullWidth ? styles['ttabook-btn--fullwidth'] : '',
   ];
   return (

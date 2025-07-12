@@ -116,6 +116,8 @@
 .ttabook-btn--icon {
   background: transparent;
   border: none;
+  width: auto;
+  padding: var(--spacing-1);
 }
 
 .ttabook-btn--fullwidth {
