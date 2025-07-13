@@ -51,10 +51,10 @@ describe('AuthService', () => {
       const token = await authService.signAccessToken(testUser);
       const decoded = await authService.verifyAccessToken(token);
 
-      expect(decoded.originalId).toBe(testUser.id);
+      expect(decoded.id).toBe(testUser.id);
       expect(decoded.email).toBe(testUser.email);
-      expect(decoded.role).toBe(testUser.type); // type이 role로 매핑됨
-      expect(typeof decoded.id).toBe('number'); // 해시된 ID
+      expect(decoded.type).toBe(testUser.type);
+      expect(typeof decoded.id).toBe('string'); // UUID string
     });
 
     it('유효한 리프레시 토큰을 검증해야 한다', async () => {
@@ -67,9 +67,9 @@ describe('AuthService', () => {
       const token = await authService.signRefreshToken(testUser);
       const decoded = await authService.verifyRefreshToken(token);
 
-      expect(decoded.originalId).toBe(testUser.id);
+      expect(decoded.id).toBe(testUser.id);
       expect(decoded.email).toBe(testUser.email);
-      expect(decoded.role).toBe(testUser.type);
+      expect(decoded.type).toBe(testUser.type);
     });
 
     it('잘못된 토큰에 대해 에러를 발생시켜야 한다', async () => {

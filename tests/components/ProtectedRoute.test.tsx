@@ -110,7 +110,7 @@ describe('ProtectedRoute', () => {
   describe('인증된 사용자', () => {
     it('역할 제한이 없으면 콘텐츠를 렌더링해야 한다', async () => {
       mockUseSession.mockReturnValue({
-        user: { id: 'user_123', email: 'test@example.com', role: 'user' },
+        user: { id: 'user_123', email: 'test@example.com', type: 'user' },
         isLoading: false,
         isAuthenticated: true,
       });
@@ -133,7 +133,7 @@ describe('ProtectedRoute', () => {
 
     it('필요한 역할을 가지고 있으면 콘텐츠를 렌더링해야 한다', async () => {
       mockUseSession.mockReturnValue({
-        user: { id: 'admin_123', email: 'admin@example.com', role: 'admin' },
+        user: { id: 'admin_123', email: 'admin@example.com', type: 'admin' },
         isLoading: false,
         isAuthenticated: true,
       });
@@ -144,7 +144,7 @@ describe('ProtectedRoute', () => {
 
       render(
         <QueryClientProvider client={queryClient}>
-          <ProtectedRoute role="admin">
+          <ProtectedRoute type="admin">
             <TestProtectedContent />
           </ProtectedRoute>
         </QueryClientProvider>
@@ -156,7 +156,7 @@ describe('ProtectedRoute', () => {
 
     it('필요한 역할이 여러 개 중 하나를 가지고 있으면 콘텐츠를 렌더링해야 한다', async () => {
       mockUseSession.mockReturnValue({
-        user: { id: 'user_123', email: 'user@example.com', role: 'user' },
+        user: { id: 'user_123', email: 'user@example.com', type: 'user' },
         isLoading: false,
         isAuthenticated: true,
       });
@@ -167,7 +167,7 @@ describe('ProtectedRoute', () => {
 
       render(
         <QueryClientProvider client={queryClient}>
-          <ProtectedRoute role={['admin', 'user']}>
+          <ProtectedRoute type={['admin', 'user']}>
             <TestProtectedContent />
           </ProtectedRoute>
         </QueryClientProvider>
@@ -178,10 +178,10 @@ describe('ProtectedRoute', () => {
     });
   });
 
-  describe('역할 제한', () => {
-    it('필요한 역할을 가지지 않으면 접근 거부 페이지로 리다이렉트해야 한다', async () => {
+  describe('사용자 타입 제한', () => {
+    it('필요한 사용자 타입을 가지지 않으면 접근 거부 페이지로 리다이렉트해야 한다', async () => {
       mockUseSession.mockReturnValue({
-        user: { id: 'user_123', email: 'user@example.com', role: 'user' },
+        user: { id: 'user_123', email: 'user@example.com', type: 'user' },
         isLoading: false,
         isAuthenticated: true,
       });
@@ -192,7 +192,7 @@ describe('ProtectedRoute', () => {
 
       render(
         <QueryClientProvider client={queryClient}>
-          <ProtectedRoute role="admin">
+          <ProtectedRoute type="admin">
             <TestProtectedContent />
           </ProtectedRoute>
         </QueryClientProvider>
@@ -202,9 +202,9 @@ describe('ProtectedRoute', () => {
       expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
     });
 
-    it('필요한 역할 배열 중 어느 것도 가지지 않으면 접근 거부해야 한다', async () => {
+    it('필요한 사용자 타입 배열 중 어느 것도 가지지 않으면 접근 거부해야 한다', async () => {
       mockUseSession.mockReturnValue({
-        user: { id: 'user_123', email: 'user@example.com', role: 'user' },
+        user: { id: 'user_123', email: 'user@example.com', type: 'user' },
         isLoading: false,
         isAuthenticated: true,
       });
@@ -215,7 +215,7 @@ describe('ProtectedRoute', () => {
 
       render(
         <QueryClientProvider client={queryClient}>
-          <ProtectedRoute role={['admin', 'moderator']}>
+          <ProtectedRoute type={['admin', 'moderator']}>
             <TestProtectedContent />
           </ProtectedRoute>
         </QueryClientProvider>

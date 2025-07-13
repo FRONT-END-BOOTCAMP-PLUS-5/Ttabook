@@ -73,9 +73,9 @@ describe('SessionProvider', () => {
     it('유효한 accessToken이 있으면 사용자 세션을 설정해야 한다', async () => {
       const mockUser = {
         id: 123, // number ID
-        originalId: 'user_123', // original UUID string
+        id: 'user_123', // original UUID string
         email: 'test@example.com',
-        role: 'user',
+        type: 'user',
         exp: Math.floor(Date.now() / 1000) + 3600,
         iat: Math.floor(Date.now() / 1000),
       };
@@ -103,7 +103,7 @@ describe('SessionProvider', () => {
               {isAuthenticated ? 'true' : 'false'}
             </div>
             <div data-testid="user-email">{user?.email || 'no-email'}</div>
-            <div data-testid="user-role">{user?.role || 'no-role'}</div>
+            <div data-testid="user-type">{user?.type || 'no-type'}</div>
           </div>
         );
       }
@@ -127,7 +127,7 @@ describe('SessionProvider', () => {
       expect(screen.getByTestId('user-email')).toHaveTextContent(
         'test@example.com'
       );
-      expect(screen.getByTestId('user-role')).toHaveTextContent('user');
+      expect(screen.getByTestId('user-type')).toHaveTextContent('user');
       expect(mockVerifyAccessToken).toHaveBeenCalledWith('valid_access_token');
     });
 
@@ -135,9 +135,9 @@ describe('SessionProvider', () => {
       const expiredError = new Error('Token expired');
       const mockUser = {
         id: 123, // number ID
-        originalId: 'user_123', // original UUID string
+        id: 'user_123', // original UUID string
         email: 'test@example.com',
-        role: 'user',
+        type: 'user',
         exp: Math.floor(Date.now() / 1000) + 3600,
         iat: Math.floor(Date.now() / 1000),
       };
@@ -193,9 +193,9 @@ describe('SessionProvider', () => {
         'valid_refresh_token'
       );
       expect(mockSignAccessToken).toHaveBeenCalledWith({
-        id: mockUser.originalId, // Use original UUID string
+        id: mockUser.id, // Use original UUID string
         email: mockUser.email,
-        type: mockUser.role, // Map role to type
+        type: mockUser.type, // Map type to type
       });
       expect(mockSetCookie).toHaveBeenCalledWith(
         'accessToken',
@@ -297,9 +297,9 @@ describe('SessionProvider', () => {
     it('login 메서드는 토큰을 쿠키에 저장하고 사용자 정보를 설정해야 한다', async () => {
       const mockUser = {
         id: 123, // number ID
-        originalId: 'user_123', // original UUID string
+        id: 'user_123', // original UUID string
         email: 'test@example.com',
-        role: 'user',
+        type: 'user',
         exp: Math.floor(Date.now() / 1000) + 3600,
         iat: Math.floor(Date.now() / 1000),
       };
@@ -376,9 +376,9 @@ describe('SessionProvider', () => {
     it('logout 메서드는 쿠키를 삭제하고 사용자 정보를 초기화해야 한다', async () => {
       const mockUser = {
         id: 123, // number ID
-        originalId: 'user_123', // original UUID string
+        id: 'user_123', // original UUID string
         email: 'test@example.com',
-        role: 'user',
+        type: 'user',
         exp: Math.floor(Date.now() / 1000) + 3600,
         iat: Math.floor(Date.now() / 1000),
       };

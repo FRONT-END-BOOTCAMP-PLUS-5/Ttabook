@@ -43,10 +43,9 @@ describe('/api/refresh API 라우트', () => {
     it('유효한 리프레시 토큰으로 새로운 액세스 토큰을 발급해야 한다', async () => {
       // Mock 설정 - JWT payload 형식
       const userPayload = {
-        id: 123, // number ID in JWT
-        originalId: 'user_123', // original UUID string
+        id: 'user_123',
         email: 'user@example.com',
-        role: 'user',
+        type: 'user',
         exp: Math.floor(Date.now() / 1000) + 3600,
         iat: Math.floor(Date.now() / 1000),
       };
@@ -80,14 +79,14 @@ describe('/api/refresh API 라우트', () => {
         'valid_refresh_token_123'
       );
       expect(mockSignAccessToken).toHaveBeenCalledWith({
-        id: userPayload.originalId, // Use original UUID string
+        id: userPayload.id,
         email: userPayload.email,
-        type: userPayload.role, // Map role to type
+        type: userPayload.type,
       });
       expect(mockSignRefreshToken).toHaveBeenCalledWith({
-        id: userPayload.originalId, // Use original UUID string
+        id: userPayload.id,
         email: userPayload.email,
-        type: userPayload.role, // Map role to type
+        type: userPayload.type,
       });
 
       // 새로운 쿠키 설정 확인

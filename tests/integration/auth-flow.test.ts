@@ -19,6 +19,7 @@ import { GET as DuplicateHandler } from '../../app/api/duplicates/(adaptor)/rout
 
 // JWT 검증 함수 import
 import { verifyAccessToken, verifyRefreshToken } from '../../lib/jwt';
+import { RequestInit } from 'next/dist/server/web/spec-extension/request';
 
 // 타입 정의
 interface AuthCookies {
@@ -201,9 +202,9 @@ describe('인증 시스템 통합 테스트', () => {
       expect(typeof accessToken).toBe('string');
 
       const accessPayload = await verifyAccessToken(accessToken);
-      expect(accessPayload.originalId).toBe(mockUser.id); // Check originalId instead of id
+      expect(accessPayload.id).toBe(mockUser.id); // Check id instead of id
       expect(accessPayload.email).toBe(mockUser.email);
-      expect(accessPayload.role).toBe(mockUser.type); // role in payload mapped from type in input
+      expect(accessPayload.type).toBe(mockUser.type);
 
       // 리프레시 토큰 생성 및 검증
       const refreshToken = await signRefreshToken(mockUser);
@@ -211,9 +212,9 @@ describe('인증 시스템 통합 테스트', () => {
       expect(typeof refreshToken).toBe('string');
 
       const refreshPayload = await verifyRefreshToken(refreshToken);
-      expect(refreshPayload.originalId).toBe(mockUser.id); // Check originalId instead of id
+      expect(refreshPayload.id).toBe(mockUser.id); // Check id instead of id
       expect(refreshPayload.email).toBe(mockUser.email);
-      expect(refreshPayload.role).toBe(mockUser.type); // role in payload mapped from type in input
+      expect(refreshPayload.type).toBe(mockUser.type);
     });
 
     it('유효하지 않은 토큰에 대해 에러를 발생시켜야 한다', async () => {
@@ -324,11 +325,7 @@ describe('인증 시스템 통합 테스트', () => {
       const refreshResponse = await RefreshHandler(refreshRequest);
       expect(refreshResponse.status).toBe(401); // 토큰 없음
 
-      // 로그아웃 요청 - 정상 처리 (JWT stateless 특성)
-      const logoutRequest = createRequest('http://localhost:3000/api/logout', {
-        method: 'POST',
-      });
-      const logoutResponse = await LogoutHandler(logoutRequest);
+      const logoutResponse = await LogoutHandler();
       expect(logoutResponse.status).toBe(200); // 로그아웃은 항상 성공
 
       console.log(
@@ -481,17 +478,8 @@ describe('인증 시스템 통합 테스트', () => {
 
         // ===== 6. LOGOUT: 로그아웃 =====
         console.log('🔵 6. 로그아웃 테스트 시작...');
-        const logoutRequest = createRequest(
-          'http://localhost:3000/api/logout',
-          {
-            method: 'POST',
-            headers: {
-              Cookie: `accessToken=${cookies.accessToken}; refreshToken=${cookies.refreshToken}`,
-            },
-          }
-        );
 
-        const logoutResponse = await LogoutHandler(logoutRequest);
+        const logoutResponse = await LogoutHandler();
         const logoutData = await logoutResponse.json();
 
         // 로그아웃 성공 검증

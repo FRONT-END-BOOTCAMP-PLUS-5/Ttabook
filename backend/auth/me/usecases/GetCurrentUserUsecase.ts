@@ -23,7 +23,7 @@ export class GetCurrentUserUsecase {
     }
 
     // 2. 데이터베이스에서 최신 사용자 정보 조회
-    const user = await this.userRepository.findById(userPayload.originalId);
+    const user = await this.userRepository.findById(userPayload.id);
     if (!user) {
       throw new Error('사용자 정보를 찾을 수 없습니다');
     }

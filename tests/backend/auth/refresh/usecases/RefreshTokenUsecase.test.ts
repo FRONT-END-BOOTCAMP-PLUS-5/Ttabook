@@ -28,10 +28,11 @@ describe('RefreshTokenUsecase', () => {
   const refreshRequest = new RefreshTokenRequestDto(validRefreshToken);
 
   const mockUserPayload = {
-    originalId: 'user-uuid-123',
+    id: 'user-uuid-123',
     email: 'test@example.com',
-    role: 'user', // role을 type으로 변환됨
-    id: 1, // 숫자 ID (하위 호환성)
+    type: 'user',
+    exp: Math.floor(Date.now() / 1000) + 3600,
+    iat: Math.floor(Date.now() / 1000),
   };
 
   describe('execute - 성공 케이스', () => {
@@ -69,7 +70,7 @@ describe('RefreshTokenUsecase', () => {
 
     it('관리자 사용자의 토큰을 올바르게 갱신해야 한다', async () => {
       // Given
-      const adminPayload = { ...mockUserPayload, role: 'admin' };
+      const adminPayload = { ...mockUserPayload, type: 'admin' };
       mockAuthService.verifyRefreshToken.mockResolvedValue(adminPayload);
       mockAuthService.signAccessToken.mockResolvedValue('admin-access-token');
       mockAuthService.signRefreshToken.mockResolvedValue('admin-refresh-token');
@@ -86,7 +87,7 @@ describe('RefreshTokenUsecase', () => {
       expect(result.tokens.accessToken).toBe('admin-access-token');
     });
 
-    it('role을 type으로 올바르게 변환해야 한다', async () => {
+    it('type 필드를 올바르게 전달해야 한다', async () => {
       // Given
       mockAuthService.verifyRefreshToken.mockResolvedValue(mockUserPayload);
       mockAuthService.signAccessToken.mockResolvedValue('token');
@@ -97,11 +98,11 @@ describe('RefreshTokenUsecase', () => {
 
       // Then
       const tokenPayload = mockAuthService.signAccessToken.mock.calls[0][0];
-      expect(tokenPayload.type).toBe('user'); // role → type 변환 확인
+      expect(tokenPayload.type).toBe('user');
       expect(tokenPayload).not.toHaveProperty('role');
     });
 
-    it('originalId를 id로 올바르게 매핑해야 한다', async () => {
+    it('id를 id로 올바르게 매핑해야 한다', async () => {
       // Given
       mockAuthService.verifyRefreshToken.mockResolvedValue(mockUserPayload);
       mockAuthService.signAccessToken.mockResolvedValue('token');
@@ -112,7 +113,7 @@ describe('RefreshTokenUsecase', () => {
 
       // Then
       const tokenPayload = mockAuthService.signAccessToken.mock.calls[0][0];
-      expect(tokenPayload.id).toBe('user-uuid-123'); // originalId → id 매핑 확인
+      expect(tokenPayload.id).toBe('user-uuid-123'); // id → id 매핑 확인
     });
   });
 
@@ -246,24 +247,4 @@ describe('RefreshTokenUsecase', () => {
     });
   });
 
-  describe('하위 호환성', () => {
-    it('legacy 토큰 형식을 올바르게 처리해야 한다', async () => {
-      // Given - originalId가 없는 legacy 페이로드
-      const legacyPayload = {
-        id: 123, // 숫자 ID만 있음
-        email: 'legacy@example.com',
-        role: 'user',
-      };
-      mockAuthService.verifyRefreshToken.mockResolvedValue(legacyPayload);
-      mockAuthService.signAccessToken.mockResolvedValue('token');
-      mockAuthService.signRefreshToken.mockResolvedValue('refresh');
-
-      // When
-      await usecase.execute(refreshRequest);
-
-      // Then
-      const tokenPayload = mockAuthService.signAccessToken.mock.calls[0][0];
-      expect(tokenPayload.id).toBe('123'); // originalId가 없으면 id를 string으로 변환해서 사용
-    });
-  });
 });

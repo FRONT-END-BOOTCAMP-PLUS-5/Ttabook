@@ -63,7 +63,7 @@ describe('/api/me API 라우트', () => {
       // Mock 설정
       const userPayload = {
         id: 123,
-        originalId: 'user_123',
+        id: 'user_123',
         email: 'user@example.com',
         role: 'user',
         exp: Math.floor(Date.now() / 1000) + 900,
@@ -241,7 +241,7 @@ describe('/api/me API 라우트', () => {
     it('여러 쿠키 중에서 accessToken을 올바르게 추출해야 한다', async () => {
       const userPayload = {
         id: 456,
-        originalId: 'user_456',
+        id: 'user_456',
         email: 'test@example.com',
         role: 'admin',
         exp: Math.floor(Date.now() / 1000) + 900,

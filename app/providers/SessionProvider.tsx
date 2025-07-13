@@ -19,7 +19,7 @@ import {
 export interface SessionUser {
   id: string;
   email: string;
-  role: string;
+  type: string;
 }
 
 // 세션 컨텍스트 타입
@@ -51,9 +51,9 @@ export function SessionProvider({ children }: SessionProviderProps) {
 
   // JWT 페이로드를 SessionUser로 변환
   const jwtPayloadToUser = (payload: UserJWTPayload): SessionUser => ({
-    id: payload.originalId, // Use original UUID string
+    id: payload.id, // Use UUID string directly
     email: payload.email,
-    role: payload.role,
+    type: payload.type,
   });
 
   // 세션 초기화 함수
@@ -86,9 +86,9 @@ export function SessionProvider({ children }: SessionProviderProps) {
         try {
           const payload = await verifyRefreshToken(refreshToken);
           const newAccessToken = await signAccessToken({
-            id: payload.originalId, // Use original UUID string
+            id: payload.id, // Use UUID string directly
             email: payload.email,
-            type: payload.role, // Map role back to type
+            type: payload.type,
           });
 
           // 새 accessToken을 쿠키에 저장

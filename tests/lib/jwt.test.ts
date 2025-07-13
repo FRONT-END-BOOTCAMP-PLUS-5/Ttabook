@@ -68,10 +68,10 @@ describe('JWT 유틸리티', () => {
 
       const decoded = await verifyAccessToken(token);
 
-      expect(decoded.originalId).toBe(user.id); // 원본 UUID 확인
+      expect(decoded.id).toBe(user.id); // UUID 직접 사용
       expect(decoded.email).toBe(user.email);
-      expect(decoded.role).toBe(user.type); // type이 role로 매핑됨
-      expect(typeof decoded.id).toBe('number'); // 해시된 ID는 숫자
+      expect(decoded.type).toBe(user.type);
+      expect(typeof decoded.id).toBe('string'); // ID는 문자열
     });
 
     it('잘못된 토큰에 대해 에러를 발생시켜야 한다', async () => {
@@ -136,53 +136,42 @@ describe('JWT 유틸리티', () => {
     });
   });
 
-  describe('토큰 마이그레이션', () => {
-    it('originalId가 없는 기존 토큰도 정상적으로 처리해야 한다', async () => {
-      // 기존 형식의 토큰을 시뮬레이션 (originalId 없음)
-      const { SignJWT } = await import('jose');
-      const { JWT_SECRET } = await import('../../lib/config');
 
-      const secret = new TextEncoder().encode(JWT_SECRET);
-      const now = Math.floor(Date.now() / 1000);
-
-      // originalId 필드 없이 토큰 생성
-      const legacyToken = await new SignJWT({
-        id: 12345, // 숫자 ID만 있는 기존 토큰
-        email: 'legacy@example.com',
-        role: 'user',
-      })
-        .setProtectedHeader({ alg: 'HS256' })
-        .setIssuedAt(now)
-        .setExpirationTime(now + 15 * 60)
-        .sign(secret);
-
-      const { verifyAccessToken } = await import('../../lib/jwt');
-      const decoded = await verifyAccessToken(legacyToken);
-
-      // 기존 토큰의 경우 숫자 ID를 문자열로 변환해서 originalId로 사용
-      expect(decoded.id).toBe(12345);
-      expect(decoded.originalId).toBe('12345'); // 숫자를 문자열로 변환
-      expect(decoded.email).toBe('legacy@example.com');
-      expect(decoded.role).toBe('user');
-    });
-
-    it('새로운 형식의 토큰은 originalId를 그대로 사용해야 한다', async () => {
-      const { signAccessToken, verifyAccessToken } = await import(
+  describe('verifyRefreshToken', () => {
+    it('유효한 리프레시 토큰을 검증하고 사용자 정보를 반환해야 한다', async () => {
+      const { signRefreshToken, verifyRefreshToken } = await import(
         '../../lib/jwt'
       );
 
       const user = {
-        id: 'uuid-new-format',
-        email: 'new@example.com',
+        id: 'test-uuid-456',
+        email: 'refresh@example.com',
         type: 'admin',
       };
-      const token = await signAccessToken(user);
-      const decoded = await verifyAccessToken(token);
+      const token = await signRefreshToken(user);
 
-      // 새로운 토큰은 originalId가 그대로 보존됨
-      expect(decoded.originalId).toBe('uuid-new-format');
-      expect(decoded.email).toBe('new@example.com');
-      expect(decoded.role).toBe('admin');
+      const decoded = await verifyRefreshToken(token);
+
+      expect(decoded.id).toBe(user.id);
+      expect(decoded.email).toBe(user.email);
+      expect(decoded.type).toBe(user.type);
+      expect(typeof decoded.id).toBe('string');
+    });
+
+    it('빈 문자열 리프레시 토큰에 대해 에러를 발생시켜야 한다', async () => {
+      const { verifyRefreshToken } = await import('../../lib/jwt');
+
+      await expect(verifyRefreshToken('')).rejects.toThrow(
+        '토큰이 제공되지 않았습니다'
+      );
+    });
+
+    it('잘못된 리프레시 토큰에 대해 에러를 발생시켜야 한다', async () => {
+      const { verifyRefreshToken } = await import('../../lib/jwt');
+
+      await expect(
+        verifyRefreshToken('invalid.refresh.token')
+      ).rejects.toThrow('토큰 검증 실패:');
     });
   });
 
@@ -226,5 +215,7 @@ describe('JWT 유틸리티', () => {
         verifyAccessToken('completely.invalid.token')
       ).rejects.toThrow('토큰 검증 실패:');
     });
+
+
   });
 });

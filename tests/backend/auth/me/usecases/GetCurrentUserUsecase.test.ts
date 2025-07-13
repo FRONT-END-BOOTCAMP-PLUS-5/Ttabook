@@ -36,10 +36,11 @@ describe('GetCurrentUserUsecase', () => {
   const validAccessToken = 'valid-access-token';
 
   const mockTokenPayload = {
-    originalId: 'user-uuid-123',
+    id: 'user-uuid-123',
     email: 'test@example.com',
-    role: 'user',
-    id: 1,
+    type: 'user',
+    exp: Math.floor(Date.now() / 1000) + 3600,
+    iat: Math.floor(Date.now() / 1000),
   };
 
   const testUser: User = {
@@ -109,7 +110,7 @@ describe('GetCurrentUserUsecase', () => {
       expect(mockUserRepository.findById).toHaveBeenCalledWith('user-uuid-123');
     });
 
-    it('originalId를 사용하여 사용자를 조회해야 한다', async () => {
+    it('id를 사용하여 사용자를 조회해야 한다', async () => {
       // Given
       mockAuthService.verifyAccessToken.mockResolvedValue(mockTokenPayload);
       mockUserRepository.findById.mockResolvedValue(testUser);
@@ -118,7 +119,7 @@ describe('GetCurrentUserUsecase', () => {
       await usecase.execute(validAccessToken);
 
       // Then
-      expect(mockUserRepository.findById).toHaveBeenCalledWith('user-uuid-123'); // originalId 사용
+      expect(mockUserRepository.findById).toHaveBeenCalledWith('user-uuid-123'); // id 사용
     });
   });
 
@@ -228,7 +229,7 @@ describe('GetCurrentUserUsecase', () => {
       // Given
       const tokenWithDifferentId = {
         ...mockTokenPayload,
-        originalId: 'different-uuid',
+        id: 'different-uuid',
       };
       mockAuthService.verifyAccessToken.mockResolvedValue(tokenWithDifferentId);
       mockUserRepository.findById.mockResolvedValue(null);

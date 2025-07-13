@@ -7,7 +7,7 @@ import { useSession } from '@/app/providers/SessionProvider';
 // ProtectedRoute Props 인터페이스
 interface ProtectedRouteProps {
   children: ReactNode;
-  role?: string | string[];
+  type?: string | string[];
   loadingComponent?: ReactNode;
 }
 
@@ -17,7 +17,7 @@ interface ProtectedRouteProps {
  */
 export function ProtectedRoute({
   children,
-  role,
+  type,
   loadingComponent,
 }: ProtectedRouteProps) {
   const { user, isLoading, isAuthenticated } = useSession();
@@ -37,18 +37,18 @@ export function ProtectedRoute({
       return;
     }
 
-    // 역할 검사가 필요한 경우
-    if (role && user) {
-      const hasRequiredRole = Array.isArray(role)
-        ? role.includes(user.role)
-        : user.role === role;
+    // 사용자 타입 검사가 필요한 경우
+    if (type && user) {
+      const hasRequiredType = Array.isArray(type)
+        ? type.includes(user.type)
+        : user.type === type;
 
-      if (!hasRequiredRole) {
+      if (!hasRequiredType) {
         router.replace('/forbidden');
         return;
       }
     }
-  }, [isLoading, isAuthenticated, user, role, router, pathname]);
+  }, [isLoading, isAuthenticated, user, type, router, pathname]);
 
   // 로딩 중일 때
   if (isLoading) {
@@ -60,13 +60,13 @@ export function ProtectedRoute({
     return null;
   }
 
-  // 역할 검사
-  if (role && user) {
-    const hasRequiredRole = Array.isArray(role)
-      ? role.includes(user.role)
-      : user.role === role;
+  // 사용자 타입 검사
+  if (type && user) {
+    const hasRequiredType = Array.isArray(type)
+      ? type.includes(user.type)
+      : user.type === type;
 
-    if (!hasRequiredRole) {
+    if (!hasRequiredType) {
       return null; // 접근 거부 페이지로 리다이렉트 중
     }
   }
