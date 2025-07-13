@@ -7,7 +7,7 @@ export const ActionsData = {
 
 const meta = {
   component: InputField,
-  title: 'Components/Moleculars/InputField',
+  title: 'Components/Molecules/InputField',
   tags: ['autodocs'],
   //👇 Our exports that end in "Data" are not stories.
   excludeStories: /.*Data$/,
