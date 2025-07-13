@@ -15,10 +15,11 @@ Frontend (Next.js)
 └── Auth Hooks (useSession)
 
 Backend API (Clean Architecture)
-├── API Routes (/api/signup, /signin, /me, /refresh, /logout)
-├── Use Cases (비즈니스 로직)
-├── Domain Services (AuthService, CookieService)
-└── Repository Layer (Supabase)
+├── API Routes (/api/signup/(adaptor), /signin/(adaptor), /me/(adaptor), /refresh/(adaptor), /logout/(adaptor))
+│   └── Next.js API route handlers in (adaptor) folders following Clean Architecture
+├── Use Cases (비즈니스 로직 - /backend/auth/*/usecases/)
+├── Domain Services (AuthService, CookieService - /backend/common/infrastructures/auth/)
+└── Repository Layer (Supabase - /backend/common/infrastructures/repositories/)
 
 External Services
 ├── Supabase Database (사용자 데이터)

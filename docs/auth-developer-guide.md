@@ -75,10 +75,10 @@ export default function RootLayout({
 
 ```typescript
 interface SessionContextValue {
-  user: User | null; // 현재 로그인한 사용자 정보
+  user: SessionUser | null; // 현재 로그인한 사용자 정보
   isLoading: boolean; // 로딩 상태
   isAuthenticated: boolean; // 인증 여부
-  login: (email: string, password: string) => Promise<void>;
+  login: (accessToken: string, refreshToken: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 ```
@@ -167,10 +167,10 @@ function UserProfile() {
 
 ```typescript
 interface UseSessionReturn {
-  user: User | null;
+  user: SessionUser | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (accessToken: string, refreshToken: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 ```
@@ -178,11 +178,11 @@ interface UseSessionReturn {
 #### User 객체 구조
 
 ```typescript
-interface User {
+// SessionProvider에서 사용하는 사용자 타입 (JWT 페이로드에서 파생)
+interface SessionUser {
   id: string; // 사용자 UUID
   email: string; // 이메일 주소
-  name: string; // 사용자 이름
-  type: 'user' | 'admin'; // 사용자 역할
+  type: string; // 사용자 역할 ('user' | 'admin')
 }
 ```
 
@@ -201,7 +201,6 @@ function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const { login } = useSession();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -210,10 +209,27 @@ function LoginForm() {
     setError('');
 
     try {
-      await login(email, password);
-      router.push('/dashboard'); // 로그인 성공 시 리다이렉트
+      // 1. API로 로그인 요청
+      const response = await fetch('/api/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include', // 쿠키 포함
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // 2. 쿠키가 자동으로 설정되므로 SessionProvider가 세션을 인식
+        router.push('/dashboard'); // 로그인 성공 시 리다이렉트
+        router.refresh(); // SessionProvider가 새 세션을 인식하도록
+      } else {
+        setError(data.error || '로그인에 실패했습니다');
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : '로그인에 실패했습니다');
+      setError('네트워크 오류가 발생했습니다');
     } finally {
       setIsLoading(false);
     }
@@ -359,7 +375,7 @@ function SignupForm() {
 
 ## API 직접 사용
 
-SessionProvider를 통하지 않고 API를 직접 호출해야 하는 경우의 사용법입니다.
+SessionProvider를 통하지 않고 API를 직접 호출해야 하는 경우의 사용법입니다. 일반적으로는 위의 예제처럼 API를 직접 호출하고, 쿠키가 자동으로 설정되어 SessionProvider가 세션을 인식하게 하는 것이 권장됩니다.
 
 ### 회원가입 API
 
@@ -489,6 +505,11 @@ async function logout(): Promise<void> {
 
 ```typescript
 // GET /api/duplicates?email={email}
+interface DuplicateCheckResponse {
+  available: boolean;
+  message: string;
+}
+
 async function checkEmailDuplicate(email: string): Promise<boolean> {
   const response = await fetch(
     `/api/duplicates?email=${encodeURIComponent(email)}`
@@ -499,8 +520,8 @@ async function checkEmailDuplicate(email: string): Promise<boolean> {
     throw new Error(error.error || '이메일 확인에 실패했습니다');
   }
 
-  const data = await response.json();
-  return data.isDuplicate;
+  const data: DuplicateCheckResponse = await response.json();
+  return !data.available; // available이 false면 중복(true 반환)
 }
 
 // 사용 예시
@@ -514,8 +535,8 @@ function EmailInput() {
 
     setIsChecking(true);
     try {
-      const duplicate = await checkEmailDuplicate(email);
-      setIsDuplicate(duplicate);
+      const isDuplicateResult = await checkEmailDuplicate(email);
+      setIsDuplicate(isDuplicateResult);
     } catch (error) {
       console.error('이메일 확인 실패:', error);
     } finally {
@@ -1022,11 +1043,10 @@ function App() {
 
 ```typescript
 // types/auth.ts
-export interface User {
+export interface SessionUser {
   id: string;
   email: string;
-  name: string;
-  type: 'user' | 'admin';
+  type: string; // 'user' | 'admin'
 }
 
 export interface SessionContextValue {
@@ -1055,7 +1075,12 @@ export interface SignupRequest {
 }
 
 export interface SignupResponse extends ApiResponse {
-  user: User;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    type: string;
+  };
 }
 
 export interface SigninRequest {
@@ -1064,11 +1089,21 @@ export interface SigninRequest {
 }
 
 export interface SigninResponse extends ApiResponse {
-  user: User;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    type: string;
+  };
 }
 
 export interface MeResponse extends ApiResponse {
-  user: User;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    type: string;
+  };
 }
 ```
 
@@ -1148,16 +1183,16 @@ const UserProfile = memo(({ user }: { user: User }) => {
 
 // ProtectedRoute 최적화
 const OptimizedProtectedRoute = memo(
-  ({ children, allowedRoles }: ProtectedRouteProps) => {
+  ({ children, type }: ProtectedRouteProps) => {
     const { user, isAuthenticated, isLoading } = useSession();
 
     const hasAccess = useMemo(() => {
       if (!isAuthenticated || !user) return false;
-      if (!allowedRoles) return true;
+      if (!type) return true;
 
-      const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
+      const roles = Array.isArray(type) ? type : [type];
       return roles.includes(user.type);
-    }, [isAuthenticated, user, allowedRoles]);
+    }, [isAuthenticated, user, type]);
 
     if (isLoading) return <LoadingSpinner />;
     if (!hasAccess) return <AccessDenied />;
