@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '22.x'
 
       - name: Use Yarn v4 (Berry)
         run: corepack prepare yarn@4.x --activate
@@ -31,6 +31,16 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
+
+      - name: Inject .env
+        run: |
+          cat <<EOF > .env
+          SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          JWT_SECRET=${{ secrets.JWT_SECRET_BUILD }}
+          BCRYPT_ROUNDS=${{ secrets.BCRYPT_ROUNDS }}
+          NODE_ENV=production
+          EOF
 
       - name: Install dependencies
         run: yarn install --immutable
@@ -46,16 +56,6 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           NODE_ENV: test
-
-      - name: Inject .env
-        run: |
-          cat <<EOF > .env
-          SUPABASE_URL=${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          JWT_SECRET=${{ secrets.JWT_SECRET_BUILD }}
-          BCRYPT_ROUNDS=${{ secrets.BCRYPT_ROUNDS }}
-          NODE_ENV=production
-          EOF
 
       - name: Build
         run: yarn build

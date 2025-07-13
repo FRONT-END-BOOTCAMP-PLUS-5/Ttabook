@@ -102,11 +102,9 @@ describe('LogoutUsecase', () => {
 
     it('여러 번 연속 호출해도 안전해야 한다', async () => {
       // When & Then
-      await expect(Promise.all([
-        usecase.execute(),
-        usecase.execute(),
-        usecase.execute(),
-      ])).resolves.toHaveLength(3);
+      await expect(
+        Promise.all([usecase.execute(), usecase.execute(), usecase.execute()])
+      ).resolves.toHaveLength(3);
     });
   });
 });

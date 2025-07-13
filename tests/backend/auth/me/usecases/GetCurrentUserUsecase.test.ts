@@ -34,7 +34,7 @@ describe('GetCurrentUserUsecase', () => {
   });
 
   const validAccessToken = 'valid-access-token';
-  
+
   const mockTokenPayload = {
     originalId: 'user-uuid-123',
     email: 'test@example.com',
@@ -62,7 +62,9 @@ describe('GetCurrentUserUsecase', () => {
       const result = await usecase.execute(validAccessToken);
 
       // Then
-      expect(mockAuthService.verifyAccessToken).toHaveBeenCalledWith(validAccessToken);
+      expect(mockAuthService.verifyAccessToken).toHaveBeenCalledWith(
+        validAccessToken
+      );
       expect(mockUserRepository.findById).toHaveBeenCalledWith('user-uuid-123');
 
       expect(result.success).toBe(true);
@@ -128,10 +130,13 @@ describe('GetCurrentUserUsecase', () => {
       mockAuthService.verifyAccessToken.mockRejectedValue(expiredError);
 
       // When & Then
-      await expect(usecase.execute(validAccessToken))
-        .rejects.toThrow('액세스 토큰이 만료되었습니다. 새로고침하거나 다시 로그인해주세요');
+      await expect(usecase.execute(validAccessToken)).rejects.toThrow(
+        '액세스 토큰이 만료되었습니다. 새로고침하거나 다시 로그인해주세요'
+      );
 
-      expect(mockAuthService.verifyAccessToken).toHaveBeenCalledWith(validAccessToken);
+      expect(mockAuthService.verifyAccessToken).toHaveBeenCalledWith(
+        validAccessToken
+      );
       expect(mockUserRepository.findById).not.toHaveBeenCalled();
     });
 
@@ -141,10 +146,13 @@ describe('GetCurrentUserUsecase', () => {
       mockAuthService.verifyAccessToken.mockRejectedValue(invalidError);
 
       // When & Then
-      await expect(usecase.execute(validAccessToken))
-        .rejects.toThrow('유효하지 않은 액세스 토큰입니다');
+      await expect(usecase.execute(validAccessToken)).rejects.toThrow(
+        '유효하지 않은 액세스 토큰입니다'
+      );
 
-      expect(mockAuthService.verifyAccessToken).toHaveBeenCalledWith(validAccessToken);
+      expect(mockAuthService.verifyAccessToken).toHaveBeenCalledWith(
+        validAccessToken
+      );
       expect(mockUserRepository.findById).not.toHaveBeenCalled();
     });
 
@@ -154,21 +162,27 @@ describe('GetCurrentUserUsecase', () => {
       mockUserRepository.findById.mockResolvedValue(null);
 
       // When & Then
-      await expect(usecase.execute(validAccessToken))
-        .rejects.toThrow('사용자 정보를 찾을 수 없습니다');
+      await expect(usecase.execute(validAccessToken)).rejects.toThrow(
+        '사용자 정보를 찾을 수 없습니다'
+      );
 
-      expect(mockAuthService.verifyAccessToken).toHaveBeenCalledWith(validAccessToken);
+      expect(mockAuthService.verifyAccessToken).toHaveBeenCalledWith(
+        validAccessToken
+      );
       expect(mockUserRepository.findById).toHaveBeenCalledWith('user-uuid-123');
     });
 
     it('데이터베이스 조회 실패 시 에러를 전파해야 한다', async () => {
       // Given
       mockAuthService.verifyAccessToken.mockResolvedValue(mockTokenPayload);
-      mockUserRepository.findById.mockRejectedValue(new Error('데이터베이스 연결 실패'));
+      mockUserRepository.findById.mockRejectedValue(
+        new Error('데이터베이스 연결 실패')
+      );
 
       // When & Then
-      await expect(usecase.execute(validAccessToken))
-        .rejects.toThrow('데이터베이스 연결 실패');
+      await expect(usecase.execute(validAccessToken)).rejects.toThrow(
+        '데이터베이스 연결 실패'
+      );
 
       expect(mockUserRepository.findById).toHaveBeenCalledWith('user-uuid-123');
     });
@@ -185,7 +199,9 @@ describe('GetCurrentUserUsecase', () => {
 
       // Then
       expect(mockAuthService.verifyAccessToken).toHaveBeenCalledTimes(1);
-      expect(mockAuthService.verifyAccessToken).toHaveBeenCalledWith(validAccessToken);
+      expect(mockAuthService.verifyAccessToken).toHaveBeenCalledWith(
+        validAccessToken
+      );
     });
 
     it('응답에 민감한 정보가 포함되지 않아야 한다', async () => {
@@ -210,22 +226,31 @@ describe('GetCurrentUserUsecase', () => {
 
     it('토큰에서 추출한 사용자 ID로 데이터베이스를 조회해야 한다', async () => {
       // Given
-      const tokenWithDifferentId = { ...mockTokenPayload, originalId: 'different-uuid' };
+      const tokenWithDifferentId = {
+        ...mockTokenPayload,
+        originalId: 'different-uuid',
+      };
       mockAuthService.verifyAccessToken.mockResolvedValue(tokenWithDifferentId);
       mockUserRepository.findById.mockResolvedValue(null);
 
       // When & Then
-      await expect(usecase.execute(validAccessToken))
-        .rejects.toThrow('사용자 정보를 찾을 수 없습니다');
+      await expect(usecase.execute(validAccessToken)).rejects.toThrow(
+        '사용자 정보를 찾을 수 없습니다'
+      );
 
-      expect(mockUserRepository.findById).toHaveBeenCalledWith('different-uuid');
+      expect(mockUserRepository.findById).toHaveBeenCalledWith(
+        'different-uuid'
+      );
     });
   });
 
   describe('데이터 무결성', () => {
     it('토큰의 이메일과 DB의 이메일이 일치하는지 확인', async () => {
       // Given
-      const userWithDifferentEmail: User = { ...testUser, email: 'different@example.com' };
+      const userWithDifferentEmail: User = {
+        ...testUser,
+        email: 'different@example.com',
+      };
       mockAuthService.verifyAccessToken.mockResolvedValue(mockTokenPayload);
       mockUserRepository.findById.mockResolvedValue(userWithDifferentEmail);
 

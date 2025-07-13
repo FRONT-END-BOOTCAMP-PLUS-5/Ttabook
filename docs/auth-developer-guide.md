@@ -29,11 +29,14 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Router>
     </SessionProvider>
@@ -61,9 +64,7 @@ export default function RootLayout({
   return (
     <html>
       <body>
-        <SessionProvider>
-          {children}
-        </SessionProvider>
+        <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
   );
@@ -74,9 +75,9 @@ export default function RootLayout({
 
 ```typescript
 interface SessionContextValue {
-  user: User | null;              // 현재 로그인한 사용자 정보
-  isLoading: boolean;             // 로딩 상태
-  isAuthenticated: boolean;       // 인증 여부
+  user: User | null; // 현재 로그인한 사용자 정보
+  isLoading: boolean; // 로딩 상태
+  isAuthenticated: boolean; // 인증 여부
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -118,8 +119,8 @@ import { ProtectedRoute } from '@/app/components/ProtectedRoute';
 ```typescript
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  allowedRoles?: string | string[];  // 허용할 역할 ('user', 'admin')
-  fallback?: React.ReactNode;        // 로딩 중 표시할 컴포넌트
+  allowedRoles?: string | string[]; // 허용할 역할 ('user', 'admin')
+  fallback?: React.ReactNode; // 로딩 중 표시할 컴포넌트
 }
 ```
 
@@ -178,10 +179,10 @@ interface UseSessionReturn {
 
 ```typescript
 interface User {
-  id: string;          // 사용자 UUID
-  email: string;       // 이메일 주소
-  name: string;        // 사용자 이름
-  type: 'user' | 'admin';  // 사용자 역할
+  id: string; // 사용자 UUID
+  email: string; // 이메일 주소
+  name: string; // 사용자 이름
+  type: 'user' | 'admin'; // 사용자 역할
 }
 ```
 
@@ -199,7 +200,7 @@ function LoginForm() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  
+
   const { login } = useSession();
   const router = useRouter();
 
@@ -230,7 +231,7 @@ function LoginForm() {
           required
         />
       </div>
-      
+
       <div>
         <label htmlFor="password">패스워드</label>
         <input
@@ -241,9 +242,9 @@ function LoginForm() {
           required
         />
       </div>
-      
+
       {error && <div className="error">{error}</div>}
-      
+
       <button type="submit" disabled={isLoading}>
         {isLoading ? '로그인 중...' : '로그인'}
       </button>
@@ -266,13 +267,13 @@ function SignupForm() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  
+
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
@@ -319,7 +320,7 @@ function SignupForm() {
           required
         />
       </div>
-      
+
       <div>
         <label htmlFor="email">이메일</label>
         <input
@@ -331,7 +332,7 @@ function SignupForm() {
           required
         />
       </div>
-      
+
       <div>
         <label htmlFor="password">패스워드</label>
         <input
@@ -345,9 +346,9 @@ function SignupForm() {
         />
         <small>최소 8자 이상 입력해주세요</small>
       </div>
-      
+
       {error && <div className="error">{error}</div>}
-      
+
       <button type="submit" disabled={isLoading}>
         {isLoading ? '가입 중...' : '회원가입'}
       </button>
@@ -510,7 +511,7 @@ function EmailInput() {
 
   const handleEmailCheck = async () => {
     if (!email) return;
-    
+
     setIsChecking(true);
     try {
       const duplicate = await checkEmailDuplicate(email);
@@ -550,14 +551,12 @@ function Navigation() {
   return (
     <nav>
       <Link href="/">홈</Link>
-      
+
       {isAuthenticated ? (
         // 로그인 상태
         <>
           <Link href="/dashboard">대시보드</Link>
-          {user?.type === 'admin' && (
-            <Link href="/admin">관리자</Link>
-          )}
+          {user?.type === 'admin' && <Link href="/admin">관리자</Link>}
           <span>안녕하세요, {user?.name}님</span>
           <button onClick={logout}>로그아웃</button>
         </>
@@ -582,7 +581,11 @@ interface RoleBasedProps {
   fallback?: React.ReactNode;
 }
 
-function RoleBased({ children, allowedRoles, fallback = null }: RoleBasedProps) {
+function RoleBased({
+  children,
+  allowedRoles,
+  fallback = null,
+}: RoleBasedProps) {
   const { user, isAuthenticated } = useSession();
 
   if (!isAuthenticated || !user) {
@@ -599,8 +602,8 @@ function RoleBased({ children, allowedRoles, fallback = null }: RoleBasedProps) 
 // 사용 예시
 function AdminSection() {
   return (
-    <RoleBased 
-      allowedRoles={['admin']} 
+    <RoleBased
+      allowedRoles={['admin']}
       fallback={<div>관리자만 접근 가능합니다</div>}
     >
       <AdminPanel />
@@ -615,7 +618,7 @@ function AdminSection() {
 // useAuth: 더 간단한 인터페이스 제공
 function useAuth() {
   const { user, isAuthenticated } = useSession();
-  
+
   return {
     user,
     isLoggedIn: isAuthenticated,
@@ -680,13 +683,13 @@ function LoginForm() {
   return (
     <form onSubmit={handleSubmit}>
       {/* 폼 필드들 */}
-      
+
       {error && (
         <div className="error-message" role="alert">
           {error}
         </div>
       )}
-      
+
       <button type="submit">로그인</button>
     </form>
   );
@@ -746,9 +749,7 @@ import LoginForm from './LoginForm';
 
 // Mock SessionProvider
 const MockSessionProvider = ({ children, value }: any) => (
-  <SessionProvider.Provider value={value}>
-    {children}
-  </SessionProvider.Provider>
+  <SessionProvider.Provider value={value}>{children}</SessionProvider.Provider>
 );
 
 describe('LoginForm', () => {
@@ -883,7 +884,7 @@ function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const password = passwordRef.current?.value || '';
-    
+
     try {
       await login(email, password);
       // 성공 후 패스워드 필드 클리어
@@ -1117,9 +1118,9 @@ function useApi<TRequest, TResponse>() {
 // 사용 예시
 function useSignup() {
   const { request, isLoading, error } = useApi<SignupRequest, SignupResponse>();
-  
+
   const signup = (data: SignupRequest) => request('/api/signup', 'POST', data);
-  
+
   return { signup, isLoading, error };
 }
 ```
@@ -1146,22 +1147,24 @@ const UserProfile = memo(({ user }: { user: User }) => {
 });
 
 // ProtectedRoute 최적화
-const OptimizedProtectedRoute = memo(({ children, allowedRoles }: ProtectedRouteProps) => {
-  const { user, isAuthenticated, isLoading } = useSession();
-  
-  const hasAccess = useMemo(() => {
-    if (!isAuthenticated || !user) return false;
-    if (!allowedRoles) return true;
-    
-    const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
-    return roles.includes(user.type);
-  }, [isAuthenticated, user, allowedRoles]);
+const OptimizedProtectedRoute = memo(
+  ({ children, allowedRoles }: ProtectedRouteProps) => {
+    const { user, isAuthenticated, isLoading } = useSession();
 
-  if (isLoading) return <LoadingSpinner />;
-  if (!hasAccess) return <AccessDenied />;
-  
-  return <>{children}</>;
-});
+    const hasAccess = useMemo(() => {
+      if (!isAuthenticated || !user) return false;
+      if (!allowedRoles) return true;
+
+      const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
+      return roles.includes(user.type);
+    }, [isAuthenticated, user, allowedRoles]);
+
+    if (isLoading) return <LoadingSpinner />;
+    if (!hasAccess) return <AccessDenied />;
+
+    return <>{children}</>;
+  }
+);
 ```
 
 ### 지연 로딩
@@ -1178,7 +1181,7 @@ function Dashboard() {
   return (
     <div>
       <h1>대시보드</h1>
-      
+
       {user?.type === 'admin' && (
         <Suspense fallback={<div>관리자 패널 로딩 중...</div>}>
           <AdminPanel />
@@ -1226,4 +1229,4 @@ BCRYPT_ROUNDS=12
 
 ---
 
-*본 가이드는 Ttabook 인증 시스템의 효과적인 사용을 위한 종합적인 가이드입니다. 추가 질문이나 문제가 있으면 개발팀에 문의해주세요.*
+_본 가이드는 Ttabook 인증 시스템의 효과적인 사용을 위한 종합적인 가이드입니다. 추가 질문이나 문제가 있으면 개발팀에 문의해주세요._

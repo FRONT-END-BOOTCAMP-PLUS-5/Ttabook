@@ -15,7 +15,9 @@ export class GetCurrentUserUsecase {
       userPayload = await this.authService.verifyAccessToken(accessToken);
     } catch (error) {
       if (error instanceof Error && error.name === 'JWTExpired') {
-        throw new Error('액세스 토큰이 만료되었습니다. 새로고침하거나 다시 로그인해주세요');
+        throw new Error(
+          '액세스 토큰이 만료되었습니다. 새로고침하거나 다시 로그인해주세요'
+        );
       }
       throw new Error('유효하지 않은 액세스 토큰입니다');
     }

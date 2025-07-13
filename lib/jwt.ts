@@ -27,7 +27,7 @@ function uuidToNumber(uuid: string): number {
   let hash = 0;
   for (let i = 0; i < uuid.length; i++) {
     const char = uuid.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash; // 32비트 정수로 변환
   }
   return Math.abs(hash);
@@ -39,7 +39,7 @@ function uuidToNumber(uuid: string): number {
 export async function signAccessToken(user: UserForJWT): Promise<string> {
   const secret = getSecretKey();
   const now = Math.floor(Date.now() / 1000);
-  
+
   return await new SignJWT({
     id: uuidToNumber(user.id), // UUID를 number로 변환
     originalId: user.id, // 원본 UUID 저장
@@ -48,7 +48,7 @@ export async function signAccessToken(user: UserForJWT): Promise<string> {
   })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt(now)
-    .setExpirationTime(now + (15 * 60)) // 15분
+    .setExpirationTime(now + 15 * 60) // 15분
     .sign(secret);
 }
 
@@ -58,7 +58,7 @@ export async function signAccessToken(user: UserForJWT): Promise<string> {
 export async function signRefreshToken(user: UserForJWT): Promise<string> {
   const secret = getSecretKey();
   const now = Math.floor(Date.now() / 1000);
-  
+
   return await new SignJWT({
     id: uuidToNumber(user.id), // UUID를 number로 변환
     originalId: user.id, // 원본 UUID 저장
@@ -67,30 +67,32 @@ export async function signRefreshToken(user: UserForJWT): Promise<string> {
   })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt(now)
-    .setExpirationTime(now + (14 * 24 * 60 * 60)) // 14일
+    .setExpirationTime(now + 14 * 24 * 60 * 60) // 14일
     .sign(secret);
 }
 
 /**
  * 액세스 토큰을 검증하고 사용자 정보를 반환합니다
  */
-export async function verifyAccessToken(token: string): Promise<UserJWTPayload> {
+export async function verifyAccessToken(
+  token: string
+): Promise<UserJWTPayload> {
   if (!token || token.trim() === '') {
     throw new Error('토큰이 제공되지 않았습니다');
   }
 
   const secret = getSecretKey();
-  
+
   try {
     const { payload } = await jwtVerify(token, secret);
-    
+
     // 토큰 마이그레이션: originalId가 없는 기존 토큰 호환성 처리
     const originalId = payload.originalId as string | undefined;
     const numericId = payload.id as number;
-    
+
     // originalId가 없으면 숫자 ID를 문자열로 변환 (기존 토큰 호환성)
     const userId = originalId || numericId.toString();
-    
+
     return {
       id: numericId,
       originalId: userId,
@@ -100,7 +102,8 @@ export async function verifyAccessToken(token: string): Promise<UserJWTPayload> 
       iat: payload.iat as number,
     };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
+    const errorMessage =
+      error instanceof Error ? error.message : '알 수 없는 오류';
     throw new Error(`토큰 검증 실패: ${errorMessage}`);
   }
 }
@@ -108,23 +111,25 @@ export async function verifyAccessToken(token: string): Promise<UserJWTPayload> 
 /**
  * 리프레시 토큰을 검증하고 사용자 정보를 반환합니다
  */
-export async function verifyRefreshToken(token: string): Promise<UserJWTPayload> {
+export async function verifyRefreshToken(
+  token: string
+): Promise<UserJWTPayload> {
   if (!token || token.trim() === '') {
     throw new Error('토큰이 제공되지 않았습니다');
   }
 
   const secret = getSecretKey();
-  
+
   try {
     const { payload } = await jwtVerify(token, secret);
-    
+
     // 토큰 마이그레이션: originalId가 없는 기존 토큰 호환성 처리
     const originalId = payload.originalId as string | undefined;
     const numericId = payload.id as number;
-    
+
     // originalId가 없으면 숫자 ID를 문자열로 변환 (기존 토큰 호환성)
     const userId = originalId || numericId.toString();
-    
+
     return {
       id: numericId,
       originalId: userId,
@@ -134,7 +139,8 @@ export async function verifyRefreshToken(token: string): Promise<UserJWTPayload>
       iat: payload.iat as number,
     };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
+    const errorMessage =
+      error instanceof Error ? error.message : '알 수 없는 오류';
     throw new Error(`토큰 검증 실패: ${errorMessage}`);
   }
 }

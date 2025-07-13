@@ -52,6 +52,7 @@ PORT=3000
 ### 환경 변수 검증
 
 시스템 시작 시 `/lib/config.ts`에서 자동 검증:
+
 - JWT_SECRET 길이 검증 (최소 32자)
 - Supabase URL 형식 검증
 - 필수 변수 존재 여부 확인
@@ -61,18 +62,21 @@ PORT=3000
 #### JWT Secret 로테이션 절차
 
 1. **준비 단계**
+
    ```bash
    # 새로운 JWT secret 생성
    openssl rand -base64 64
    ```
 
 2. **배포 전 검증**
+
    ```bash
    # 테스트 환경에서 새 secret 검증
    JWT_SECRET="new-secret" yarn test
    ```
 
 3. **점진적 배포**
+
    ```bash
    # 1. Blue-Green 배포로 downtime 최소화
    # 2. 기존 토큰 만료 시간(15분) 고려
@@ -90,6 +94,7 @@ PORT=3000
 ### 핵심 메트릭
 
 #### 1. 인증 성공률
+
 ```
 Target: > 95%
 Alert: < 90% (5분간)
@@ -100,6 +105,7 @@ Alert: < 90% (5분간)
 ```
 
 #### 2. 토큰 만료율
+
 ```
 Target: < 5% (정상적 만료 제외)
 Alert: > 10% (10분간)
@@ -110,6 +116,7 @@ Alert: > 10% (10분간)
 ```
 
 #### 3. 데이터베이스 응답 시간
+
 ```
 Target: < 100ms (P95)
 Alert: > 500ms (5분간)
@@ -120,6 +127,7 @@ Alert: > 500ms (5분간)
 ```
 
 #### 4. 시스템 리소스
+
 ```
 Memory: < 80%
 CPU: < 70%
@@ -162,12 +170,14 @@ grep "ERROR:" /var/log/ttabook/auth.log | tail -50
 ### 대시보드 구성
 
 #### 실시간 모니터링 패널
+
 1. **인증 성공률** (5분 단위)
 2. **활성 세션 수** (실시간)
 3. **API 응답 시간** (P50, P95, P99)
 4. **오류율** (엔드포인트별)
 
 #### 보안 모니터링 패널
+
 1. **비정상 로그인 시도** (시간당)
 2. **계정 생성률** (일별)
 3. **토큰 만료 패턴** (시간대별)
@@ -180,12 +190,14 @@ grep "ERROR:" /var/log/ttabook/auth.log | tail -50
 #### 1. 사용자가 로그인할 수 없음
 
 **증상**
+
 ```
 - 로그인 폼에서 "서버 오류" 메시지
 - HTTP 500 에러 응답
 ```
 
 **진단 절차**
+
 ```bash
 # 1. 데이터베이스 연결 확인
 curl -X GET "http://localhost:3000/api/duplicates?email=test@example.com"
@@ -199,6 +211,7 @@ curl -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
 ```
 
 **해결 방법**
+
 ```bash
 # A. 환경 변수 재설정
 export JWT_SECRET="new-valid-secret-minimum-32-characters"
@@ -214,12 +227,14 @@ systemctl restart ttabook
 #### 2. 토큰 만료 오류가 빈발함
 
 **증상**
+
 ```
 - 15분 이내 토큰 만료
 - "토큰이 만료되었습니다" 오류 다발
 ```
 
 **진단 절차**
+
 ```bash
 # 1. 서버 시간 동기화 확인
 timedatectl status
@@ -234,6 +249,7 @@ console.log('Token valid:', !!decoded);
 ```
 
 **해결 방법**
+
 ```bash
 # A. 시간 동기화
 sudo timedatectl set-ntp true
@@ -247,12 +263,14 @@ sudo systemctl restart systemd-timesyncd
 #### 3. 데이터베이스 연결 실패
 
 **증상**
+
 ```
 - 모든 API 엔드포인트에서 500 에러
 - "Database connection failed" 로그
 ```
 
 **진단 절차**
+
 ```bash
 # 1. Supabase 서비스 상태 확인
 curl -I https://your-project.supabase.co
@@ -267,6 +285,7 @@ curl -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
 ```
 
 **해결 방법**
+
 ```bash
 # A. Supabase 설정 검증
 # 프로젝트 설정에서 API URL과 Service Role Key 재확인
@@ -283,6 +302,7 @@ curl -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
 #### 1. 응답 시간 지연
 
 **진단**
+
 ```bash
 # API 응답 시간 측정
 time curl -X POST "http://localhost:3000/api/signin" \
@@ -294,6 +314,7 @@ time curl -X POST "http://localhost:3000/api/signin" \
 ```
 
 **최적화 방법**
+
 ```sql
 -- 자주 사용되는 쿼리 인덱스 추가
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
@@ -303,6 +324,7 @@ CREATE INDEX IF NOT EXISTS idx_users_id ON users(id);
 #### 2. 메모리 사용량 증가
 
 **진단**
+
 ```bash
 # Node.js 메모리 사용량 모니터링
 ps aux | grep node
@@ -314,6 +336,7 @@ node --inspect server.js
 ```
 
 **해결책**
+
 ```bash
 # 메모리 제한 설정
 node --max-old-space-size=1024 server.js
@@ -329,6 +352,7 @@ node --trace-gc server.js
 #### 1. JWT Secret 노출 의심
 
 **즉시 조치**
+
 ```bash
 # 1. 새로운 JWT Secret 생성
 NEW_SECRET=$(openssl rand -base64 64)
@@ -341,6 +365,7 @@ kubectl set env deployment/ttabook JWT_SECRET="$NEW_SECRET"
 ```
 
 **후속 조치**
+
 ```bash
 # 1. 로그 분석으로 영향 범위 확인
 grep "JWT" /var/log/ttabook/* | grep "$(date +%Y-%m-%d)"
@@ -352,6 +377,7 @@ grep "JWT" /var/log/ttabook/* | grep "$(date +%Y-%m-%d)"
 #### 2. 대량 비정상 로그인 시도
 
 **탐지**
+
 ```bash
 # 1시간 내 실패한 로그인 시도 수 확인
 grep "Authentication failed" /var/log/ttabook/auth.log | \
@@ -359,6 +385,7 @@ grep "$(date --date='1 hour ago' '+%Y-%m-%d %H')" | wc -l
 ```
 
 **대응**
+
 ```bash
 # 1. IP 기반 임시 차단
 iptables -A INPUT -s 악성_IP -j DROP
@@ -373,6 +400,7 @@ iptables -A INPUT -s 악성_IP -j DROP
 #### 3. 데이터베이스 보안 사고
 
 **즉시 조치**
+
 ```bash
 # 1. 데이터베이스 연결 차단
 # Supabase 콘솔에서 API 비활성화
@@ -426,6 +454,7 @@ tail -100
 ### 데이터 백업 전략
 
 #### 1. 자동 백업 (Supabase)
+
 ```bash
 # Supabase 자동 백업 설정 확인
 # - 일간 백업: 7일 보관
@@ -434,6 +463,7 @@ tail -100
 ```
 
 #### 2. 수동 백업
+
 ```bash
 # 사용자 데이터 백업
 pg_dump $DATABASE_URL > backup_$(date +%Y%m%d_%H%M%S).sql
@@ -446,6 +476,7 @@ cp -r config/ config.backup.$(date +%Y%m%d)/
 ### 복구 절차
 
 #### 1. 데이터베이스 복구
+
 ```bash
 # 1. 서비스 중단
 systemctl stop ttabook
@@ -461,6 +492,7 @@ systemctl start ttabook
 ```
 
 #### 2. 설정 복구
+
 ```bash
 # 환경 변수 복원
 cp .env.backup.20240101 .env
@@ -477,42 +509,45 @@ curl -X GET "http://localhost:3000/api/me"
 ### 데이터베이스 최적화
 
 #### 인덱스 관리
+
 ```sql
 -- 필수 인덱스 생성
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_email 
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_email
 ON users(email);
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_type 
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_type
 ON users(type);
 
 -- 인덱스 사용률 모니터링
-SELECT 
+SELECT
     schemaname,
     tablename,
     attname,
     n_distinct,
     correlation
-FROM pg_stats 
+FROM pg_stats
 WHERE tablename = 'users';
 ```
 
 #### 쿼리 최적화
+
 ```sql
 -- 느린 쿼리 식별
-SELECT query, mean_time, calls 
-FROM pg_stat_statements 
-WHERE query LIKE '%users%' 
-ORDER BY mean_time DESC 
+SELECT query, mean_time, calls
+FROM pg_stat_statements
+WHERE query LIKE '%users%'
+ORDER BY mean_time DESC
 LIMIT 10;
 ```
 
 ### 애플리케이션 최적화
 
 #### JWT 토큰 최적화
+
 ```typescript
 // JWT 페이로드 최소화
 const payload = {
-  id: user.id,           // 필수만 포함
+  id: user.id, // 필수만 포함
   email: user.email,
   role: user.type,
   // 불필요한 데이터 제거
@@ -520,6 +555,7 @@ const payload = {
 ```
 
 #### 캐싱 전략
+
 ```typescript
 // Redis 캐싱 (선택적)
 // - 사용자 세션 정보 캐싱
@@ -530,6 +566,7 @@ const payload = {
 ## 운영 체크리스트
 
 ### 일간 체크리스트
+
 - [ ] 시스템 리소스 사용률 확인 (CPU, Memory, Disk)
 - [ ] API 응답 시간 모니터링 (< 100ms P95)
 - [ ] 오류율 확인 (< 1%)
@@ -537,6 +574,7 @@ const payload = {
 - [ ] 보안 로그 검토
 
 ### 주간 체크리스트
+
 - [ ] 의존성 업데이트 확인
 - [ ] 성능 트렌드 분석
 - [ ] 용량 계획 검토
@@ -544,6 +582,7 @@ const payload = {
 - [ ] 문서 업데이트
 
 ### 월간 체크리스트
+
 - [ ] JWT Secret 로테이션 검토
 - [ ] 보안 감사 수행
 - [ ] 재해 복구 테스트
@@ -551,6 +590,7 @@ const payload = {
 - [ ] 사용자 피드백 분석
 
 ### 분기별 체크리스트
+
 - [ ] 전체 시스템 아키텍처 검토
 - [ ] 비즈니스 연속성 계획 업데이트
 - [ ] 팀 교육 및 지식 공유
@@ -560,15 +600,17 @@ const payload = {
 ## 연락처 및 지원
 
 ### 긴급 연락망
+
 - **시스템 관리자**: [연락처]
 - **보안 담당자**: [연락처]
 - **개발팀 리드**: [연락처]
 
 ### 외부 지원
+
 - **Supabase 지원팀**: support@supabase.io
 - **Next.js 커뮤니티**: https://github.com/vercel/next.js
 - **보안 신고**: security@ttabook.com
 
 ---
 
-*본 문서는 Ttabook 인증 시스템의 안정적인 운영을 위한 가이드입니다. 시스템 변경 시 반드시 문서를 업데이트하시기 바랍니다.*
+_본 문서는 Ttabook 인증 시스템의 안정적인 운영을 위한 가이드입니다. 시스템 변경 시 반드시 문서를 업데이트하시기 바랍니다._

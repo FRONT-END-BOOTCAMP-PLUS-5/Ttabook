@@ -1,8 +1,19 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from 'react';
 import Cookies from 'js-cookie';
-import { verifyAccessToken, verifyRefreshToken, signAccessToken, UserJWTPayload } from '@/lib/jwt';
+import {
+  verifyAccessToken,
+  verifyRefreshToken,
+  signAccessToken,
+  UserJWTPayload,
+} from '@/lib/jwt';
 
 // 세션 사용자 타입 (JWT 페이로드에서 파생)
 export interface SessionUser {
@@ -49,7 +60,7 @@ export function SessionProvider({ children }: SessionProviderProps) {
   const initializeSession = React.useCallback(async () => {
     try {
       setIsLoading(true);
-      
+
       const accessToken = Cookies.get('accessToken');
       const refreshToken = Cookies.get('refreshToken');
 
@@ -96,7 +107,6 @@ export function SessionProvider({ children }: SessionProviderProps) {
       // 모든 토큰이 유효하지 않으면 정리하고 로그아웃
       clearTokens();
       setUser(null);
-      
     } catch (error) {
       console.error('세션 초기화 오류:', error);
       clearTokens();
@@ -129,7 +139,6 @@ export function SessionProvider({ children }: SessionProviderProps) {
       // accessToken 검증 및 사용자 정보 설정
       const payload = await verifyAccessToken(accessToken);
       setUser(jwtPayloadToUser(payload));
-      
     } catch (error) {
       console.error('로그인 오류:', error);
       clearTokens();
@@ -168,10 +177,12 @@ export function SessionProvider({ children }: SessionProviderProps) {
 // useSession 훅
 export function useSession(): SessionContextType {
   const context = useContext(SessionContext);
-  
+
   if (context === null) {
-    throw new Error('useSession은 SessionProvider 내부에서만 사용할 수 있습니다');
+    throw new Error(
+      'useSession은 SessionProvider 내부에서만 사용할 수 있습니다'
+    );
   }
-  
+
   return context;
 }

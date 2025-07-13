@@ -7,7 +7,7 @@ export class SaveRequest {
     public positionY: number,
     public scaleX: number,
     public scaleY: number
-  ){}
+  ) {}
 }
 
 export class UpdateRequest {
@@ -20,5 +20,5 @@ export class UpdateRequest {
     public positionY: number,
     public scaleX: number,
     public scaleY: number
-  ){}
+  ) {}
 }

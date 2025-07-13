@@ -4,7 +4,7 @@ export class SaveRequest {
     public roomId: number,
     public spaceId: number,
     public startTime: Date,
-    public endTime: Date,
+    public endTime: Date
   ) {}
 }
 
@@ -13,7 +13,7 @@ export class UpdateRequest {
     public rsvId: string,
     public userId: string,
     public startTime: Date,
-    public endTime: Date,
+    public endTime: Date
   ) {}
 }
 

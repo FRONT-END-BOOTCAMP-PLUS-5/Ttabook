@@ -34,7 +34,11 @@ describe('SignupUsecase', () => {
     usecase = new SignupUsecase(mockUserRepository, mockAuthService);
   });
 
-  const signupRequest = new SignupRequestDto('test@example.com', 'password123', 'Test User');
+  const signupRequest = new SignupRequestDto(
+    'test@example.com',
+    'password123',
+    'Test User'
+  );
 
   const createdUser: User = {
     id: 'new-uuid-123',
@@ -59,7 +63,9 @@ describe('SignupUsecase', () => {
       const result = await usecase.execute(signupRequest);
 
       // Then
-      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('test@example.com');
+      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith(
+        'test@example.com'
+      );
       expect(mockAuthService.hashPassword).toHaveBeenCalledWith('password123');
       expect(mockUserRepository.save).toHaveBeenCalledWith({
         email: 'test@example.com',
@@ -97,8 +103,12 @@ describe('SignupUsecase', () => {
         email: 'test@example.com',
         type: 'user',
       };
-      expect(mockAuthService.signAccessToken).toHaveBeenCalledWith(expectedTokenPayload);
-      expect(mockAuthService.signRefreshToken).toHaveBeenCalledWith(expectedTokenPayload);
+      expect(mockAuthService.signAccessToken).toHaveBeenCalledWith(
+        expectedTokenPayload
+      );
+      expect(mockAuthService.signRefreshToken).toHaveBeenCalledWith(
+        expectedTokenPayload
+      );
     });
   });
 
@@ -117,8 +127,10 @@ describe('SignupUsecase', () => {
       mockUserRepository.findByEmail.mockResolvedValue(existingUser);
 
       // When & Then
-      await expect(usecase.execute(signupRequest)).rejects.toThrow('이미 사용 중인 이메일입니다');
-      
+      await expect(usecase.execute(signupRequest)).rejects.toThrow(
+        '이미 사용 중인 이메일입니다'
+      );
+
       // 패스워드 해싱이나 사용자 저장이 호출되지 않아야 함
       expect(mockAuthService.hashPassword).not.toHaveBeenCalled();
       expect(mockUserRepository.save).not.toHaveBeenCalled();
@@ -127,10 +139,14 @@ describe('SignupUsecase', () => {
     it('패스워드 해싱 실패 시 에러가 전파되어야 한다', async () => {
       // Given
       mockUserRepository.findByEmail.mockResolvedValue(null);
-      mockAuthService.hashPassword.mockRejectedValue(new Error('패스워드 해싱 실패'));
+      mockAuthService.hashPassword.mockRejectedValue(
+        new Error('패스워드 해싱 실패')
+      );
 
       // When & Then
-      await expect(usecase.execute(signupRequest)).rejects.toThrow('패스워드 해싱 실패');
+      await expect(usecase.execute(signupRequest)).rejects.toThrow(
+        '패스워드 해싱 실패'
+      );
       expect(mockUserRepository.save).not.toHaveBeenCalled();
     });
 
@@ -138,10 +154,14 @@ describe('SignupUsecase', () => {
       // Given
       mockUserRepository.findByEmail.mockResolvedValue(null);
       mockAuthService.hashPassword.mockResolvedValue('hashed-password');
-      mockUserRepository.save.mockRejectedValue(new Error('데이터베이스 저장 실패'));
+      mockUserRepository.save.mockRejectedValue(
+        new Error('데이터베이스 저장 실패')
+      );
 
       // When & Then
-      await expect(usecase.execute(signupRequest)).rejects.toThrow('데이터베이스 저장 실패');
+      await expect(usecase.execute(signupRequest)).rejects.toThrow(
+        '데이터베이스 저장 실패'
+      );
       expect(mockAuthService.signAccessToken).not.toHaveBeenCalled();
     });
 
@@ -150,10 +170,14 @@ describe('SignupUsecase', () => {
       mockUserRepository.findByEmail.mockResolvedValue(null);
       mockAuthService.hashPassword.mockResolvedValue('hashed-password');
       mockUserRepository.save.mockResolvedValue(createdUser);
-      mockAuthService.signAccessToken.mockRejectedValue(new Error('JWT 생성 실패'));
+      mockAuthService.signAccessToken.mockRejectedValue(
+        new Error('JWT 생성 실패')
+      );
 
       // When & Then
-      await expect(usecase.execute(signupRequest)).rejects.toThrow('JWT 생성 실패');
+      await expect(usecase.execute(signupRequest)).rejects.toThrow(
+        'JWT 생성 실패'
+      );
     });
   });
 

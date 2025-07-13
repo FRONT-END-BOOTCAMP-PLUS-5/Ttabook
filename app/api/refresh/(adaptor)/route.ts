@@ -3,7 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 // Clean Architecture imports
 import { RefreshTokenUsecase } from '@/backend/auth/refresh/usecases';
 import { RefreshTokenRequestDto } from '@/backend/auth/refresh/dtos';
-import { AuthService, CookieService } from '@/backend/common/infrastructures/auth';
+import {
+  AuthService,
+  CookieService,
+} from '@/backend/common/infrastructures/auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,7 +20,10 @@ export async function POST(request: NextRequest) {
     }
 
     const cookieService = new CookieService();
-    const refreshToken = cookieService.extractTokenFromCookies(cookieHeader, 'refreshToken');
+    const refreshToken = cookieService.extractTokenFromCookies(
+      cookieHeader,
+      'refreshToken'
+    );
     if (!refreshToken || refreshToken.trim() === '') {
       return NextResponse.json(
         { error: '리프레시 토큰이 필요합니다' },
@@ -42,23 +48,27 @@ export async function POST(request: NextRequest) {
     );
 
     // 4. 쿠키 설정
-    const cookies = cookieService.setAuthCookies(result.tokens.accessToken, result.tokens.refreshToken);
-    response.headers.set('Set-Cookie', [cookies.accessToken, cookies.refreshToken].join(', '));
+    const cookies = cookieService.setAuthCookies(
+      result.tokens.accessToken,
+      result.tokens.refreshToken
+    );
+    response.headers.set(
+      'Set-Cookie',
+      [cookies.accessToken, cookies.refreshToken].join(', ')
+    );
 
     return response;
-
   } catch (error) {
     console.error('RefreshToken error:', error);
-    
+
     // 비즈니스 로직 에러 (토큰 만료/검증 실패 등)는 401로 처리
-    if (error instanceof Error && 
-        (error.message.includes('토큰') || 
-         error.message.includes('만료') ||
-         error.message.includes('유효하지 않은'))) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 401 }
-      );
+    if (
+      error instanceof Error &&
+      (error.message.includes('토큰') ||
+        error.message.includes('만료') ||
+        error.message.includes('유효하지 않은'))
+    ) {
+      return NextResponse.json({ error: error.message }, { status: 401 });
     }
 
     // 기타 서버 에러

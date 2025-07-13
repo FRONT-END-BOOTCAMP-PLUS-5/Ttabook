@@ -8,7 +8,8 @@ describe('AuthService', () => {
 
   beforeEach(() => {
     process.env = { ...originalEnv };
-    process.env.JWT_SECRET = 'test-jwt-secret-for-unit-tests-that-is-long-enough';
+    process.env.JWT_SECRET =
+      'test-jwt-secret-for-unit-tests-that-is-long-enough';
     process.env.BCRYPT_ROUNDS = '12';
     authService = new AuthService();
   });
@@ -26,14 +27,14 @@ describe('AuthService', () => {
 
     it('액세스 토큰을 정상적으로 생성해야 한다', async () => {
       const token = await authService.signAccessToken(testUser);
-      
+
       expect(typeof token).toBe('string');
       expect(token.split('.')).toHaveLength(3); // JWT 형식
     });
 
     it('리프레시 토큰을 정상적으로 생성해야 한다', async () => {
       const token = await authService.signRefreshToken(testUser);
-      
+
       expect(typeof token).toBe('string');
       expect(token.split('.')).toHaveLength(3); // JWT 형식
     });
@@ -72,30 +73,40 @@ describe('AuthService', () => {
     });
 
     it('잘못된 토큰에 대해 에러를 발생시켜야 한다', async () => {
-      await expect(authService.verifyAccessToken('invalid.token')).rejects.toThrow();
-      await expect(authService.verifyRefreshToken('invalid.token')).rejects.toThrow();
+      await expect(
+        authService.verifyAccessToken('invalid.token')
+      ).rejects.toThrow();
+      await expect(
+        authService.verifyRefreshToken('invalid.token')
+      ).rejects.toThrow();
     });
   });
 
   describe('패스워드 검증', () => {
     it('올바른 패스워드를 검증해야 한다', async () => {
       const { hashPassword } = await import('@/lib/password');
-      
+
       const plainPassword = 'testPassword123!';
       const hashedPassword = await hashPassword(plainPassword);
-      
-      const isValid = await authService.verifyPassword(plainPassword, hashedPassword);
+
+      const isValid = await authService.verifyPassword(
+        plainPassword,
+        hashedPassword
+      );
       expect(isValid).toBe(true);
     });
 
     it('틀린 패스워드를 거부해야 한다', async () => {
       const { hashPassword } = await import('@/lib/password');
-      
+
       const plainPassword = 'testPassword123!';
       const wrongPassword = 'wrongPassword456!';
       const hashedPassword = await hashPassword(plainPassword);
-      
-      const isValid = await authService.verifyPassword(wrongPassword, hashedPassword);
+
+      const isValid = await authService.verifyPassword(
+        wrongPassword,
+        hashedPassword
+      );
       expect(isValid).toBe(false);
     });
   });

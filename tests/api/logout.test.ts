@@ -1,4 +1,11 @@
-import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  jest,
+} from '@jest/globals';
 import { NextRequest } from 'next/server';
 
 describe('/api/logout API 라우트', () => {
@@ -6,7 +13,8 @@ describe('/api/logout API 라우트', () => {
 
   beforeEach(() => {
     process.env = { ...originalEnv };
-    process.env.JWT_SECRET = 'test-jwt-secret-for-unit-tests-that-is-long-enough';
+    process.env.JWT_SECRET =
+      'test-jwt-secret-for-unit-tests-that-is-long-enough';
 
     // 모든 mock 초기화
     jest.clearAllMocks();
@@ -23,7 +31,8 @@ describe('/api/logout API 라우트', () => {
       const request = new NextRequest('http://localhost:3000/api/logout', {
         method: 'POST',
         headers: {
-          Cookie: 'accessToken=some_access_token; refreshToken=some_refresh_token',
+          Cookie:
+            'accessToken=some_access_token; refreshToken=some_refresh_token',
         },
       });
 
@@ -121,7 +130,8 @@ describe('/api/logout API 라우트', () => {
       const request = new NextRequest('http://localhost:3000/api/logout', {
         method: 'POST',
         headers: {
-          Cookie: 'sessionId=abc123; accessToken=token123; theme=dark; refreshToken=refresh456',
+          Cookie:
+            'sessionId=abc123; accessToken=token123; theme=dark; refreshToken=refresh456',
         },
       });
 

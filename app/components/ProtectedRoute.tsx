@@ -15,10 +15,10 @@ interface ProtectedRouteProps {
  * 인증된 사용자만 접근할 수 있는 라우트를 보호하는 컴포넌트
  * 선택적으로 특정 역할을 가진 사용자만 접근하도록 제한할 수 있습니다
  */
-export function ProtectedRoute({ 
-  children, 
-  role, 
-  loadingComponent 
+export function ProtectedRoute({
+  children,
+  role,
+  loadingComponent,
 }: ProtectedRouteProps) {
   const { user, isLoading, isAuthenticated } = useSession();
   const router = useRouter();
@@ -52,9 +52,7 @@ export function ProtectedRoute({
 
   // 로딩 중일 때
   if (isLoading) {
-    return loadingComponent || (
-      <div data-testid="loading">로딩 중...</div>
-    );
+    return loadingComponent || <div data-testid="loading">로딩 중...</div>;
   }
 
   // 인증되지 않은 사용자는 아무것도 렌더링하지 않음 (리다이렉트 중)

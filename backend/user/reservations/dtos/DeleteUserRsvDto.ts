@@ -1,6 +1,6 @@
 export class DeleteUserRsvDto {
-    constructor(
-        public rsvId: string,
-        public userId: string
-    ) {}
+  constructor(
+    public rsvId: string,
+    public userId: string
+  ) {}
 }

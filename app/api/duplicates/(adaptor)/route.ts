@@ -7,7 +7,6 @@ const emailSchema = z.object({
   email: z.string().email('유효한 이메일 주소를 입력해주세요'),
 });
 
-
 export async function GET(request: NextRequest) {
   try {
     // URL에서 이메일 파라미터 추출
@@ -25,11 +24,10 @@ export async function GET(request: NextRequest) {
     // 이메일 형식 검증
     const validationResult = emailSchema.safeParse({ email: email.trim() });
     if (!validationResult.success) {
-      const errorMessage = validationResult.error.issues[0]?.message || '유효한 이메일 주소를 입력해주세요';
-      return NextResponse.json(
-        { error: errorMessage },
-        { status: 400 }
-      );
+      const errorMessage =
+        validationResult.error.issues[0]?.message ||
+        '유효한 이메일 주소를 입력해주세요';
+      return NextResponse.json({ error: errorMessage }, { status: 400 });
     }
 
     const validatedEmail = validationResult.data.email;
@@ -70,7 +68,6 @@ export async function GET(request: NextRequest) {
       },
       { status: 200 }
     );
-
   } catch (error) {
     console.error('Unexpected error:', error);
     return NextResponse.json(

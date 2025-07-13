@@ -21,7 +21,7 @@ describe('SupabaseUserRepository', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // 체이닝 메서드 설정
     mockQueryBuilder.select.mockReturnValue(mockQueryBuilder);
     mockQueryBuilder.eq.mockReturnValue(mockQueryBuilder);
@@ -29,9 +29,9 @@ describe('SupabaseUserRepository', () => {
     mockQueryBuilder.insert.mockReturnValue(mockQueryBuilder);
     mockQueryBuilder.update.mockReturnValue(mockQueryBuilder);
     mockQueryBuilder.delete.mockReturnValue(mockQueryBuilder);
-    
+
     mockSupabaseClient.from.mockReturnValue(mockQueryBuilder);
-    
+
     repository = new SupabaseUserRepository(mockSupabaseClient as any);
   });
 
@@ -56,7 +56,10 @@ describe('SupabaseUserRepository', () => {
 
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('users');
       expect(mockQueryBuilder.select).toHaveBeenCalledWith('*');
-      expect(mockQueryBuilder.eq).toHaveBeenCalledWith('email', 'test@example.com');
+      expect(mockQueryBuilder.eq).toHaveBeenCalledWith(
+        'email',
+        'test@example.com'
+      );
       expect(mockQueryBuilder.single).toHaveBeenCalled();
       expect(result).toEqual(testUser);
     });
@@ -78,8 +81,9 @@ describe('SupabaseUserRepository', () => {
         error: { code: 'PGRST301', message: 'Database connection failed' },
       });
 
-      await expect(repository.findByEmail('test@example.com'))
-        .rejects.toThrow('사용자 조회 중 오류 발생: Database connection failed');
+      await expect(repository.findByEmail('test@example.com')).rejects.toThrow(
+        '사용자 조회 중 오류 발생: Database connection failed'
+      );
     });
   });
 
@@ -154,11 +158,15 @@ describe('SupabaseUserRepository', () => {
     it('저장 실패 시 예외를 발생시켜야 한다', async () => {
       mockQueryBuilder.single.mockResolvedValue({
         data: null,
-        error: { code: '23505', message: 'duplicate key value violates unique constraint' },
+        error: {
+          code: '23505',
+          message: 'duplicate key value violates unique constraint',
+        },
       });
 
-      await expect(repository.save(newUserData))
-        .rejects.toThrow('사용자 생성 중 오류 발생: duplicate key value violates unique constraint');
+      await expect(repository.save(newUserData)).rejects.toThrow(
+        '사용자 생성 중 오류 발생: duplicate key value violates unique constraint'
+      );
     });
   });
 
@@ -200,8 +208,11 @@ describe('SupabaseUserRepository', () => {
         error: { code: 'PGRST301', message: 'Database connection failed' },
       });
 
-      await expect(repository.update('update-uuid-123', updateData))
-        .rejects.toThrow('사용자 업데이트 중 오류 발생: Database connection failed');
+      await expect(
+        repository.update('update-uuid-123', updateData)
+      ).rejects.toThrow(
+        '사용자 업데이트 중 오류 발생: Database connection failed'
+      );
     });
   });
 
@@ -223,8 +234,9 @@ describe('SupabaseUserRepository', () => {
         error: { code: 'PGRST301', message: 'Database connection failed' },
       });
 
-      await expect(repository.delete('delete-uuid-123'))
-        .rejects.toThrow('사용자 삭제 중 오류 발생: Database connection failed');
+      await expect(repository.delete('delete-uuid-123')).rejects.toThrow(
+        '사용자 삭제 중 오류 발생: Database connection failed'
+      );
     });
   });
 });

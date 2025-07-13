@@ -11,15 +11,24 @@ export class SignupUsecase {
     this.authService = authService;
   }
 
-  async execute(signupData: SignupRequestDto): Promise<{ response: SignupResponseDto; tokens: { accessToken: string; refreshToken: string } }> {
+  async execute(
+    signupData: SignupRequestDto
+  ): Promise<{
+    response: SignupResponseDto;
+    tokens: { accessToken: string; refreshToken: string };
+  }> {
     // 이메일 중복 체크
-    const existingUser = await this.userRepository.findByEmail(signupData.email);
+    const existingUser = await this.userRepository.findByEmail(
+      signupData.email
+    );
     if (existingUser) {
       throw new Error('이미 사용 중인 이메일입니다');
     }
 
     // 패스워드 해싱
-    const hashedPassword = await this.authService.hashPassword(signupData.password);
+    const hashedPassword = await this.authService.hashPassword(
+      signupData.password
+    );
 
     // 새 사용자 생성
     const newUser = await this.userRepository.save({
@@ -40,16 +49,12 @@ export class SignupUsecase {
     const refreshToken = await this.authService.signRefreshToken(tokenPayload);
 
     // 응답 생성
-    const response = new SignupResponseDto(
-      true,
-      '회원가입이 완료되었습니다',
-      {
-        id: newUser.id,
-        email: newUser.email,
-        name: newUser.name,
-        type: newUser.type,
-      }
-    );
+    const response = new SignupResponseDto(true, '회원가입이 완료되었습니다', {
+      id: newUser.id,
+      email: newUser.email,
+      name: newUser.name,
+      type: newUser.type,
+    });
 
     return {
       response,

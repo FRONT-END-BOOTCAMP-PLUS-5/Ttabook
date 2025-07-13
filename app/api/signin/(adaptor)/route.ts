@@ -6,14 +6,16 @@ import { createClient } from '@/backend/common/infrastructures/supabase/server';
 import { SigninUsecase } from '@/backend/auth/signin/usecases';
 import { SigninRequestDto } from '@/backend/auth/signin/dtos';
 import { SupabaseUserRepository } from '@/backend/common/infrastructures/repositories/SbUserRepository';
-import { AuthService, CookieService } from '@/backend/common/infrastructures/auth';
+import {
+  AuthService,
+  CookieService,
+} from '@/backend/common/infrastructures/auth';
 
 // 로그인 요청 데이터 검증 스키마
 const signinSchema = z.object({
   email: z.string().email('유효한 이메일 주소를 입력해주세요'),
   password: z.string().min(1, '패스워드를 입력해주세요'),
 });
-
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,22 +35,25 @@ export async function POST(request: NextRequest) {
     if (!validationResult.success) {
       const firstIssue = validationResult.error.issues[0];
       let errorMessage = '입력 데이터가 올바르지 않습니다';
-      
+
       if (firstIssue) {
         const field = firstIssue.path[0];
         if (field === 'email') {
-          errorMessage = firstIssue.code === 'invalid_type' ? '이메일을 입력해주세요' : firstIssue.message;
+          errorMessage =
+            firstIssue.code === 'invalid_type'
+              ? '이메일을 입력해주세요'
+              : firstIssue.message;
         } else if (field === 'password') {
-          errorMessage = firstIssue.code === 'invalid_type' ? '패스워드를 입력해주세요' : firstIssue.message;
+          errorMessage =
+            firstIssue.code === 'invalid_type'
+              ? '패스워드를 입력해주세요'
+              : firstIssue.message;
         } else {
           errorMessage = firstIssue.message;
         }
       }
-      
-      return NextResponse.json(
-        { error: errorMessage },
-        { status: 400 }
-      );
+
+      return NextResponse.json({ error: errorMessage }, { status: 400 });
     }
 
     const { email, password } = validationResult.data;
@@ -74,22 +79,26 @@ export async function POST(request: NextRequest) {
     );
 
     // 5. 쿠키 설정
-    const cookies = cookieService.setAuthCookies(result.tokens.accessToken, result.tokens.refreshToken);
-    response.headers.set('Set-Cookie', [cookies.accessToken, cookies.refreshToken].join(', '));
+    const cookies = cookieService.setAuthCookies(
+      result.tokens.accessToken,
+      result.tokens.refreshToken
+    );
+    response.headers.set(
+      'Set-Cookie',
+      [cookies.accessToken, cookies.refreshToken].join(', ')
+    );
 
     return response;
-
   } catch (error) {
     console.error('Signin error:', error);
-    
+
     // 비즈니스 로직 에러 (인증 실패 등)는 401로 처리
-    if (error instanceof Error && 
-        (error.message.includes('이메일 또는 패스워드가 올바르지 않습니다') ||
-         error.message.includes('인증'))) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 401 }
-      );
+    if (
+      error instanceof Error &&
+      (error.message.includes('이메일 또는 패스워드가 올바르지 않습니다') ||
+        error.message.includes('인증'))
+    ) {
+      return NextResponse.json({ error: error.message }, { status: 401 });
     }
 
     // 기타 서버 에러

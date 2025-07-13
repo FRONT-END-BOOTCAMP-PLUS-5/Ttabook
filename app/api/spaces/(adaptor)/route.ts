@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const spaceId = Number(searchParams.get('spaceId'));
-    
+
     // Supabase 클라이언트 생성
     const supabase = await createClient();
     const spaceRepository = new SbSpaceRepository(supabase);

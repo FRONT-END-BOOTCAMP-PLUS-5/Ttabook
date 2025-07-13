@@ -1,5 +1,5 @@
-import { Room } from "./Room";
-import { Space } from "./Space";
+import { Room } from './Room';
+import { Space } from './Space';
 
 export class Rsv {
   constructor(
@@ -9,7 +9,7 @@ export class Rsv {
     public roomId: number,
     public startTime: Date,
     public endTime: Date,
-    public createdAt: Date |null,
+    public createdAt: Date | null,
     public editedAt: Date | null,
     public deletedAt: Date | null,
 

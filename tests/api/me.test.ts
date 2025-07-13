@@ -1,18 +1,25 @@
-import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  jest,
+} from '@jest/globals';
 import { NextRequest } from 'next/server';
 
-// Supabase 모킹
-const mockSupabaseClient = {
-  from: jest.fn(),
-};
-
+// Supabase 인프라 모킹
+const mockCreateClient = jest.fn();
 const mockSelect = jest.fn();
 const mockEq = jest.fn();
 const mockSingle = jest.fn();
 
-jest.unstable_mockModule('@supabase/supabase-js', () => ({
-  createClient: jest.fn(() => mockSupabaseClient),
-}));
+jest.unstable_mockModule(
+  '../../backend/common/infrastructures/supabase/server',
+  () => ({
+    createClient: mockCreateClient,
+  })
+);
 
 // JWT 유틸리티 모킹
 const mockSignAccessToken = jest.fn();
@@ -30,18 +37,16 @@ jest.unstable_mockModule('../../lib/jwt', () => ({
 }));
 
 describe('/api/me API 라우트', () => {
-  const originalEnv = process.env;
-
   beforeEach(() => {
-    process.env = { ...originalEnv };
-    process.env.JWT_SECRET = 'test-jwt-secret-for-unit-tests-that-is-long-enough';
-    process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-    process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
+    // Supabase 클라이언트 Mock 체인 설정
+    const mockSupabaseClient = {
+      from: jest.fn(() => ({
+        select: mockSelect,
+      })),
+    };
 
-    // Mock 체인 설정
-    mockSupabaseClient.from.mockReturnValue({
-      select: mockSelect,
-    });
+    mockCreateClient.mockResolvedValue(mockSupabaseClient);
+
     mockSelect.mockReturnValue({
       eq: mockEq,
     });
@@ -53,10 +58,6 @@ describe('/api/me API 라우트', () => {
     jest.clearAllMocks();
   });
 
-  afterEach(() => {
-    process.env = originalEnv;
-  });
-
   describe('GET /api/me', () => {
     it('유효한 액세스 토큰으로 사용자 정보를 반환해야 한다', async () => {
       // Mock 설정
@@ -66,7 +67,7 @@ describe('/api/me API 라우트', () => {
         email: 'user@example.com',
         role: 'user',
         exp: Math.floor(Date.now() / 1000) + 900,
-        iat: Math.floor(Date.now() / 1000)
+        iat: Math.floor(Date.now() / 1000),
       };
 
       const dbUser = {
@@ -106,7 +107,9 @@ describe('/api/me API 라우트', () => {
       });
 
       // JWT 토큰 검증 확인
-      expect(mockVerifyAccessToken).toHaveBeenCalledWith('valid_access_token_123');
+      expect(mockVerifyAccessToken).toHaveBeenCalledWith(
+        'valid_access_token_123'
+      );
     });
 
     it('액세스 토큰이 없으면 401을 반환해야 한다', async () => {
@@ -188,7 +191,8 @@ describe('/api/me API 라우트', () => {
 
       expect(response.status).toBe(401);
       expect(data).toEqual({
-        error: '액세스 토큰이 만료되었습니다. 새로고침하거나 다시 로그인해주세요',
+        error:
+          '액세스 토큰이 만료되었습니다. 새로고침하거나 다시 로그인해주세요',
       });
 
       expect(mockVerifyAccessToken).toHaveBeenCalledWith('expired_token');
@@ -241,7 +245,7 @@ describe('/api/me API 라우트', () => {
         email: 'test@example.com',
         role: 'admin',
         exp: Math.floor(Date.now() / 1000) + 900,
-        iat: Math.floor(Date.now() / 1000)
+        iat: Math.floor(Date.now() / 1000),
       };
 
       const dbUser = {
@@ -261,7 +265,8 @@ describe('/api/me API 라우트', () => {
 
       const request = new NextRequest('http://localhost:3000/api/me', {
         headers: {
-          Cookie: 'refreshToken=refresh_123; accessToken=access_456; sessionId=session_789',
+          Cookie:
+            'refreshToken=refresh_123; accessToken=access_456; sessionId=session_789',
         },
       });
 

@@ -1,7 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  jest,
+} from '@jest/globals';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
@@ -81,16 +88,20 @@ describe('SessionProvider', () => {
 
       mockVerifyAccessToken.mockResolvedValue(mockUser);
 
-      const { SessionProvider, useSession } = await import('../../app/providers/SessionProvider.tsx');
+      const { SessionProvider, useSession } = await import(
+        '../../app/providers/SessionProvider.tsx'
+      );
 
       function TestConsumer() {
         const { user, isLoading, isAuthenticated } = useSession();
-        
+
         if (isLoading) return <div data-testid="loading">로딩 중...</div>;
-        
+
         return (
           <div>
-            <div data-testid="authenticated">{isAuthenticated ? 'true' : 'false'}</div>
+            <div data-testid="authenticated">
+              {isAuthenticated ? 'true' : 'false'}
+            </div>
             <div data-testid="user-email">{user?.email || 'no-email'}</div>
             <div data-testid="user-role">{user?.role || 'no-role'}</div>
           </div>
@@ -113,7 +124,9 @@ describe('SessionProvider', () => {
         expect(screen.getByTestId('authenticated')).toHaveTextContent('true');
       });
 
-      expect(screen.getByTestId('user-email')).toHaveTextContent('test@example.com');
+      expect(screen.getByTestId('user-email')).toHaveTextContent(
+        'test@example.com'
+      );
       expect(screen.getByTestId('user-role')).toHaveTextContent('user');
       expect(mockVerifyAccessToken).toHaveBeenCalledWith('valid_access_token');
     });
@@ -139,16 +152,20 @@ describe('SessionProvider', () => {
       mockVerifyRefreshToken.mockResolvedValue(mockUser);
       mockSignAccessToken.mockResolvedValue('new_access_token');
 
-      const { SessionProvider, useSession } = await import('../../app/providers/SessionProvider.tsx');
+      const { SessionProvider, useSession } = await import(
+        '../../app/providers/SessionProvider.tsx'
+      );
 
       function TestConsumer() {
         const { user, isLoading, isAuthenticated } = useSession();
-        
+
         if (isLoading) return <div data-testid="loading">로딩 중...</div>;
-        
+
         return (
           <div>
-            <div data-testid="authenticated">{isAuthenticated ? 'true' : 'false'}</div>
+            <div data-testid="authenticated">
+              {isAuthenticated ? 'true' : 'false'}
+            </div>
             <div data-testid="user-email">{user?.email || 'no-email'}</div>
           </div>
         );
@@ -166,18 +183,28 @@ describe('SessionProvider', () => {
         expect(screen.getByTestId('authenticated')).toHaveTextContent('true');
       });
 
-      expect(screen.getByTestId('user-email')).toHaveTextContent('test@example.com');
-      expect(mockVerifyAccessToken).toHaveBeenCalledWith('expired_access_token');
-      expect(mockVerifyRefreshToken).toHaveBeenCalledWith('valid_refresh_token');
+      expect(screen.getByTestId('user-email')).toHaveTextContent(
+        'test@example.com'
+      );
+      expect(mockVerifyAccessToken).toHaveBeenCalledWith(
+        'expired_access_token'
+      );
+      expect(mockVerifyRefreshToken).toHaveBeenCalledWith(
+        'valid_refresh_token'
+      );
       expect(mockSignAccessToken).toHaveBeenCalledWith({
         id: mockUser.originalId, // Use original UUID string
         email: mockUser.email,
         type: mockUser.role, // Map role to type
       });
-      expect(mockSetCookie).toHaveBeenCalledWith('accessToken', 'new_access_token', expect.objectContaining({
-        secure: false, // NODE_ENV이 production이 아니므로 false
-        sameSite: 'strict',
-      }));
+      expect(mockSetCookie).toHaveBeenCalledWith(
+        'accessToken',
+        'new_access_token',
+        expect.objectContaining({
+          secure: false, // NODE_ENV이 production이 아니므로 false
+          sameSite: 'strict',
+        })
+      );
     });
 
     it('토큰이 모두 유효하지 않으면 로그아웃 상태여야 한다', async () => {
@@ -190,16 +217,20 @@ describe('SessionProvider', () => {
       mockVerifyAccessToken.mockRejectedValue(new Error('Invalid token'));
       mockVerifyRefreshToken.mockRejectedValue(new Error('Invalid token'));
 
-      const { SessionProvider, useSession } = await import('../../app/providers/SessionProvider.tsx');
+      const { SessionProvider, useSession } = await import(
+        '../../app/providers/SessionProvider.tsx'
+      );
 
       function TestConsumer() {
         const { user, isLoading, isAuthenticated } = useSession();
-        
+
         if (isLoading) return <div data-testid="loading">로딩 중...</div>;
-        
+
         return (
           <div>
-            <div data-testid="authenticated">{isAuthenticated ? 'true' : 'false'}</div>
+            <div data-testid="authenticated">
+              {isAuthenticated ? 'true' : 'false'}
+            </div>
             <div data-testid="user-email">{user?.email || 'no-email'}</div>
           </div>
         );
@@ -225,16 +256,20 @@ describe('SessionProvider', () => {
     it('토큰이 없으면 로그아웃 상태여야 한다', async () => {
       mockGetCookie.mockReturnValue(undefined);
 
-      const { SessionProvider, useSession } = await import('../../app/providers/SessionProvider.tsx');
+      const { SessionProvider, useSession } = await import(
+        '../../app/providers/SessionProvider.tsx'
+      );
 
       function TestConsumer() {
         const { user, isLoading, isAuthenticated } = useSession();
-        
+
         if (isLoading) return <div data-testid="loading">로딩 중...</div>;
-        
+
         return (
           <div>
-            <div data-testid="authenticated">{isAuthenticated ? 'true' : 'false'}</div>
+            <div data-testid="authenticated">
+              {isAuthenticated ? 'true' : 'false'}
+            </div>
             <div data-testid="user-email">{user?.email || 'no-email'}</div>
           </div>
         );
@@ -272,11 +307,13 @@ describe('SessionProvider', () => {
       mockGetCookie.mockReturnValue(undefined);
       mockVerifyAccessToken.mockResolvedValue(mockUser);
 
-      const { SessionProvider, useSession } = await import('../../app/providers/SessionProvider.tsx');
+      const { SessionProvider, useSession } = await import(
+        '../../app/providers/SessionProvider.tsx'
+      );
 
       function TestConsumer() {
         const { login, isAuthenticated, user } = useSession();
-        
+
         return (
           <div>
             <button
@@ -285,7 +322,9 @@ describe('SessionProvider', () => {
             >
               로그인
             </button>
-            <div data-testid="authenticated">{isAuthenticated ? 'true' : 'false'}</div>
+            <div data-testid="authenticated">
+              {isAuthenticated ? 'true' : 'false'}
+            </div>
             <div data-testid="user-email">{user?.email || 'no-email'}</div>
           </div>
         );
@@ -313,15 +352,25 @@ describe('SessionProvider', () => {
         expect(screen.getByTestId('authenticated')).toHaveTextContent('true');
       });
 
-      expect(screen.getByTestId('user-email')).toHaveTextContent('test@example.com');
-      expect(mockSetCookie).toHaveBeenCalledWith('accessToken', 'new_access_token', expect.objectContaining({
-        secure: false, // NODE_ENV이 production이 아니므로 false
-        sameSite: 'strict',
-      }));
-      expect(mockSetCookie).toHaveBeenCalledWith('refreshToken', 'new_refresh_token', expect.objectContaining({
-        secure: false, // NODE_ENV이 production이 아니므로 false
-        sameSite: 'strict',
-      }));
+      expect(screen.getByTestId('user-email')).toHaveTextContent(
+        'test@example.com'
+      );
+      expect(mockSetCookie).toHaveBeenCalledWith(
+        'accessToken',
+        'new_access_token',
+        expect.objectContaining({
+          secure: false, // NODE_ENV이 production이 아니므로 false
+          sameSite: 'strict',
+        })
+      );
+      expect(mockSetCookie).toHaveBeenCalledWith(
+        'refreshToken',
+        'new_refresh_token',
+        expect.objectContaining({
+          secure: false, // NODE_ENV이 production이 아니므로 false
+          sameSite: 'strict',
+        })
+      );
     });
 
     it('logout 메서드는 쿠키를 삭제하고 사용자 정보를 초기화해야 한다', async () => {
@@ -342,17 +391,21 @@ describe('SessionProvider', () => {
 
       mockVerifyAccessToken.mockResolvedValue(mockUser);
 
-      const { SessionProvider, useSession } = await import('../../app/providers/SessionProvider.tsx');
+      const { SessionProvider, useSession } = await import(
+        '../../app/providers/SessionProvider.tsx'
+      );
 
       function TestConsumer() {
         const { logout, isAuthenticated, user } = useSession();
-        
+
         return (
           <div>
             <button data-testid="logout-button" onClick={logout}>
               로그아웃
             </button>
-            <div data-testid="authenticated">{isAuthenticated ? 'true' : 'false'}</div>
+            <div data-testid="authenticated">
+              {isAuthenticated ? 'true' : 'false'}
+            </div>
             <div data-testid="user-email">{user?.email || 'no-email'}</div>
           </div>
         );
@@ -388,7 +441,9 @@ describe('SessionProvider', () => {
 
   describe('컨텍스트 에러 처리', () => {
     it('SessionProvider 외부에서 useSession을 사용하면 에러를 던져야 한다', async () => {
-      const { useSession } = await import('../../app/providers/SessionProvider.tsx');
+      const { useSession } = await import(
+        '../../app/providers/SessionProvider.tsx'
+      );
 
       function TestConsumer() {
         useSession();

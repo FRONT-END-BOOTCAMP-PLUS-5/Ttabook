@@ -11,7 +11,12 @@ export class SigninUsecase {
     this.authService = authService;
   }
 
-  async execute(signinData: SigninRequestDto): Promise<{ response: SigninResponseDto; tokens: { accessToken: string; refreshToken: string } }> {
+  async execute(
+    signinData: SigninRequestDto
+  ): Promise<{
+    response: SigninResponseDto;
+    tokens: { accessToken: string; refreshToken: string };
+  }> {
     // 사용자 조회
     const user = await this.userRepository.findByEmail(signinData.email);
     if (!user) {
@@ -19,7 +24,10 @@ export class SigninUsecase {
     }
 
     // 패스워드 검증
-    const isPasswordValid = await this.authService.verifyPassword(signinData.password, user.password);
+    const isPasswordValid = await this.authService.verifyPassword(
+      signinData.password,
+      user.password
+    );
     if (!isPasswordValid) {
       throw new Error('이메일 또는 패스워드가 올바르지 않습니다');
     }
@@ -35,16 +43,12 @@ export class SigninUsecase {
     const refreshToken = await this.authService.signRefreshToken(tokenPayload);
 
     // 응답 생성
-    const response = new SigninResponseDto(
-      true,
-      '로그인이 완료되었습니다',
-      {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        type: user.type,
-      }
-    );
+    const response = new SigninResponseDto(true, '로그인이 완료되었습니다', {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      type: user.type,
+    });
 
     return {
       response,

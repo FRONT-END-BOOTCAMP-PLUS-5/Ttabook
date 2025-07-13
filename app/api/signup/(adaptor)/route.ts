@@ -6,7 +6,10 @@ import { createClient } from '@/backend/common/infrastructures/supabase/server';
 import { SignupUsecase } from '@/backend/auth/signup/usecases';
 import { SignupRequestDto } from '@/backend/auth/signup/dtos';
 import { SupabaseUserRepository } from '@/backend/common/infrastructures/repositories/SbUserRepository';
-import { AuthService, CookieService } from '@/backend/common/infrastructures/auth';
+import {
+  AuthService,
+  CookieService,
+} from '@/backend/common/infrastructures/auth';
 
 // 회원가입 요청 데이터 검증 스키마
 const signupSchema = z.object({
@@ -14,7 +17,6 @@ const signupSchema = z.object({
   password: z.string().min(8, '패스워드는 8자 이상이어야 합니다'),
   name: z.string().min(1, '이름을 입력해주세요').trim(),
 });
-
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,24 +36,30 @@ export async function POST(request: NextRequest) {
     if (!validationResult.success) {
       const firstIssue = validationResult.error.issues[0];
       let errorMessage = '입력 데이터가 올바르지 않습니다';
-      
+
       if (firstIssue) {
         const field = firstIssue.path[0];
         if (field === 'email') {
-          errorMessage = firstIssue.code === 'invalid_type' ? '이메일을 입력해주세요' : firstIssue.message;
+          errorMessage =
+            firstIssue.code === 'invalid_type'
+              ? '이메일을 입력해주세요'
+              : firstIssue.message;
         } else if (field === 'password') {
-          errorMessage = firstIssue.code === 'invalid_type' ? '패스워드를 입력해주세요' : firstIssue.message;
+          errorMessage =
+            firstIssue.code === 'invalid_type'
+              ? '패스워드를 입력해주세요'
+              : firstIssue.message;
         } else if (field === 'name') {
-          errorMessage = firstIssue.code === 'invalid_type' ? '이름을 입력해주세요' : firstIssue.message;
+          errorMessage =
+            firstIssue.code === 'invalid_type'
+              ? '이름을 입력해주세요'
+              : firstIssue.message;
         } else {
           errorMessage = firstIssue.message;
         }
       }
-      
-      return NextResponse.json(
-        { error: errorMessage },
-        { status: 400 }
-      );
+
+      return NextResponse.json({ error: errorMessage }, { status: 400 });
     }
 
     const { email, password, name } = validationResult.data;
@@ -77,20 +85,25 @@ export async function POST(request: NextRequest) {
     );
 
     // 5. 쿠키 설정
-    const cookies = cookieService.setAuthCookies(result.tokens.accessToken, result.tokens.refreshToken);
-    response.headers.set('Set-Cookie', [cookies.accessToken, cookies.refreshToken].join(', '));
+    const cookies = cookieService.setAuthCookies(
+      result.tokens.accessToken,
+      result.tokens.refreshToken
+    );
+    response.headers.set(
+      'Set-Cookie',
+      [cookies.accessToken, cookies.refreshToken].join(', ')
+    );
 
     return response;
-
   } catch (error) {
     console.error('Signup error:', error);
-    
+
     // 비즈니스 로직 에러 (이메일 중복 등)는 409로 처리
-    if (error instanceof Error && error.message.includes('이미 사용 중인 이메일입니다')) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 409 }
-      );
+    if (
+      error instanceof Error &&
+      error.message.includes('이미 사용 중인 이메일입니다')
+    ) {
+      return NextResponse.json({ error: error.message }, { status: 409 });
     }
 
     // 기타 서버 에러

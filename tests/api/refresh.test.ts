@@ -1,4 +1,11 @@
-import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  jest,
+} from '@jest/globals';
 import { NextRequest } from 'next/server';
 
 // JWT 유틸리티 모킹
@@ -21,7 +28,8 @@ describe('/api/refresh API 라우트', () => {
 
   beforeEach(() => {
     process.env = { ...originalEnv };
-    process.env.JWT_SECRET = 'test-jwt-secret-for-unit-tests-that-is-long-enough';
+    process.env.JWT_SECRET =
+      'test-jwt-secret-for-unit-tests-that-is-long-enough';
 
     // 모든 mock 초기화
     jest.clearAllMocks();
@@ -68,14 +76,16 @@ describe('/api/refresh API 라우트', () => {
       });
 
       // JWT 토큰 검증 및 생성 확인
-      expect(mockVerifyRefreshToken).toHaveBeenCalledWith('valid_refresh_token_123');
+      expect(mockVerifyRefreshToken).toHaveBeenCalledWith(
+        'valid_refresh_token_123'
+      );
       expect(mockSignAccessToken).toHaveBeenCalledWith({
         id: userPayload.originalId, // Use original UUID string
         email: userPayload.email,
         type: userPayload.role, // Map role to type
       });
       expect(mockSignRefreshToken).toHaveBeenCalledWith({
-        id: userPayload.originalId, // Use original UUID string  
+        id: userPayload.originalId, // Use original UUID string
         email: userPayload.email,
         type: userPayload.role, // Map role to type
       });
@@ -135,7 +145,9 @@ describe('/api/refresh API 라우트', () => {
       console.error = mockConsoleError;
 
       // JWT 검증 실패 시뮬레이션
-      mockVerifyRefreshToken.mockRejectedValue(new Error('Invalid refresh token'));
+      mockVerifyRefreshToken.mockRejectedValue(
+        new Error('Invalid refresh token')
+      );
 
       const { POST } = await import('../../app/api/refresh/(adaptor)/route');
 
@@ -156,7 +168,7 @@ describe('/api/refresh API 라우트', () => {
       expect(mockConsoleError).toHaveBeenCalledWith(
         'RefreshToken error:',
         expect.objectContaining({
-          message: '유효하지 않은 리프레시 토큰입니다'
+          message: '유효하지 않은 리프레시 토큰입니다',
         })
       );
 
@@ -198,7 +210,7 @@ describe('/api/refresh API 라우트', () => {
       expect(mockConsoleError).toHaveBeenCalledWith(
         'RefreshToken error:',
         expect.objectContaining({
-          message: '리프레시 토큰이 만료되었습니다. 다시 로그인해주세요'
+          message: '리프레시 토큰이 만료되었습니다. 다시 로그인해주세요',
         })
       );
 
@@ -228,7 +240,8 @@ describe('/api/refresh API 라우트', () => {
       const request = new NextRequest('http://localhost:3000/api/refresh', {
         method: 'POST',
         headers: {
-          Cookie: 'sessionId=session_123; refreshToken=refresh_456; accessToken=old_access_789',
+          Cookie:
+            'sessionId=session_123; refreshToken=refresh_456; accessToken=old_access_789',
         },
       });
 
@@ -274,7 +287,9 @@ describe('/api/refresh API 라우트', () => {
       };
 
       mockVerifyRefreshToken.mockResolvedValue(userPayload);
-      mockSignAccessToken.mockRejectedValue(new Error('Token generation failed'));
+      mockSignAccessToken.mockRejectedValue(
+        new Error('Token generation failed')
+      );
 
       const { POST } = await import('../../app/api/refresh/(adaptor)/route');
 
@@ -295,7 +310,7 @@ describe('/api/refresh API 라우트', () => {
       expect(mockConsoleError).toHaveBeenCalledWith(
         'RefreshToken error:',
         expect.objectContaining({
-          message: 'Token generation failed'
+          message: 'Token generation failed',
         })
       );
 

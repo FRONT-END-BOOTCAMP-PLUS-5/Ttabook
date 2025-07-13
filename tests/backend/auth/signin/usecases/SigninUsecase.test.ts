@@ -58,8 +58,13 @@ describe('SigninUsecase', () => {
       const result = await usecase.execute(signinRequest);
 
       // Then
-      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('test@example.com');
-      expect(mockAuthService.verifyPassword).toHaveBeenCalledWith('password123', 'hashed-password');
+      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith(
+        'test@example.com'
+      );
+      expect(mockAuthService.verifyPassword).toHaveBeenCalledWith(
+        'password123',
+        'hashed-password'
+      );
       expect(mockAuthService.signAccessToken).toHaveBeenCalledWith({
         id: 'test-uuid-123',
         email: 'test@example.com',
@@ -113,10 +118,13 @@ describe('SigninUsecase', () => {
       mockUserRepository.findByEmail.mockResolvedValue(null);
 
       // When & Then
-      await expect(usecase.execute(signinRequest))
-        .rejects.toThrow('이메일 또는 패스워드가 올바르지 않습니다');
+      await expect(usecase.execute(signinRequest)).rejects.toThrow(
+        '이메일 또는 패스워드가 올바르지 않습니다'
+      );
 
-      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('test@example.com');
+      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith(
+        'test@example.com'
+      );
       expect(mockAuthService.verifyPassword).not.toHaveBeenCalled();
       expect(mockAuthService.signAccessToken).not.toHaveBeenCalled();
     });
@@ -127,11 +135,17 @@ describe('SigninUsecase', () => {
       mockAuthService.verifyPassword.mockResolvedValue(false);
 
       // When & Then
-      await expect(usecase.execute(signinRequest))
-        .rejects.toThrow('이메일 또는 패스워드가 올바르지 않습니다');
+      await expect(usecase.execute(signinRequest)).rejects.toThrow(
+        '이메일 또는 패스워드가 올바르지 않습니다'
+      );
 
-      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('test@example.com');
-      expect(mockAuthService.verifyPassword).toHaveBeenCalledWith('password123', 'hashed-password');
+      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith(
+        'test@example.com'
+      );
+      expect(mockAuthService.verifyPassword).toHaveBeenCalledWith(
+        'password123',
+        'hashed-password'
+      );
       expect(mockAuthService.signAccessToken).not.toHaveBeenCalled();
     });
 
@@ -139,24 +153,32 @@ describe('SigninUsecase', () => {
       // Given
       mockUserRepository.findByEmail.mockResolvedValue(testUser);
       mockAuthService.verifyPassword.mockResolvedValue(true);
-      mockAuthService.signAccessToken.mockRejectedValue(new Error('토큰 생성 실패'));
+      mockAuthService.signAccessToken.mockRejectedValue(
+        new Error('토큰 생성 실패')
+      );
 
       // When & Then
-      await expect(usecase.execute(signinRequest))
-        .rejects.toThrow('토큰 생성 실패');
+      await expect(usecase.execute(signinRequest)).rejects.toThrow(
+        '토큰 생성 실패'
+      );
 
       expect(mockAuthService.signAccessToken).toHaveBeenCalled();
     });
 
     it('데이터베이스 조회 실패 시 에러를 전파해야 한다', async () => {
       // Given
-      mockUserRepository.findByEmail.mockRejectedValue(new Error('데이터베이스 연결 실패'));
+      mockUserRepository.findByEmail.mockRejectedValue(
+        new Error('데이터베이스 연결 실패')
+      );
 
       // When & Then
-      await expect(usecase.execute(signinRequest))
-        .rejects.toThrow('데이터베이스 연결 실패');
+      await expect(usecase.execute(signinRequest)).rejects.toThrow(
+        '데이터베이스 연결 실패'
+      );
 
-      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('test@example.com');
+      expect(mockUserRepository.findByEmail).toHaveBeenCalledWith(
+        'test@example.com'
+      );
     });
   });
 
@@ -173,7 +195,10 @@ describe('SigninUsecase', () => {
 
       // Then
       expect(mockAuthService.verifyPassword).toHaveBeenCalledTimes(1);
-      expect(mockAuthService.verifyPassword).toHaveBeenCalledWith('password123', 'hashed-password');
+      expect(mockAuthService.verifyPassword).toHaveBeenCalledWith(
+        'password123',
+        'hashed-password'
+      );
     });
 
     it('토큰 페이로드에 민감한 정보가 포함되지 않아야 한다', async () => {

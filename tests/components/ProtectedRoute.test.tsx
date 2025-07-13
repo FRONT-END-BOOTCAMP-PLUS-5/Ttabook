@@ -1,7 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  jest,
+} from '@jest/globals';
 import { render, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
@@ -61,7 +68,9 @@ describe('ProtectedRoute', () => {
         isAuthenticated: false,
       });
 
-      const { ProtectedRoute } = await import('../../app/components/ProtectedRoute.tsx');
+      const { ProtectedRoute } = await import(
+        '../../app/components/ProtectedRoute.tsx'
+      );
 
       render(
         <QueryClientProvider client={queryClient}>
@@ -82,7 +91,9 @@ describe('ProtectedRoute', () => {
         isAuthenticated: false,
       });
 
-      const { ProtectedRoute } = await import('../../app/components/ProtectedRoute.tsx');
+      const { ProtectedRoute } = await import(
+        '../../app/components/ProtectedRoute.tsx'
+      );
 
       render(
         <QueryClientProvider client={queryClient}>
@@ -104,7 +115,9 @@ describe('ProtectedRoute', () => {
         isAuthenticated: true,
       });
 
-      const { ProtectedRoute } = await import('../../app/components/ProtectedRoute.tsx');
+      const { ProtectedRoute } = await import(
+        '../../app/components/ProtectedRoute.tsx'
+      );
 
       render(
         <QueryClientProvider client={queryClient}>
@@ -125,7 +138,9 @@ describe('ProtectedRoute', () => {
         isAuthenticated: true,
       });
 
-      const { ProtectedRoute } = await import('../../app/components/ProtectedRoute.tsx');
+      const { ProtectedRoute } = await import(
+        '../../app/components/ProtectedRoute.tsx'
+      );
 
       render(
         <QueryClientProvider client={queryClient}>
@@ -146,7 +161,9 @@ describe('ProtectedRoute', () => {
         isAuthenticated: true,
       });
 
-      const { ProtectedRoute } = await import('../../app/components/ProtectedRoute.tsx');
+      const { ProtectedRoute } = await import(
+        '../../app/components/ProtectedRoute.tsx'
+      );
 
       render(
         <QueryClientProvider client={queryClient}>
@@ -169,7 +186,9 @@ describe('ProtectedRoute', () => {
         isAuthenticated: true,
       });
 
-      const { ProtectedRoute } = await import('../../app/components/ProtectedRoute.tsx');
+      const { ProtectedRoute } = await import(
+        '../../app/components/ProtectedRoute.tsx'
+      );
 
       render(
         <QueryClientProvider client={queryClient}>
@@ -190,7 +209,9 @@ describe('ProtectedRoute', () => {
         isAuthenticated: true,
       });
 
-      const { ProtectedRoute } = await import('../../app/components/ProtectedRoute.tsx');
+      const { ProtectedRoute } = await import(
+        '../../app/components/ProtectedRoute.tsx'
+      );
 
       render(
         <QueryClientProvider client={queryClient}>
@@ -213,7 +234,9 @@ describe('ProtectedRoute', () => {
         isAuthenticated: false,
       });
 
-      const { ProtectedRoute } = await import('../../app/components/ProtectedRoute.tsx');
+      const { ProtectedRoute } = await import(
+        '../../app/components/ProtectedRoute.tsx'
+      );
 
       render(
         <QueryClientProvider client={queryClient}>
@@ -241,7 +264,9 @@ describe('ProtectedRoute', () => {
         <div data-testid="custom-loading">커스텀 로딩...</div>
       );
 
-      const { ProtectedRoute } = await import('../../app/components/ProtectedRoute.tsx');
+      const { ProtectedRoute } = await import(
+        '../../app/components/ProtectedRoute.tsx'
+      );
 
       render(
         <QueryClientProvider client={queryClient}>

@@ -45,7 +45,9 @@ describe('RefreshTokenUsecase', () => {
       const result = await usecase.execute(refreshRequest);
 
       // Then
-      expect(mockAuthService.verifyRefreshToken).toHaveBeenCalledWith(validRefreshToken);
+      expect(mockAuthService.verifyRefreshToken).toHaveBeenCalledWith(
+        validRefreshToken
+      );
       expect(mockAuthService.signAccessToken).toHaveBeenCalledWith({
         id: 'user-uuid-123',
         email: 'test@example.com',
@@ -122,10 +124,13 @@ describe('RefreshTokenUsecase', () => {
       mockAuthService.verifyRefreshToken.mockRejectedValue(expiredError);
 
       // When & Then
-      await expect(usecase.execute(refreshRequest))
-        .rejects.toThrow('리프레시 토큰이 만료되었습니다. 다시 로그인해주세요');
+      await expect(usecase.execute(refreshRequest)).rejects.toThrow(
+        '리프레시 토큰이 만료되었습니다. 다시 로그인해주세요'
+      );
 
-      expect(mockAuthService.verifyRefreshToken).toHaveBeenCalledWith(validRefreshToken);
+      expect(mockAuthService.verifyRefreshToken).toHaveBeenCalledWith(
+        validRefreshToken
+      );
       expect(mockAuthService.signAccessToken).not.toHaveBeenCalled();
     });
 
@@ -135,21 +140,27 @@ describe('RefreshTokenUsecase', () => {
       mockAuthService.verifyRefreshToken.mockRejectedValue(invalidError);
 
       // When & Then
-      await expect(usecase.execute(refreshRequest))
-        .rejects.toThrow('유효하지 않은 리프레시 토큰입니다');
+      await expect(usecase.execute(refreshRequest)).rejects.toThrow(
+        '유효하지 않은 리프레시 토큰입니다'
+      );
 
-      expect(mockAuthService.verifyRefreshToken).toHaveBeenCalledWith(validRefreshToken);
+      expect(mockAuthService.verifyRefreshToken).toHaveBeenCalledWith(
+        validRefreshToken
+      );
       expect(mockAuthService.signAccessToken).not.toHaveBeenCalled();
     });
 
     it('새 액세스 토큰 생성 실패 시 에러를 전파해야 한다', async () => {
       // Given
       mockAuthService.verifyRefreshToken.mockResolvedValue(mockUserPayload);
-      mockAuthService.signAccessToken.mockRejectedValue(new Error('토큰 생성 실패'));
+      mockAuthService.signAccessToken.mockRejectedValue(
+        new Error('토큰 생성 실패')
+      );
 
       // When & Then
-      await expect(usecase.execute(refreshRequest))
-        .rejects.toThrow('토큰 생성 실패');
+      await expect(usecase.execute(refreshRequest)).rejects.toThrow(
+        '토큰 생성 실패'
+      );
 
       expect(mockAuthService.verifyRefreshToken).toHaveBeenCalled();
       expect(mockAuthService.signAccessToken).toHaveBeenCalled();
@@ -159,11 +170,14 @@ describe('RefreshTokenUsecase', () => {
       // Given
       mockAuthService.verifyRefreshToken.mockResolvedValue(mockUserPayload);
       mockAuthService.signAccessToken.mockResolvedValue('new-access-token');
-      mockAuthService.signRefreshToken.mockRejectedValue(new Error('리프레시 토큰 생성 실패'));
+      mockAuthService.signRefreshToken.mockRejectedValue(
+        new Error('리프레시 토큰 생성 실패')
+      );
 
       // When & Then
-      await expect(usecase.execute(refreshRequest))
-        .rejects.toThrow('리프레시 토큰 생성 실패');
+      await expect(usecase.execute(refreshRequest)).rejects.toThrow(
+        '리프레시 토큰 생성 실패'
+      );
 
       expect(mockAuthService.signAccessToken).toHaveBeenCalled();
       expect(mockAuthService.signRefreshToken).toHaveBeenCalled();
@@ -182,7 +196,9 @@ describe('RefreshTokenUsecase', () => {
 
       // Then
       expect(mockAuthService.verifyRefreshToken).toHaveBeenCalledTimes(1);
-      expect(mockAuthService.verifyRefreshToken).toHaveBeenCalledWith(validRefreshToken);
+      expect(mockAuthService.verifyRefreshToken).toHaveBeenCalledWith(
+        validRefreshToken
+      );
     });
 
     it('새 토큰 페이로드에 민감한 정보가 포함되지 않아야 한다', async () => {
@@ -192,7 +208,9 @@ describe('RefreshTokenUsecase', () => {
         password: 'hashed-password',
         createdAt: '2024-01-01',
       };
-      mockAuthService.verifyRefreshToken.mockResolvedValue(payloadWithSensitiveData);
+      mockAuthService.verifyRefreshToken.mockResolvedValue(
+        payloadWithSensitiveData
+      );
       mockAuthService.signAccessToken.mockResolvedValue('token');
       mockAuthService.signRefreshToken.mockResolvedValue('refresh');
 
@@ -220,8 +238,10 @@ describe('RefreshTokenUsecase', () => {
       await usecase.execute(refreshRequest);
 
       // Then
-      const accessTokenPayload = mockAuthService.signAccessToken.mock.calls[0][0];
-      const refreshTokenPayload = mockAuthService.signRefreshToken.mock.calls[0][0];
+      const accessTokenPayload =
+        mockAuthService.signAccessToken.mock.calls[0][0];
+      const refreshTokenPayload =
+        mockAuthService.signRefreshToken.mock.calls[0][0];
       expect(accessTokenPayload).toEqual(refreshTokenPayload);
     });
   });

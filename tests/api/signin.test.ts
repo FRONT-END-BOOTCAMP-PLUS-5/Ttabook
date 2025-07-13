@@ -1,18 +1,25 @@
-import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  jest,
+} from '@jest/globals';
 import { NextRequest } from 'next/server';
 
-// Supabase 모킹
-const mockSupabaseClient = {
-  from: jest.fn(),
-};
-
+// Supabase 인프라 모킹
+const mockCreateClient = jest.fn();
 const mockSelect = jest.fn();
 const mockEq = jest.fn();
 const mockSingle = jest.fn();
 
-jest.unstable_mockModule('@supabase/supabase-js', () => ({
-  createClient: jest.fn(() => mockSupabaseClient),
-}));
+jest.unstable_mockModule(
+  '../../backend/common/infrastructures/supabase/server',
+  () => ({
+    createClient: mockCreateClient,
+  })
+);
 
 // JWT 유틸리티 모킹
 const mockSignAccessToken = jest.fn();
@@ -32,25 +39,24 @@ jest.unstable_mockModule('../../lib/jwt', () => ({
 
 // 패스워드 유틸리티 모킹
 const mockVerifyPassword = jest.fn();
+const mockHashPassword = jest.fn();
 
 jest.unstable_mockModule('../../lib/password', () => ({
   verifyPassword: mockVerifyPassword,
+  hashPassword: mockHashPassword,
 }));
 
 describe('/api/signin API 라우트', () => {
-  const originalEnv = process.env;
-
   beforeEach(() => {
-    process.env = { ...originalEnv };
-    process.env.JWT_SECRET = 'test-jwt-secret-for-unit-tests-that-is-long-enough';
-    process.env.BCRYPT_ROUNDS = '12';
-    process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-    process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
+    // Supabase 클라이언트 Mock 체인 설정
+    const mockSupabaseClient = {
+      from: jest.fn(() => ({
+        select: mockSelect,
+      })),
+    };
 
-    // Mock 체인 설정
-    mockSupabaseClient.from.mockReturnValue({
-      select: mockSelect,
-    });
+    mockCreateClient.mockResolvedValue(mockSupabaseClient);
+
     mockSelect.mockReturnValue({
       eq: mockEq,
     });
@@ -60,10 +66,6 @@ describe('/api/signin API 라우트', () => {
 
     // 모든 mock 초기화
     jest.clearAllMocks();
-  });
-
-  afterEach(() => {
-    process.env = originalEnv;
   });
 
   describe('POST /api/signin', () => {
@@ -117,8 +119,8 @@ describe('/api/signin API 라우트', () => {
         },
       });
 
-      // Supabase 사용자 조회 검증
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('users');
+      // Supabase 인프라 사용 검증
+      expect(mockCreateClient).toHaveBeenCalled();
       expect(mockSelect).toHaveBeenCalledWith('*'); // Clean architecture uses select('*')
       expect(mockEq).toHaveBeenCalledWith('email', validSigninData.email);
 
@@ -247,7 +249,7 @@ describe('/api/signin API 라우트', () => {
       expect(mockConsoleError).toHaveBeenCalledWith(
         'Signin error:',
         expect.objectContaining({
-          message: '이메일 또는 패스워드가 올바르지 않습니다'
+          message: '이메일 또는 패스워드가 올바르지 않습니다',
         })
       );
 
@@ -297,7 +299,7 @@ describe('/api/signin API 라우트', () => {
       expect(mockConsoleError).toHaveBeenCalledWith(
         'Signin error:',
         expect.objectContaining({
-          message: '이메일 또는 패스워드가 올바르지 않습니다'
+          message: '이메일 또는 패스워드가 올바르지 않습니다',
         })
       );
 
@@ -339,7 +341,7 @@ describe('/api/signin API 라우트', () => {
       expect(mockConsoleError).toHaveBeenCalledWith(
         'Signin error:',
         expect.objectContaining({
-          message: expect.stringContaining('사용자 조회 중 오류 발생')
+          message: expect.stringContaining('사용자 조회 중 오류 발생'),
         })
       );
 
