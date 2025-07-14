@@ -16,10 +16,18 @@ export class SbSpaceRepository implements SpaceRepository {
   async findById(id: number): Promise<Space> {
     const { data, error } = await this.supabase
       .from('spaces')
-      .select('*')
+      .select(
+        `
+         *,
+        rooms: room (
+          *,
+          supplies (*)
+         )
+        `
+      )
+      // .select('*')
       .eq('id', id)
       .single();
-
     if (error) {
       throw new Error(`공간 조회 중 오류 발생: ${error.message}`);
     }
