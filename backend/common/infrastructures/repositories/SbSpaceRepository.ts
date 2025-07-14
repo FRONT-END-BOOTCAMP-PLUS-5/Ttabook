@@ -18,10 +18,8 @@ export class SbSpaceRepository implements SpaceRepository {
       .from('spaces')
       .select(
         `
-         *,
-        rooms (*,
-          assets (*)
-        )
+          id,
+          name
         `
       )
       .eq('id', id)

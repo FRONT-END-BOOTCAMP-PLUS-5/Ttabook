@@ -5,6 +5,7 @@ import {
   UpdateRequest,
 } from '../../domains/repositories/roomRequest';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { mapKeysToCamelCase } from '../utils';
 
 export class SbRoomRepository implements RoomRepository {
   private supabase: SupabaseClient;
@@ -75,8 +76,26 @@ export class SbRoomRepository implements RoomRepository {
     }
   }
 
-  async findById(id: number): Promise<Room | null> {
-    void id;
-    return null;
+  async findBySpaceId(spaceId: number): Promise<Room[] | null> {
+    const { data, error } = await this.supabase
+      .from('rooms')
+      .select(
+        `
+        *, 
+        assets: room_id(
+          type, 
+          position_x, 
+          position_y, 
+          width, 
+          height
+        )`
+      )
+      .eq('space_id', spaceId);
+
+    if (error) {
+      throw new Error(`Failed to find rooms by space id: ${error.message}`);
+    }
+
+    return mapKeysToCamelCase(data) as Room[];
   }
 }
