@@ -72,10 +72,7 @@ export class SupabaseUserRepository implements UserRepository {
   }
 
   async delete(id: string): Promise<void> {
-    const { error } = await this.supabase
-      .from('users')
-      .delete()
-      .eq('id', id);
+    const { error } = await this.supabase.from('users').delete().eq('id', id);
 
     if (error) {
       throw new Error(`사용자 삭제 중 오류 발생: ${error.message}`);

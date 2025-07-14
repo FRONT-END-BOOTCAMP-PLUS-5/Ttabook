@@ -27,7 +27,7 @@ const eslintConfig = [
       {
         files: ['*.ts', '*.tsx', '*.js', '*.jsx'],
         rules: {
-          '@typescript-eslint/no-unused-vars': 'warn'
+          '@typescript-eslint/no-unused-vars': 'warn',
         },
       },
     ],

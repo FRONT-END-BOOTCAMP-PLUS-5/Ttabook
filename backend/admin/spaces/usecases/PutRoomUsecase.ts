@@ -1,6 +1,6 @@
-import { RoomRepository } from "@/backend/common/domains/repositories/RoomRepository";
-import { PutRoomQueryDto, RoomDto } from "../dtos/PutRoomQueryDto";
-import { UpdateRequest } from "@/backend/common/domains/repositories/roomRequest";
+import { RoomRepository } from '@/backend/common/domains/repositories/RoomRepository';
+import { PutRoomQueryDto, RoomDto } from '../dtos/PutRoomQueryDto';
+import { UpdateRequest } from '@/backend/common/domains/repositories/roomRequest';
 
 export class PutRoomUsecase {
   private roomRepository: RoomRepository;

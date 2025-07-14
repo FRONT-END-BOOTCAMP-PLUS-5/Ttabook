@@ -9,7 +9,6 @@ export async function createClient() {
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
   return createServerClient<Database>(supabaseUrl, supabaseServiceKey, {
-
     cookies: {
       getAll() {
         return cookieStore.getAll();

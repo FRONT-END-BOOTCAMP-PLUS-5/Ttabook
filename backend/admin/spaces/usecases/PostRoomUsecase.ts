@@ -1,7 +1,6 @@
-import { RoomRepository } from "@/backend/common/domains/repositories/RoomRepository";
-import { SaveRequest } from "@/backend/common/domains/repositories/roomRequest";
-import { PostRoomQueryDto, RoomDto } from "../dtos/PostRoomQueryDto";
-
+import { RoomRepository } from '@/backend/common/domains/repositories/RoomRepository';
+import { SaveRequest } from '@/backend/common/domains/repositories/roomRequest';
+import { PostRoomQueryDto, RoomDto } from '../dtos/PostRoomQueryDto';
 
 export class PostRoomUsecase {
   constructor(private repository: RoomRepository) {}
@@ -18,7 +17,7 @@ export class PostRoomUsecase {
         room.positionY,
         room.scaleX,
         room.scaleY
-       )
+      );
     });
     return this.repository.saveAll(saveRequests);
   }
