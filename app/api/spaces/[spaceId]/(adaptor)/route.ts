@@ -9,22 +9,21 @@ import { GetSpaceDto } from '@/backend/spaces/dtos/GetSpaceDto';
 // 관리자, 일반사용자를 위한 공간 조회 API
 export async function GET(
   request: NextRequest,
-  { params }: { params: { spaceId: string } }
+  { params }: { params: Promise<{ spaceId: string }> }
 ) {
+  const { spaceId } = await params;
   try {
-    const spaceId = Number(params.spaceId);
-
     const supabase = await createClient();
 
     // spaceId로 spaces 테이블에서 space 정보 가져오기
     const spaceRepository = new SbSpaceRepository(supabase);
     const getSpaceUsecase = new GetSpaceUsecase(spaceRepository);
-    const spaceInfo = await getSpaceUsecase.execute(spaceId);
+    const spaceInfo = await getSpaceUsecase.execute(Number(spaceId));
 
     // spaceId가 같은 room들을 rooms 테이블에서 가져오기
     const roomRepository = new SbRoomRepository(supabase);
     const getRoomsRepository = new GetRoomsInSpaceUsecase(roomRepository);
-    const rooms = await getRoomsRepository.execute(spaceId);
+    const rooms = await getRoomsRepository.execute(Number(spaceId));
 
     return NextResponse.json({
       data: new GetSpaceDto(spaceInfo.id, spaceInfo.name, rooms),
