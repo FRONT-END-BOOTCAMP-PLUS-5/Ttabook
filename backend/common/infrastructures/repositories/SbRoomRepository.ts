@@ -15,26 +15,26 @@ export class SbRoomRepository implements RoomRepository {
 
   async save(room: SaveRequest): Promise<void> {
     await this.supabase.from('rooms').insert({
-      supply_id: room.supplyId,
-      room_name: room.roomName,
-      room_detail: room.roomDetail,
+      name: room.roomName,
+      detail: room.roomDetail,
+      space_id: room.spaceId,
       position_x: room.positionX,
       position_y: room.positionY,
-      scale_x: room.scaleX,
-      scale_y: room.scaleY,
+      width: room.width,
+      height: room.height,
     });
   }
 
   async saveAll(rooms: SaveRequest[]): Promise<void> {
     const { error } = await this.supabase.from('rooms').insert(
       rooms.map((room) => ({
-        supply_id: room.supplyId,
-        room_name: room.roomName,
-        room_detail: room.roomDetail,
+        name: room.roomName,
+        detail: room.roomDetail,
+        space_id: room.spaceId,
         position_x: room.positionX,
         position_y: room.positionY,
-        scale_x: room.scaleX,
-        scale_y: room.scaleY,
+        width: room.width,
+        height: room.height,
       }))
     );
 
@@ -47,13 +47,13 @@ export class SbRoomRepository implements RoomRepository {
     await this.supabase
       .from('rooms')
       .update({
-        supply_id: room.supplyId,
-        room_name: room.roomName,
-        room_detail: room.roomDetail,
+        name: room.roomName,
+        detail: room.roomDetail,
+        space_id: room.spaceId,
         position_x: room.positionX,
         position_y: room.positionY,
-        scale_x: room.scaleX,
-        scale_y: room.scaleY,
+        width: room.width,
+        height: room.height,
       })
       .eq('id', room.id);
   }
@@ -61,13 +61,13 @@ export class SbRoomRepository implements RoomRepository {
   async upsert(rooms: UpdateRequest[]): Promise<void> {
     const updates = rooms.map((room) => ({
       id: room.id,
-      supply_id: room.supplyId,
-      room_name: room.roomName,
-      room_detail: room.roomDetail,
+      name: room.roomName,
+      detail: room.roomDetail,
+      space_id: room.spaceId,
       position_x: room.positionX,
       position_y: room.positionY,
-      scale_x: room.scaleX,
-      scale_y: room.scaleY,
+      width: room.width,
+      height: room.height,
     }));
 
     const { error } = await this.supabase.from('rooms').upsert(updates);

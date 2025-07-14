@@ -1,9 +1,16 @@
 import { Room } from './Room';
+import { Asset } from './Asset';
+
+export interface SpaceWithRoomsAndAssets {
+  id: number;
+  name: string;
+  rooms: (Room & { assets: Asset[] })[];
+}
 
 export class Space {
   constructor(
     public id: number,
     public name: string,
-    public room: Room[] // 공간에 속한 방들, room 객체의 배열
+    public rooms: Room[]
   ) {}
 }

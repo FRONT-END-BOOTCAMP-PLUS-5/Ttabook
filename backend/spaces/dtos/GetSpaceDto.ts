@@ -4,16 +4,13 @@ export class GetSpaceDto {
   room: {
     id: number;
     name: string;
-    description?: string;
-    createdAt?: Date;
-    updatedAt?: Date;
-    width?: number;
-    height?: number;
-    scaleX?: number;
-    scaleY?: number;
-    positionX?: number;
-    positionY?: number;
-    supplies: { width: number; height: number; shape: string }[]; // 공급 정보, 필요시 추가 필드 정의 가능
+    detail: string | null;
+    spaceId: number;
+    positionX?: number | null;
+    positionY?: number | null;
+    width?: number | null;
+    height?: number | null;
+    assets: { id: number; type: string; positionX?: number | null; positionY?: number | null; width?: number | null; height?: number | null }[];
   }[];
 
   constructor(
@@ -22,16 +19,13 @@ export class GetSpaceDto {
     room: {
       id: number;
       name: string;
-      description?: string;
-      createdAt?: Date;
-      updatedAt?: Date;
-      width?: number;
-      height?: number;
-      scaleX?: number;
-      scaleY?: number;
-      positionX?: number;
-      positionY?: number;
-      supplies: { width: number; height: number; shape: string }[]; // 공급 정보, 필요시 추가 필드 정의 가능
+      detail: string | null;
+      spaceId: number;
+      positionX?: number | null;
+      positionY?: number | null;
+      width?: number | null;
+      height?: number | null;
+      assets: { id: number; type: string; positionX?: number | null; positionY?: number | null; width?: number | null; height?: number | null }[];
     }[]
   ) {
     this.id = id;

@@ -1,9 +1,8 @@
-export class Room {
+export class Asset {
   constructor(
     public id: number,
-    public name: string,
-    public detail: string | null,
-    public spaceId: number,
+    public roomId: number,
+    public type: string,
     public positionX?: number | null,
     public positionY?: number | null,
     public width?: number | null,

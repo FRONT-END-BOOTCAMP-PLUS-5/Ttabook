@@ -6,13 +6,12 @@ import { createClient } from '@/backend/common/infrastructures/supabase/server';
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const spaceId = Number(searchParams.get('spaceId'));
     const roomId = Number(searchParams.get('roomId'));
 
     const supabase = await createClient();
     const rsvRepository = new SbRsvRepository(supabase);
     const getroomRsvUsecase = new GetRoomRsvUsecase(rsvRepository);
-    const reservations = await getroomRsvUsecase.execute(spaceId, roomId);
+    const reservations = await getroomRsvUsecase.execute(roomId);
 
     return NextResponse.json(reservations);
   } catch (error) {
