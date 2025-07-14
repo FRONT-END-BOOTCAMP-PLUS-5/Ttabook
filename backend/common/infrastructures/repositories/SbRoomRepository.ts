@@ -49,21 +49,19 @@ export class SbRoomRepository implements RoomRepository {
       .update({
         name: room.roomName,
         detail: room.roomDetail,
-        space_id: room.spaceId,
         position_x: room.positionX,
         position_y: room.positionY,
         width: room.width,
         height: room.height,
       })
-      .eq('id', room.id);
+      .eq('id', room.roomId);
   }
 
   async upsert(rooms: UpdateRequest[]): Promise<void> {
     const updates = rooms.map((room) => ({
-      id: room.id,
+      id: room.roomId,
       name: room.roomName,
       detail: room.roomDetail,
-      space_id: room.spaceId,
       position_x: room.positionX,
       position_y: room.positionY,
       width: room.width,
