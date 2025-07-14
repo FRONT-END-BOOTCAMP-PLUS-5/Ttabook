@@ -1,7 +1,8 @@
 import React from 'react';
+import ReservationListPage from './ReservationListPage';
 
 const AdminPage: React.FC = () => {
-  return null;
+  return <ReservationListPage />;
 };
 
 export default AdminPage;
