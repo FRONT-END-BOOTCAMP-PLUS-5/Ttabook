@@ -3,7 +3,7 @@ import { Supply } from './Supply';
 export class Room {
   constructor(
     public id: number,
-    // public supplyId: number,
+    public supplyId: number,
     public supplies: Supply[],
     public name: string,
     public detail: string | null,
