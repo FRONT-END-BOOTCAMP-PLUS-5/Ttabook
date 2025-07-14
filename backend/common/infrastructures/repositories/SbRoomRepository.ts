@@ -1,6 +1,9 @@
 import { RoomRepository } from '@/backend/common/domains/repositories/RoomRepository';
 import { Room } from '../../domains/entities/Room';
-import { SaveRequest, UpdateRequest } from '../../domains/repositories/roomRequest';
+import {
+  SaveRequest,
+  UpdateRequest,
+} from '../../domains/repositories/roomRequest';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export class SbRoomRepository implements RoomRepository {
@@ -9,7 +12,7 @@ export class SbRoomRepository implements RoomRepository {
   constructor(supabase: SupabaseClient) {
     this.supabase = supabase;
   }
-  
+
   async save(room: SaveRequest): Promise<void> {
     await this.supabase.from('rooms').insert({
       supply_id: room.supplyId,
@@ -21,10 +24,10 @@ export class SbRoomRepository implements RoomRepository {
       scale_y: room.scaleY,
     });
   }
-  
+
   async saveAll(rooms: SaveRequest[]): Promise<void> {
     const { error } = await this.supabase.from('rooms').insert(
-      rooms.map(room => ({
+      rooms.map((room) => ({
         supply_id: room.supplyId,
         room_name: room.roomName,
         room_detail: room.roomDetail,
@@ -41,7 +44,8 @@ export class SbRoomRepository implements RoomRepository {
   }
 
   async update(room: UpdateRequest): Promise<void> {
-    await this.supabase.from('rooms')
+    await this.supabase
+      .from('rooms')
       .update({
         supply_id: room.supplyId,
         room_name: room.roomName,
@@ -55,7 +59,7 @@ export class SbRoomRepository implements RoomRepository {
   }
 
   async upsert(rooms: UpdateRequest[]): Promise<void> {
-    const updates = rooms.map(room => ({
+    const updates = rooms.map((room) => ({
       id: room.id,
       supply_id: room.supplyId,
       room_name: room.roomName,

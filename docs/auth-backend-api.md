@@ -15,20 +15,23 @@
 **엔드포인트:** `POST /api/auth/register`
 
 **요청 헤더:**
+
 ```
 Content-Type: application/json
 ```
 
 **요청 본문:**
+
 ```json
 {
   "email": "user@example.com",
   "password": "your-password",
-  "type": "user"  // 선택사항, 기본값: "user", 가능한 값: "user" | "admin"
+  "type": "user" // 선택사항, 기본값: "user", 가능한 값: "user" | "admin"
 }
 ```
 
 **응답 (성공 - 201):**
+
 ```json
 {
   "message": "사용자 등록이 완료되었습니다.",
@@ -41,6 +44,7 @@ Content-Type: application/json
 ```
 
 **응답 (실패 - 400):**
+
 ```json
 {
   "error": "이메일과 비밀번호는 필수입니다."
@@ -48,6 +52,7 @@ Content-Type: application/json
 ```
 
 **응답 (실패 - 500):**
+
 ```json
 {
   "error": "이미 존재하는 이메일입니다."
@@ -55,6 +60,7 @@ Content-Type: application/json
 ```
 
 **사용 예시:**
+
 ```javascript
 const response = await fetch('/api/auth/register', {
   method: 'POST',
@@ -64,8 +70,8 @@ const response = await fetch('/api/auth/register', {
   body: JSON.stringify({
     email: 'newuser@example.com',
     password: 'securepassword123',
-    type: 'user'
-  })
+    type: 'user',
+  }),
 });
 
 const data = await response.json();
@@ -80,20 +86,21 @@ NextAuth를 통한 로그인을 처리합니다.
 이 엔드포인트는 NextAuth가 자동으로 생성하며, 주로 NextAuth 클라이언트 라이브러리를 통해 사용됩니다.
 
 **프론트엔드에서 사용법:**
+
 ```javascript
-import { signIn } from 'next-auth/react'
+import { signIn } from 'next-auth/react';
 
 // 로그인 시도
 const result = await signIn('credentials', {
   email: 'user@example.com',
   password: 'your-password',
   redirect: false, // 자동 리다이렉트 방지
-})
+});
 
 if (result?.error) {
-  console.error('로그인 실패:', result.error)
+  console.error('로그인 실패:', result.error);
 } else {
-  console.log('로그인 성공')
+  console.log('로그인 성공');
 }
 ```
 
@@ -102,14 +109,15 @@ if (result?.error) {
 **엔드포인트:** `POST /api/auth/signout`
 
 **프론트엔드에서 사용법:**
+
 ```javascript
-import { signOut } from 'next-auth/react'
+import { signOut } from 'next-auth/react';
 
 // 로그아웃
 await signOut({
   redirect: true, // 로그인 페이지로 리다이렉트
-  callbackUrl: '/' // 리다이렉트할 URL
-})
+  callbackUrl: '/', // 리다이렉트할 URL
+});
 ```
 
 ### 4. 세션 확인
@@ -119,6 +127,7 @@ await signOut({
 **엔드포인트:** `GET /api/auth/session`
 
 **응답 (로그인됨):**
+
 ```json
 {
   "user": {
@@ -132,20 +141,22 @@ await signOut({
 ```
 
 **응답 (로그인되지 않음):**
+
 ```json
 {}
 ```
 
 **프론트엔드에서 사용법:**
+
 ```javascript
-import { getSession } from 'next-auth/react'
+import { getSession } from 'next-auth/react';
 
 // 세션 확인
-const session = await getSession()
+const session = await getSession();
 if (session) {
-  console.log('로그인된 사용자:', session.user)
+  console.log('로그인된 사용자:', session.user);
 } else {
-  console.log('로그인되지 않음')
+  console.log('로그인되지 않음');
 }
 ```
 
@@ -156,6 +167,7 @@ if (session) {
 CSRF 보호를 위한 토큰을 반환합니다.
 
 **응답:**
+
 ```json
 {
   "csrfToken": "abc123..."
@@ -169,15 +181,15 @@ CSRF 보호를 위한 토큰을 반환합니다.
 컴포넌트에서 세션 정보에 접근할 때 사용합니다.
 
 ```javascript
-import { useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react';
 
 function MyComponent() {
-  const { data: session, status } = useSession()
+  const { data: session, status } = useSession();
 
-  if (status === 'loading') return <p>로딩 중...</p>
-  
+  if (status === 'loading') return <p>로딩 중...</p>;
+
   if (status === 'unauthenticated') {
-    return <p>로그인이 필요합니다.</p>
+    return <p>로그인이 필요합니다.</p>;
   }
 
   return (
@@ -185,50 +197,51 @@ function MyComponent() {
       <p>안녕하세요, {session.user.email}님!</p>
       <p>사용자 타입: {session.user.type}</p>
     </div>
-  )
+  );
 }
 ```
 
 ### 서버 사이드에서 세션 확인
 
 ```javascript
-import { getServerSession } from 'next-auth/next'
-import { authOptions } from '@/app/api/auth/infrastructure/next-auth/auth.config'
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/app/api/auth/infrastructure/next-auth/auth.config';
 
 // API 라우트에서
 export async function GET(request) {
-  const session = await getServerSession(authOptions)
-  
+  const session = await getServerSession(authOptions);
+
   if (!session) {
-    return new Response('인증되지 않음', { status: 401 })
+    return new Response('인증되지 않음', { status: 401 });
   }
-  
+
   // 인증된 사용자만 접근 가능한 로직
-  return Response.json({ message: '성공' })
+  return Response.json({ message: '성공' });
 }
 
 // 페이지에서
 export async function getServerSideProps(context) {
-  const session = await getServerSession(context.req, context.res, authOptions)
-  
+  const session = await getServerSession(context.req, context.res, authOptions);
+
   if (!session) {
     return {
       redirect: {
         destination: '/auth/signin',
         permanent: false,
       },
-    }
+    };
   }
-  
+
   return {
     props: { session },
-  }
+  };
 }
 ```
 
 ## 인증 플로우
 
 ### 1. 회원가입 플로우
+
 ```
 1. POST /api/auth/register (이메일, 비밀번호)
 2. 성공 시 자동으로 로그인 페이지로 이동
@@ -236,6 +249,7 @@ export async function getServerSideProps(context) {
 ```
 
 ### 2. 로그인 플로우
+
 ```
 1. signIn('credentials', { email, password })
 2. 백엔드에서 자격 증명 검증
@@ -244,6 +258,7 @@ export async function getServerSideProps(context) {
 ```
 
 ### 3. 인증이 필요한 페이지 접근
+
 ```
 1. useSession() 또는 getServerSession()로 세션 확인
 2. 세션이 없으면 로그인 페이지로 리다이렉트
@@ -276,24 +291,24 @@ const handleLogin = async (email, password) => {
       email,
       password,
       redirect: false,
-    })
+    });
 
     if (result?.error) {
       switch (result.error) {
         case 'CredentialsSignin':
-          setError('이메일 또는 비밀번호가 올바르지 않습니다.')
-          break
+          setError('이메일 또는 비밀번호가 올바르지 않습니다.');
+          break;
         default:
-          setError('로그인 중 오류가 발생했습니다.')
+          setError('로그인 중 오류가 발생했습니다.');
       }
     } else {
       // 로그인 성공
-      router.push('/dashboard')
+      router.push('/dashboard');
     }
   } catch (error) {
-    setError('네트워크 오류가 발생했습니다.')
+    setError('네트워크 오류가 발생했습니다.');
   }
-}
+};
 ```
 
 ## 보안 고려사항

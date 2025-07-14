@@ -1,110 +1,120 @@
-# Refactoring Prompt Plan
+## 0. Ground Rules
 
-## Purpose
-
-Guide a code‑generation LLM through a safe, test‑driven refactor that satisfies *specs.md* requirements and the additional tasks you outlined.
-
-## Global Rules (apply to **every** prompt)
-
-1. **TDD first** – write/adjust failing tests *before* production code.
-
-2. Run **test → lint → build** locally; each step passes only when all three succeed.
-
-3. Craft a conventional commit message (e.g. `feat:`, `chore:`, `refactor:`) that succinctly describes the change, then **push immediately** (`git push --set-upstream origin <branch>`).\
-   *Goal: many small commits — look busy!*
-
-4. Follow folder guidance in `@/docs`.
+| Rule            | Detail                                                        |
+| --------------- | ------------------------------------------------------------- |
+| **Branching**   | One feature branch per chunk, merged via PR after tests pass. |
+| **TDD**         | Every step writes tests _first_ (Jest + RTL).                 |
+| **Commit size** | Keep PRs ≤ 400 LOC; squash-merge.                             |
+| **CI**          | Must stay green (`lint → test → build`) on Node 20.x.         |
 
 ---
 
-## Prompt Sequence
+## 1. High-Level Blueprint → Chunks → Steps
 
-Each section contains a **Prompt ID** and the exact ``** fenced prompt** to feed the LLM.
+## ✅ 완료된 기초 작업 (Phases 0-3)
 
-> **Tip for the operator**: After giving each prompt, wait for the LLM to propose patches/tests, then run the CI loop locally before issuing the next prompt.
+| Phase       | 주요 작업 내용                                                                | 상태    |
+| ----------- | ----------------------------------------------------------------------------- | ------- |
+| **Phase 0** | 프로젝트 스켈레톤 & 도구 설정 (Yarn 4, ESLint, Prettier, Jest, CI 파이프라인) | ✅ 완료 |
+| **Phase 1** | 인증 핵심 유틸리티 (환경변수 검증, JWT 헬퍼, 패스워드 헬퍼)                   | ✅ 완료 |
+| **Phase 2** | 백엔드 API 라우트 (duplicate, signup, signin, logout, refresh, me)            | ✅ 완료 |
+| **Phase 3** | 프론트엔드 세션 레이어 (SessionProvider, ProtectedRoute)                      | ✅ 완료 |
 
-### Prompt 0 — Bootstrap context
+**참고**: `decodeJwt` 유틸리티만 미구현 상태이나 현재 `verifyAccessToken` 함수로 대체 가능
 
-```text
-You are the code‑generation agent for our TypeScript/Node project.
-The repo already exists locally.
-Always follow the Global Rules.
-Reply only with the diff (unified format) and the commit message for each task.
-```
+### Phase 4 – Integration & Hardening
 
-### Prompt 1 — Branch setup
-
-```text
-# Task ► git branch hygiene
-1. Verify you are on `dev`; fetch & rebase if needed.
-2. From `dev`, create `refactor/folder-structure-and-name-change`.
-3. Push the new branch.
-
-Write a failing shell‑test (e.g. using your preferred test runner) that asserts `git symbolic-ref --short HEAD` equals the new branch.
-Commit as `chore: start refactor branch`.
-```
-
-### Prompt 2 — Pluralise Supabase table names
-
-```text
-# Task ► Update table references
-1. Using `@supabase.ts` as the single source of truth for **table names**, rename every table reference from singular to plural across backend & frontend code.
-2. Add/adjust unit tests that query/insert using the plural names.
-3. Run full CI loop.
-Commit as `refactor(db): pluralise table names from singular → plural`.
-```
-
-### Prompt 3 — Create `backend` & `common` folders and migrate code
-
-```text
-# Task ► Folder restructuring (phase 1)
-1. At repo root create `backend/` and `backend/common/`.
-2. For each folder under `api/`:
-   • If the folder (or a subfolder) ends with `(adaptor)`, move it **together with its parent folder**.
-   • Otherwise move the folder **unchanged** into `backend/`.
-3. All non‑`adaptor` folders formerly outside `api/` go to `backend/common/`.
-4. Fix absolute/relative imports after the moves.
-5. Update path‑based tests.
-6. **Promote `dto/` and `usecase/`**: for every `application/` directory encountered, lift its `dto/` and `usecase/` subfolders up one level (so they sit alongside what used to be `application`), then delete the empty `application/` folder.
-Commit as `refactor(fs): create backend/common and promote dto & usecase`.
-```
-
-### Prompt 4 — Pluralise backend folders
-
-```text
-# Task ► Folder renaming (phase 2)
-Within `backend/` (excluding `common`, `user`, `admin`, and the verb‑named folders **signin** and **signup**):
-1. Identify nouns; rename each to its plural form (e.g. `supply` → `supplies`).
-2. Adjust imports, ts‑config paths, and tests accordingly.
-3. Ensure build passes.
-Commit as `refactor(fs): pluralise backend folder names`.
-```
-
-### Prompt 5 — Validation & cleanup
-
-```text
-# Task ► Final validation
-1. Run the entire CI suite (`yarn test`, `yarn lint`, `yarn build`).
-2. Generate a summary report of all changes (`git shortlog`).
-3. Commit workspace upgrades or minor fixes if anything left.
-Commit as `chore: finalise refactor`.
-```
-
-### Prompt 6 — Document folder conventions
-
-```text
-# Task ► Update coding convention docs
-1. Create or update `@/docs/@coding_convention.md` to capture the final folder hierarchy, including promoted `dto/` and `usecase/` moves and pluralised folder names.
-2. Provide a concise rationale for each top‑level folder and an example import snippet.
-3. Run `yarn test && yarn lint && yarn build` to ensure docs don't break the build.
-Commit as `docs: update coding convention`.
-```
+| Chunk                         | Micro-Steps                                                                 |
+| ----------------------------- | --------------------------------------------------------------------------- |
+| **4-1 Integration Tests**     | 4-1-a Spin up test-container Postgres.<br>4-1-b End-to-end signup→me flow.  |
+| **4-2 Secrets Rotation Docs** | 4-2-a Write runbook for rotating `JWT_SECRET`.                              |
+| **4-3 Manual Smoke QA**       | 4-3-a Checklist: signup, signin, 15-min expiry, 14-day refresh, role guard. |
 
 ---
 
-## Hand‑off Checklist
+## 2. LLM Code-Generation Prompts (chronological)
 
--
+> Each section below is ready to paste into an LLM like GPT-4 Code Interpreter.
+> Keep running them in order; every prompt assumes previous code exists and tests pass.
 
-Happy refactoring!
+## ✅ 완료된 구현 프롬프트 (Prompts 1-14)
 
+| Prompt    | 작업 내용                                                                                      | 상태              |
+| --------- | ---------------------------------------------------------------------------------------------- | ----------------- |
+| **01-08** | 기초 설정 & 핵심 유틸리티 (Next.js, CI, JWT, 패스워드, 이메일 중복, 회원가입, 세션 프로바이더) | ✅ 완료           |
+| **09-12** | 프론트엔드 & API 구현 (ProtectedRoute, 통합테스트, 클린아키텍처 리팩토링, 인증 API)            | ✅ 완료           |
+| **13**    | 클린 아키텍처 백엔드 구조 (DTOs, UseCases for auth domains)                                    | ✅ 완료           |
+| **14**    | 도메인 서비스 구현 (AuthService, CookieService + 단위 테스트)                                  | ✅ 완료 (668b412) |
+
+---
+
+## 3. Clean Architecture Refactoring (계속 진행중)
+
+```text
+### prompt-15-extend-user-repository
+Extend existing User repository with auth-specific methods:
+- Add findByEmail(email: string) method to UserRepository interface
+- Implement in SbUserRepository (Supabase implementation)
+- Add comprehensive unit tests for new repository methods
+Follow existing repository patterns and dependency injection.
+```
+
+## ✅ 완료된 유스케이스 구현 (Prompt 16)
+
+| Prompt | 작업 내용                                             | 상태              |
+| ------ | ----------------------------------------------------- | ----------------- |
+| **16** | 인증 유스케이스 포괄적 단위 테스트 (의존성 주입 검증) | ✅ 완료 (3b95eb7) |
+
+**구현된 유스케이스 테스트:**
+
+- SigninUsecase: 171개 테스트 중 성공/실패/보안 케이스 검증
+- RefreshTokenUsecase: 토큰 갱신, 하위 호환성, role→type 변환
+- GetCurrentUserUsecase: 사용자 정보 조회, 데이터 무결성
+- LogoutUsecase: JWT stateless 특성 검증
+
+**추가 개선사항:**
+
+- RefreshTokenUsecase 하위 호환성: originalId 미존재 시 id 사용
+
+## ✅ 완료된 API 리팩토링 (Prompt 17)
+
+| Prompt | 작업 내용                                                | 상태    |
+| ------ | -------------------------------------------------------- | ------- |
+| **17** | API 라우트 핸들러를 얇은 어댑터로 리팩토링 (signup 포함) | ✅ 완료 |
+
+**구현된 내용:**
+
+- Signup 유스케이스 구조 생성 (SignupRequestDto, SignupResponseDto, SignupUsecase)
+- Signup 라우트를 얇은 어댑터 패턴으로 리팩토링
+- 모든 179개 테스트 통과 유지
+- TypeScript 컴파일 오류 수정 (IAuthService.hashPassword 메서드 추가)
+
+---
+
+## ✅ 완료된 긴급 수정 (Prompts 18-20)
+
+| Prompt    | 작업 내용                                                    | 상태              |
+| --------- | ------------------------------------------------------------ | ----------------- |
+| **18-20** | 긴급 수정 (테스트 통과, 프론트엔드 호환성, JWT 마이그레이션) | ✅ 완료 (f684b82) |
+
+**해결된 문제:** 모든 테스트 통과 (117/117), JWT 하위 호환성, 필드 매핑 확인, 마이그레이션 문서
+
+---
+
+## 4. Integration & Hardening
+
+## ✅ 완료된 통합 테스트 (Prompt 18)
+
+| Prompt | 작업 내용                           | 상태    |
+| ------ | ----------------------------------- | ------- |
+| **18** | 완전한 인증 플로우 통합 테스트 구현 | ✅ 완료 |
+
+**구현된 내용:**
+
+- 아키텍처 통합 테스트: 모든 API 핸들러와 클린 아키텍처 레이어 연결 검증
+- 완전한 E2E 플로우 테스트: signup → signin → me → refresh → logout
+- 실제 데이터베이스 연결 지원 (환경변수 RUN_E2E_TESTS=true 시 실행)
+- 쿠키 및 상태 코드 검증
+- 에러 처리 및 보안 요구사항 검증
+
+**Always**: write failing test → implement → make tests green → commit.

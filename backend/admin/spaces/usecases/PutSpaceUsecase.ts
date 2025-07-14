@@ -1,6 +1,5 @@
-import { SpaceRepository } from "@/backend/common/domains/repositories/SpaceRepository";
-import { PutSpaceQueryDto } from "../dtos/PutSpaceQueryDto";
-
+import { SpaceRepository } from '@/backend/common/domains/repositories/SpaceRepository';
+import { PutSpaceQueryDto } from '../dtos/PutSpaceQueryDto';
 
 export class PutSpaceUsecase {
   private spaceRepository: SpaceRepository;
@@ -11,6 +10,9 @@ export class PutSpaceUsecase {
 
   async execute(spaceData: PutSpaceQueryDto): Promise<void> {
     // spaceData.token 처리
-    await this.spaceRepository.update({id: spaceData.spaceId, name: spaceData.spaceName});
+    await this.spaceRepository.update({
+      id: spaceData.spaceId,
+      name: spaceData.spaceName,
+    });
   }
 }
