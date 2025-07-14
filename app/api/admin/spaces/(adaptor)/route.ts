@@ -4,7 +4,10 @@ import { SbSpaceRepository } from '@/backend/common/infrastructures/repositories
 import { PostSpaceUsecase } from '@/backend/admin/spaces/usecases/PostSpaceUsecase';
 import { PostRoomUsecase } from '@/backend/admin/spaces/usecases/PostRoomUsecase';
 import { SbRoomRepository } from '@/backend/common/infrastructures/repositories/SbRoomRepository';
-import { PostRoomQueryDto } from '@/backend/admin/spaces/dtos/PostRoomQueryDto';
+import {
+  PostRoomQueryDto,
+  RoomDto,
+} from '@/backend/admin/spaces/dtos/PostRoomQueryDto';
 import { PutSpaceUsecase } from '@/backend/admin/spaces/usecases/PutSpaceUsecase';
 import { PutSpaceQueryDto } from '@/backend/admin/spaces/dtos/PutSpaceQueryDto';
 import { PutRoomUsecase } from '@/backend/admin/spaces/usecases/PutRoomUsecase';
@@ -35,10 +38,29 @@ export async function POST(request: NextRequest) {
   const postRoomUsecase = new PostRoomUsecase(roomRepository);
 
   try {
-    await postSpaceUsecase.execute(
+    const spaceId = await postSpaceUsecase.execute(
       new PostSpaceQueryDto(token, body.spaceName)
     );
-    await postRoomUsecase.execute(new PostRoomQueryDto(token, body.rooms));
+    const rooms = body.rooms.map(
+      (room: {
+        name: string;
+        detail: string;
+        positionX: number;
+        positionY: number;
+        width: number;
+        height: number;
+      }) =>
+        new RoomDto(
+          spaceId,
+          room.name,
+          room.detail,
+          room.positionX,
+          room.positionY,
+          room.width,
+          room.height
+        )
+    );
+    await postRoomUsecase.execute(new PostRoomQueryDto(token, rooms));
     return NextResponse.json({ message: 'success' });
   } catch {
     return NextResponse.json(

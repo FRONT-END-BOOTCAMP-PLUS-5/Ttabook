@@ -28,9 +28,9 @@ export class SbRoomRepository implements RoomRepository {
   async saveAll(rooms: SaveRequest[]): Promise<void> {
     const { error } = await this.supabase.from('rooms').insert(
       rooms.map((room) => ({
+        space_id: room.spaceId,
         name: room.roomName,
         detail: room.roomDetail,
-        space_id: room.spaceId,
         position_x: room.positionX,
         position_y: room.positionY,
         width: room.width,
