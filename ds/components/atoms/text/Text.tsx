@@ -7,17 +7,23 @@ const Text: React.FC<TextProps> = ({
   children,
   size = 'md',
   variant = 'primary',
+  className: externalClassName,
   ...props
 }) => {
-  const className = [
+  const internalClasses = [
     styles['ttabook-text'],
     styles[`ttabook-text--${variant}`],
     styles[`ttabook-text--${size}`],
   ];
+
+  const combinedClassName = [...internalClasses, externalClassName]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <div className={className.filter(Boolean).join(' ')} {...props}>
+    <p className={combinedClassName} {...props}>
       {children}
-    </div>
+    </p>
   );
 };
 
