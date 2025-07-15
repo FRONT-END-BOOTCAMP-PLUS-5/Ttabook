@@ -1,7 +1,7 @@
 import Konva from 'konva';
 
 export type Room = {
-  id: string;
+  id: number | string;
   positionX: number;
   positionY: number;
   width: number;
@@ -13,9 +13,9 @@ export type Room = {
 export interface CanvasProps {
   rooms: Room[];
   setRooms: React.Dispatch<React.SetStateAction<Room[]>>;
-  setSelectedId: (id: string | null) => void;
-  editingId: string | null;
-  setEditingId: (id: string | null) => void;
+  setSelectedId: (id: string | number | null) => void;
+  editingId: string | number | null;
+  setEditingId: (id: string | number | null) => void;
   editingPos: { x: number; y: number };
   handleDrop: (e: React.DragEvent) => void;
   handleDragOver: (e: React.DragEvent) => void;

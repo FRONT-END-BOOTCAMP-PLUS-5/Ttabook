@@ -7,4 +7,5 @@ export interface RoomRepository {
   update(room: UpdateRequest): Promise<void>;
   upsert(rooms: UpdateRequest[]): Promise<void>;
   findBySpaceId(id: number): Promise<Room[] | null>;
+  deleteRooms(roomIds: number[]): Promise<void>;
 }

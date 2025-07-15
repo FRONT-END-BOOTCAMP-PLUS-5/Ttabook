@@ -5,13 +5,23 @@ import Konva from 'konva';
 import styles from './EditRoomPage.module.css';
 import Canvas from './Canvas';
 import { Room } from './types';
-import { RoomDto } from '@/backend/admin/spaces/dtos/PostRoomQueryDto';
 
-const EditRoomPage: React.FC = () => {
-  const [adminName] = useState<string>('멋쟁이 사자');
-  const [rooms, setRooms] = useState<Room[]>([]);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [editingId, setEditingId] = useState<string | null>(null);
+interface EditRoomPageProps {
+  spaceId?: number;
+  initialRooms?: Room[];
+  spaceName?: string;
+}
+
+const EditRoomPage: React.FC<EditRoomPageProps> = ({
+  spaceId,
+  initialRooms = [],
+  spaceName = '멋쟁이 사자',
+}) => {
+  const [adminName, setAdminName] = useState<string>(spaceName);
+  const [rooms, setRooms] = useState<Room[]>(initialRooms);
+  const [deletedRoomIds, setDeletedRoomIds] = useState<number[]>([]);
+  const [selectedId, setSelectedId] = useState<string | number | null>(null);
+  const [editingId, setEditingId] = useState<string | number | null>(null);
   const [editingPos, setEditingPos] = useState<{ x: number; y: number }>({
     x: 0,
     y: 0,
@@ -58,7 +68,7 @@ const EditRoomPage: React.FC = () => {
   const handleDragEnd = (id: string, positionX: number, positionY: number) => {
     setRooms((prev) =>
       prev.map((room) =>
-        room.id === id ? { ...room, positionX, positionY } : room
+        room.id.toString() === id ? { ...room, positionX, positionY } : room
       )
     );
   };
@@ -83,10 +93,12 @@ const EditRoomPage: React.FC = () => {
 
   const handleDelete = (room: Room) => {
     if (room.id) {
+      if (typeof room.id === 'number') {
+        setDeletedRoomIds((prev) => [...prev, room.id as number]);
+      }
       setRooms((prev) => prev.filter((r) => r.id !== room.id));
       setSelectedId(null);
 
-      // Transformer 초기화
       if (transformerRef.current) {
         transformerRef.current.nodes([]);
         transformerRef.current.getLayer()?.batchDraw();
@@ -99,36 +111,106 @@ const EditRoomPage: React.FC = () => {
     setEditingPos({ x: room.positionX, y: room.positionY });
   };
 
-  // To do: 백엔드 변경으로 수정 필요
   const handleSave = async () => {
-    const roomDtos: RoomDto[] = rooms.map(
-      (room) =>
-        new RoomDto(
-          room.id, // supplyId
-          room.name ?? '',
-          room.detail ?? '',
-          room.positionX,
-          room.positionY,
-          1, // scaleX
-          1 // scaleY
-        )
-    );
+    const newRooms = rooms.filter((room) => typeof room.id === 'string');
+    const updatedRooms = rooms.filter((room) => typeof room.id === 'number');
 
     try {
-      const response = await fetch('/api/admin/spaces', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'temp-token',
-        },
-        body: JSON.stringify({ spaceName: adminName, rooms: roomDtos }),
-      });
+      let currentSpaceId = spaceId;
 
-      if (response.ok) {
-        alert('저장되었습니다.');
+      // Create new space and its rooms if spaceId is not present
+      if (!currentSpaceId) {
+        const spaceResponse = await fetch('/api/admin/spaces', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'temp-token',
+          },
+          body: JSON.stringify({
+            spaceName: adminName,
+            rooms: newRooms.map((room) => ({
+              name: room.name ?? '',
+              detail: room.detail ?? '',
+              positionX: room.positionX,
+              positionY: room.positionY,
+              width: room.width,
+              height: room.height,
+            })),
+          }),
+        });
+
+        if (!spaceResponse.ok) {
+          throw new Error('Failed to create space');
+        }
+        const spaceData = await spaceResponse.json();
+        currentSpaceId = spaceData.spaceId; // Assuming the response contains spaceId
       } else {
-        alert('저장에 실패했습니다.');
+        // Update existing space name
+        await fetch(`/api/admin/spaces/${currentSpaceId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'temp-token',
+          },
+          body: JSON.stringify({ spaceName: adminName }),
+        });
+
+        // Handle new, updated, and deleted rooms for an existing space
+        if (newRooms.length > 0) {
+          await fetch(`/api/admin/spaces/${currentSpaceId}/rooms`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'temp-token',
+            },
+            body: JSON.stringify({
+              rooms: newRooms.map((room) => ({
+                name: room.name ?? '',
+                detail: room.detail ?? '',
+                positionX: room.positionX,
+                positionY: room.positionY,
+                width: room.width,
+                height: room.height,
+              })),
+            }),
+          });
+        }
+
+        if (updatedRooms.length > 0) {
+          await fetch(`/api/admin/spaces/${currentSpaceId}/rooms`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'temp-token',
+            },
+            body: JSON.stringify({
+              rooms: updatedRooms.map((room) => ({
+                roomId: room.id,
+                name: room.name ?? '',
+                detail: room.detail ?? '',
+                positionX: room.positionX,
+                positionY: room.positionY,
+                width: room.width,
+                height: room.height,
+              })),
+            }),
+          });
+        }
+
+        if (deletedRoomIds.length > 0) {
+          await fetch(`/api/admin/spaces/${currentSpaceId}/rooms`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'temp-token',
+            },
+            body: JSON.stringify({ roomIds: deletedRoomIds }),
+          });
+          setDeletedRoomIds([]);
+        }
       }
+
+      alert('저장되었습니다.');
     } catch (error) {
       console.error('Error saving rooms:', error);
       alert('저장 중 오류가 발생했습니다.');
@@ -141,7 +223,7 @@ const EditRoomPage: React.FC = () => {
     if (!transformer || !stage) return;
 
     if (selectedId && !editingId) {
-      const groupNode = stage.findOne(`#${selectedId}`);
+      const groupNode = stage.findOne(`#${selectedId.toString()}`);
       if (groupNode) {
         transformer.nodes([groupNode]);
         transformer.getLayer()?.batchDraw();
@@ -155,12 +237,12 @@ const EditRoomPage: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.canvasContainer}>
         <div>
-          <h2 className={styles.title}>{adminName}의 공간 설정하기</h2>
-          {/* <p>방을 생성하고 이름과 설명을 추가하세요.</p>
-        <p>방을 클릭하여 이동하거나 크기를 조절할 수 있습니다.</p>
-        <p>방을 더블 클릭하여 이름과 설명을 편집할 수 있습니다.</p>
-        <p>방을 선택한 후 삭제 버튼을 클릭하여 방을 삭제할 수 있습니다.</p>
-        <p>방을 드래그하여 캔버스에 추가할 수 있습니다</p> */}
+          <input
+            type="text"
+            value={adminName}
+            onChange={(e) => setAdminName(e.target.value)}
+            className={styles.titleInput}
+          />
         </div>
 
         <Canvas
@@ -181,7 +263,6 @@ const EditRoomPage: React.FC = () => {
           transformerRef={transformerRef}
         />
 
-        {/* 생성 버튼 */}
         <div
           draggable
           onDragStart={handleDragStart}

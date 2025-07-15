@@ -113,7 +113,7 @@ const Canvas: React.FC<CanvasProps> = ({
           {rooms.map((room) => (
             <Group
               key={room.id}
-              id={room.id}
+              id={room.id.toString()}
               x={room.positionX}
               y={room.positionY}
               width={room.width}
@@ -121,7 +121,7 @@ const Canvas: React.FC<CanvasProps> = ({
               draggable
               onClick={() => handleRectClick(room)}
               onDragEnd={(e) =>
-                handleDragEnd(room.id, e.target.x(), e.target.y())
+                handleDragEnd(room.id.toString(), e.target.x(), e.target.y())
               }
               onTransformEnd={(e) =>
                 handleTransformEnd(room, e.target as Konva.Rect)
