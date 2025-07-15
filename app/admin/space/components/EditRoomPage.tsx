@@ -2,7 +2,7 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import Konva from 'konva';
-import styles from './EditRoomCanvas.module.css';
+import styles from './EditRoomPage.module.css';
 import Canvas from './Canvas';
 import { Room } from './types';
 import { RoomDto } from '@/backend/admin/spaces/dtos/PostRoomQueryDto';
