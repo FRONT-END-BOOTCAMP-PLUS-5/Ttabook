@@ -21,12 +21,15 @@ export class SbRsvRepository implements RsvRepository {
     const query = this.supabase.from('reservations').select(`
       user_id,
       room_id,
-      space_id,
       id,
       start_time,
       end_time,
       room:room_id (
-        name
+        name,
+        space_id,
+        space:space_id (
+          name
+        )
       )
     `);
 
@@ -46,10 +49,12 @@ export class SbRsvRepository implements RsvRepository {
         `
       id,
       user_id,
-      space_id,
-      space:space_id(name),
       room_id,
-      room:room_id(name),
+      room:room_id(
+        name,
+        space_id,
+        space:space_id(name)
+      ),
       start_time,
       end_time,
     `
@@ -63,11 +68,10 @@ export class SbRsvRepository implements RsvRepository {
     return mapKeysToCamelCase(data) as Rsv[];
   }
 
-  async findByRoomId(spaceId: number, roomId: number): Promise<Rsv[]> {
+  async findByRoomId(roomId: number): Promise<Rsv[]> {
     const query = this.supabase
       .from('reservations')
       .select('*')
-      .eq('space_id', spaceId)
       .eq('room_id', roomId);
 
     const { error, data } = await query;

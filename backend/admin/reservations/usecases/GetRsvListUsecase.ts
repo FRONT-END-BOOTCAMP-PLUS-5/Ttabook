@@ -16,7 +16,7 @@ export class GetRsvListUsecase {
     const rsvList: Rsv[] = await this.repository.findAll();
     return rsvList.map((rsv: Rsv) => {
       return new GetRsvListDto(
-        rsv.spaceId,
+        rsv.room ? rsv.room.spaceId : 0,
         {
           roomId: rsv.roomId,
           roomName: rsv.room ? rsv.room.name : '',

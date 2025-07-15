@@ -10,13 +10,13 @@ export class PostRoomUsecase {
 
     const saveRequests: SaveRequest[] = roomData.rooms.map((room: RoomDto) => {
       return new SaveRequest(
-        room.supplyId,
+        room.spaceId,
         room.roomName,
         room.roomDetail,
         room.positionX,
         room.positionY,
-        room.scaleX,
-        room.scaleY
+        room.width,
+        room.height
       );
     });
     return this.repository.saveAll(saveRequests);

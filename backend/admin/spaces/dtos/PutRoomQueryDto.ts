@@ -1,13 +1,13 @@
 export class RoomDto {
   constructor(
     public id: number,
-    public supplyId: string,
+    public spaceId: number,
     public roomName: string,
     public roomDetail: string,
-    public positionX: number,
-    public positionY: number,
-    public scaleX: number,
-    public scaleY: number
+    public positionX?: number | null,
+    public positionY?: number | null,
+    public width?: number | null,
+    public height?: number | null
   ) {}
 }
 
