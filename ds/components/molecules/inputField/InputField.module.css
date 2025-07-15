@@ -1,0 +1,13 @@
+.ttabook-input-field {
+  display: flex;
+  gap: var(--spacing-1);
+}
+
+.ttabook-input-field--row {
+  flex-direction: row;
+  align-items: center;
+}
+
+.ttabook-input-field--column {
+  flex-direction: column;
+}
