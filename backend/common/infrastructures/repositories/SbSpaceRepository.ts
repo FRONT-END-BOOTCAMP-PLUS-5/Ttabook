@@ -18,10 +18,8 @@ export class SbSpaceRepository implements SpaceRepository {
       .from('spaces')
       .select(
         `
-         *,
-        rooms (*,
-          assets (*)
-        )
+          id,
+          name
         `
       )
       .eq('id', id)
@@ -33,8 +31,21 @@ export class SbSpaceRepository implements SpaceRepository {
     return data;
   }
 
-  async save(space: SaveRequest): Promise<void> {
-    await this.supabase.from('spaces').insert({ name: space.name });
+  async save(space: SaveRequest): Promise<number> {
+    const { data, error } = await this.supabase
+      .from('spaces')
+      .insert({ name: space.name })
+      .select('id');
+
+    if (error) {
+      throw new Error(`Error inserting space entity: ${error.message}`);
+    }
+
+    if (data && data.length > 0) {
+      return data[0].id as number;
+    } else {
+      throw new Error('No ID returned after inserting space entity.');
+    }
   }
 
   async update(space: UpdateRequest): Promise<void> {

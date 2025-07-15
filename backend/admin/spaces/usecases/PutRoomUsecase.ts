@@ -13,8 +13,7 @@ export class PutRoomUsecase {
     // roomData.token 처리
     const updateDatas = roomData.rooms.map((room: RoomDto) => {
       return new UpdateRequest(
-        room.id,
-        room.spaceId,
+        room.roomId,
         room.roomName,
         room.roomDetail,
         room.positionX,

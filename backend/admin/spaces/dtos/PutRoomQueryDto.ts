@@ -1,7 +1,6 @@
 export class RoomDto {
   constructor(
-    public id: number,
-    public spaceId: number,
+    public roomId: number,
     public roomName: string,
     public roomDetail: string,
     public positionX?: number | null,
