@@ -54,16 +54,16 @@
     "eslint-config-next": "15.3.4",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "husky": "^9.1.7",
     "eslint-plugin-storybook": "^9.0.16",
+    "husky": "^9.1.7",
     "jest": "^30.0.3",
     "jest-environment-jsdom": "^30.0.2",
     "prettier": "^3.6.2",
     "storybook": "^9.0.16",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.35.1",
-    "whatwg-fetch": "^3.6.20",
-    "webpack": "^5.99.9"
+    "webpack": "^5.99.9",
+    "whatwg-fetch": "^3.6.20"
   },
   "packageManager": "yarn@4.9.2"
 }
