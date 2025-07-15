@@ -9,12 +9,12 @@ export class PostSpaceUsecase {
     this.repository = repository;
   }
 
-  async execute(spaceData: PostSpaceQueryDto): Promise<void> {
+  async execute(spaceData: PostSpaceQueryDto): Promise<number> {
     // spaceData.token 처리
 
     const saveRequest: SaveRequest = {
       name: spaceData.spaceName,
     };
-    await this.repository.save(saveRequest);
+    return await this.repository.save(saveRequest);
   }
 }

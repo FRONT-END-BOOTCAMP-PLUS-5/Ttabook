@@ -1,0 +1,54 @@
+.ttabook-text {
+  font-family: var(--text-font-family);
+  color: var(--text-color);
+}
+
+.ttabook-text--xs {
+  font-size: var(--text-size-xs-font-size);
+  font-weight: var(--text-size-xs-font-weight);
+  line-height: var(--text-size-xs-line-height);
+}
+
+.ttabook-text--sm {
+  font-size: var(--text-size-sm-font-size);
+  font-weight: var(--text-size-sm-font-weight);
+  line-height: var(--text-size-sm-line-height);
+}
+
+.ttabook-text--md {
+  font-size: var(--text-size-md-font-size);
+  font-weight: var(--text-size-md-font-weight);
+  line-height: var(--text-size-md-line-height);
+}
+
+.ttabook-text--lg {
+  font-size: var(--text-size-lg-font-size);
+  font-weight: var(--text-size-lg-font-weight);
+  line-height: var(--text-size-lg-line-height);
+}
+
+.ttabook-text--xl {
+  font-size: var(--text-size-xl-font-size);
+  font-weight: var(--text-size-xl-font-weight);
+  line-height: var(--text-size-xl-line-height);
+}
+
+.ttabook-text--primary {
+  color: var(--color-text-primary);
+}
+
+.ttabook-text--secondary {
+  color: var(--color-primary);
+}
+
+.ttabook-text--accent {
+  color: var(--color-accent);
+}
+
+.ttabook-text--danger {
+  color: var(--color-error-dark);
+}
+
+.ttabook-text--disabled {
+  color: var(--color-text-secondary);
+}

@@ -1,0 +1,160 @@
+/* Design System Tokens as CSS Variables */
+:root {
+  /* Color Tokens */
+  --color-primary: #b8d4a8;
+  --color-primary-dark: #4a5d3a;
+  --color-secondary: #9bb89a;
+  --color-accent: #f7e8a4;
+  --color-accent-dark: #d4b896;
+  --color-background: #f7fafc;
+  --color-text-primary: #2d3748;
+  --color-text-secondary: #718096;
+  --color-error: #e87a74;
+  --color-error-dark: #d96459;
+  --color-disabled: #a0aec0;
+
+  /* Spacing Tokens */
+  --spacing-0: 0px;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-7: 28px;
+  --spacing-8: 32px;
+  --spacing-9: 36px;
+  --spacing-10: 40px;
+
+  /* Button Size Tokens */
+  --button-size-lg-height: 56px;
+  --button-size-lg-min-width: 120px;
+  --button-size-lg-padding: 0 var(--spacing-6);
+  --button-size-lg-font-size: 18px;
+  --button-size-lg-border-radius: 12px;
+  --button-size-md-height: 48px;
+  --button-size-md-min-width: 100px;
+  --button-size-md-padding: 0 var(--spacing-5);
+  --button-size-md-font-size: 16px;
+  --button-size-md-border-radius: 10px;
+  --button-size-sm-height: 40px;
+  --button-size-sm-min-width: 80px;
+  --button-size-sm-padding: 0 var(--spacing-4);
+  --button-size-sm-font-size: 14px;
+  --button-size-sm-border-radius: 8px;
+
+  /* Input Size Tokens */
+  --input-size-lg-height: 48px;
+  --input-size-lg-width: 200px;
+  --input-size-lg-padding: 0 var(--spacing-5);
+  --input-size-lg-font-size: 18px;
+  --input-size-lg-border-radius: 10px;
+  --input-size-md-height: 40px;
+  --input-size-md-width: 130px;
+  --input-size-md-padding: 0 var(--spacing-4);
+  --input-size-md-font-size: 16px;
+  --input-size-md-border-radius: 8px;
+  --input-size-sm-height: 32px;
+  --input-size-sm-width: 90px;
+  --input-size-sm-padding: 0 var(--spacing-3);
+  --input-size-sm-font-size: 14px;
+  --input-size-sm-border-radius: 6px;
+
+  /* Text Size Tokens */
+  --text-size-xs-font-size: 10px;
+  --text-size-xs-font-weight: 300;
+  --text-size-xs-line-height: 14px;
+  --text-size-sm-font-size: 12px;
+  --text-size-sm-font-weight: 400;
+  --text-size-sm-line-height: 16px;
+  --text-size-md-font-size: 16px;
+  --text-size-md-font-weight: 500;
+  --text-size-md-line-height: 24px;
+  --text-size-lg-font-size: 20px;
+  --text-size-lg-font-weight: 700;
+  --text-size-lg-line-height: 28px;
+  --text-size-xl-font-size: 24px;
+  --text-size-xl-font-weight: 800;
+  --text-size-xl-line-height: 32px;
+
+  /* Button Variant Tokens */
+  /* Primary */
+  --button-variant-primary-bg: var(--color-primary);
+  --button-variant-primary-color: var(--color-text-primary);
+  --button-variant-primary-border: none;
+  --button-variant-primary-disabled-bg: var(--color-background);
+  --button-variant-primary-disabled-color: var(--color-text-secondary);
+  --button-variant-primary-disabled-border: 1px solid var(--color-primary-light);
+
+  /* Secondary */
+  --button-variant-secondary-bg: var(--color-secondary);
+  --button-variant-secondary-color: var(--color-text-primary);
+  --button-variant-secondary-border: none;
+  --button-variant-secondary-disabled-bg: var(--color-background);
+  --button-variant-secondary-disabled-color: var(--color-text-secondary);
+  --button-variant-secondary-disabled-border: 1px solid var(--color-secondary);
+
+  /* Outline */
+  --button-variant-outline-bg: transparent;
+  --button-variant-outline-color: var(--color-primary-dark);
+  --button-variant-outline-border: 2px solid var(--color-primary);
+  --button-variant-outline-disabled-bg: transparent;
+  --button-variant-outline-disabled-color: var(--color-text-secondary);
+  --button-variant-outline-disabled-border: 1px solid var(--color-primary-light);
+
+  /* Ghost */
+  --button-variant-ghost-bg: transparent;
+  --button-variant-ghost-color: var(--color-primary-dark);
+  --button-variant-ghost-border: none;
+  --button-variant-ghost-disabled-bg: transparent;
+  --button-variant-ghost-disabled-color: var(--color-text-secondary);
+  --button-variant-ghost-disabled-border: none;
+
+  /* Danger */
+  --button-variant-danger-bg: var(--color-error);
+  --button-variant-danger-color: var(--color-background);
+  --button-variant-danger-border: 1px solid var(--color-error);
+  --button-variant-danger-disabled-bg: var(--color-background);
+  --button-variant-danger-disabled-color: var(--color-text-secondary);
+  --button-variant-danger-disabled-border: 1px solid var(--color-error);
+
+  /* Input Variant Tokens */
+  /* Primary */
+  --input-variant-primary-background: var(--color-background);
+  --input-variant-primary-color: var(--color-text-primary);
+  --input-variant-primary-border: 1px solid var(--color-primary);
+  --input-variant-primary-placeholder: var(--color-text-secondary);
+  --input-variant-primary-focus-border: 1.5px solid var(--color-primary-dark);
+  --input-variant-primary-focus-box-shadow: 0 0 0 2px var(--color-primary-light);
+
+  /* Secondary */
+  --input-variant-secondary-background: var(--color-background);
+  --input-variant-secondary-color: var(--color-text-secondary);
+  --input-variant-secondary-border: 1px solid var(--color-secondary);
+  --input-variant-secondary-placeholder: var(--color-text-secondary);
+  --input-variant-secondary-focus-border: 1.5px solid var(--color-secondary);
+  --input-variant-secondary-focus-box-shadow: 0 0 0 2px var(--color-secondary);
+
+  /* Danger */
+  --input-variant-danger-background: var(--color-background);
+  --input-variant-danger-color: var(--color-error);
+  --input-variant-danger-border: 1px solid var(--color-error);
+  --input-variant-danger-placeholder: var(--color-error);
+  --input-variant-danger-focus-border: 1.5px solid var(--color-error-dark);
+  --input-variant-danger-focus-box-shadow: 0 0 0 2px var(--color-error);
+
+  /* Outline */
+  --input-variant-outline-background: var(--color-background);
+  --input-variant-outline-color: var(--color-text-primary);
+  --input-variant-outline-border: 2px solid var(--color-primary);
+  --input-variant-outline-border-radius: 5px;
+  --input-variant-outline-placeholder: var(--color-text-secondary);
+  --input-variant-outline-focus-border: 1.5px solid var(--color-primary);
+  --input-variant-outline-focus-box-shadow: 0 0 0 2px var(--color-primary-light);
+
+  /* Disabled */
+  --input-variant-disabled-background: var(--color-background);
+  --input-variant-disabled-color: var(--color-text-secondary);
+  --input-variant-disabled-border: 1px solid var(--color-text-secondary);
+  --input-variant-disabled-placeholder: var(--color-text-secondary);
+}
