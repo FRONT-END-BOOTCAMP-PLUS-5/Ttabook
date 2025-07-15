@@ -5,15 +5,19 @@ import Konva from 'konva';
 import styles from './EditRoomCanvas.module.css';
 import Canvas from './Canvas';
 import { Room } from './types';
+import { RoomDto } from '@/backend/admin/spaces/dtos/PostRoomQueryDto';
 
 const EditRoomPage: React.FC = () => {
-  const [adminName, setAdminName] = useState<string>('멋쟁이 사자');
+  const [adminName] = useState<string>('멋쟁이 사자');
   const [rooms, setRooms] = useState<Room[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editingPos, setEditingPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [editingPos, setEditingPos] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
 
-  const stageRef = useRef<any>(null);
+  const stageRef = useRef<Konva.Stage | null>(null);
   const transformerRef = useRef<Konva.Transformer | null>(null);
 
   const handleDragStart = (e: React.DragEvent) => {
@@ -23,6 +27,7 @@ const EditRoomPage: React.FC = () => {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
 
+    if (!stageRef.current) return;
     const stage = stageRef.current.getStage();
     const stageBox = stage.container().getBoundingClientRect();
 
@@ -31,12 +36,12 @@ const EditRoomPage: React.FC = () => {
 
     const newRoom: Room = {
       id: Date.now().toString(),
-      x: dropX,
-      y: dropY,
+      positionX: dropX,
+      positionY: dropY,
       width: 120,
       height: 100,
       name: '',
-      description: '',
+      detail: '',
     };
 
     setRooms((prev) => [...prev, newRoom]);
@@ -50,10 +55,10 @@ const EditRoomPage: React.FC = () => {
     setSelectedId(room.id);
   };
 
-  const handleDragEnd = (id: string, x: number, y: number) => {
+  const handleDragEnd = (id: string, positionX: number, positionY: number) => {
     setRooms((prev) =>
       prev.map((room) =>
-        room.id === id ? { ...room, x, y } : room
+        room.id === id ? { ...room, positionX, positionY } : room
       )
     );
   };
@@ -64,8 +69,8 @@ const EditRoomPage: React.FC = () => {
 
     const updatedRoom: Room = {
       ...room,
-      x: node.x(),
-      y: node.y(),
+      positionX: node.x(),
+      positionY: node.y(),
       width: Math.max(30, node.width() * scaleX),
       height: Math.max(30, node.height() * scaleY),
     };
@@ -73,9 +78,7 @@ const EditRoomPage: React.FC = () => {
     node.scaleX(1);
     node.scaleY(1);
 
-    setRooms((prev) =>
-      prev.map((r) => (r.id === room.id ? updatedRoom : r))
-    );
+    setRooms((prev) => prev.map((r) => (r.id === room.id ? updatedRoom : r)));
   };
 
   const handleDelete = (room: Room) => {
@@ -93,7 +96,43 @@ const EditRoomPage: React.FC = () => {
 
   const handleEditStart = (room: Room) => {
     setEditingId(room.id);
-    setEditingPos({ x: room.x, y: room.y });
+    setEditingPos({ x: room.positionX, y: room.positionY });
+  };
+
+  // To do: 백엔드 변경으로 수정 필요
+  const handleSave = async () => {
+    const roomDtos: RoomDto[] = rooms.map(
+      (room) =>
+        new RoomDto(
+          room.id, // supplyId
+          room.name ?? '',
+          room.detail ?? '',
+          room.positionX,
+          room.positionY,
+          1, // scaleX
+          1 // scaleY
+        )
+    );
+
+    try {
+      const response = await fetch('/api/admin/spaces', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'temp-token',
+        },
+        body: JSON.stringify({ spaceName: adminName, rooms: roomDtos }),
+      });
+
+      if (response.ok) {
+        alert('저장되었습니다.');
+      } else {
+        alert('저장에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('Error saving rooms:', error);
+      alert('저장 중 오류가 발생했습니다.');
+    }
   };
 
   useEffect(() => {
@@ -116,8 +155,8 @@ const EditRoomPage: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.canvasContainer}>
         <div>
-        <h2 className={styles.title}>{adminName}의 공간 설정하기</h2>
-        {/* <p>방을 생성하고 이름과 설명을 추가하세요.</p>
+          <h2 className={styles.title}>{adminName}의 공간 설정하기</h2>
+          {/* <p>방을 생성하고 이름과 설명을 추가하세요.</p>
         <p>방을 클릭하여 이동하거나 크기를 조절할 수 있습니다.</p>
         <p>방을 더블 클릭하여 이름과 설명을 편집할 수 있습니다.</p>
         <p>방을 선택한 후 삭제 버튼을 클릭하여 방을 삭제할 수 있습니다.</p>
@@ -152,10 +191,7 @@ const EditRoomPage: React.FC = () => {
         </div>
       </div>
       <div>
-        <button
-          className={styles.saveButton}
-          onClick={() => {}}
-        >
+        <button className={styles.saveButton} onClick={handleSave}>
           저장
         </button>
       </div>

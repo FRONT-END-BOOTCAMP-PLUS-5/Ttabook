@@ -1,13 +1,13 @@
-import Konva from "konva";
+import Konva from 'konva';
 
 export type Room = {
   id: string;
-  x: number;
-  y: number;
+  positionX: number;
+  positionY: number;
   width: number;
   height: number;
   name?: string;
-  description?: string;
+  detail?: string;
 };
 
 export interface CanvasProps {
@@ -24,6 +24,6 @@ export interface CanvasProps {
   handleTransformEnd: (room: Room, node: Konva.Rect) => void;
   handleDelete: (room: Room) => void;
   handleEditStart: (room: Room) => void;
-  stageRef: React.RefObject<any>;
+  stageRef: React.RefObject<Konva.Stage | null>;
   transformerRef: React.RefObject<Konva.Transformer | null>;
 }

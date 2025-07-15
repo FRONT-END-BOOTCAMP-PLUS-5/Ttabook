@@ -1,7 +1,16 @@
 'use client';
 
 import React from 'react';
-import { Stage, Layer, Rect, Text, Transformer, Group, Label, Tag } from 'react-konva';
+import {
+  Stage,
+  Layer,
+  Rect,
+  Text,
+  Transformer,
+  Group,
+  Label,
+  Tag,
+} from 'react-konva';
 import Konva from 'konva';
 import styles from './Canvas.module.css';
 import { CanvasProps } from './types';
@@ -37,53 +46,57 @@ const Canvas: React.FC<CanvasProps> = ({
       }}
     >
       {/* 수정 input */}
-      {editingId && (() => {
-        const editingRoom = rooms.find((r) => r.id === editingId);
-        if (!editingRoom) return null;
+      {editingId &&
+        (() => {
+          const editingRoom = rooms.find((r) => r.id === editingId);
+          if (!editingRoom) return null;
 
-        return (
-          <div
-            className={styles.editingForm}
-            style={{
-              top: editingPos.y,
-              left: editingPos.x,
-              width: editingRoom.width - 8,
-              height: editingRoom.height - 8,
-            }}
-          >
-            <input
-              type="text"
-              autoFocus
-              value={editingRoom.name || ''}
-              onChange={(e) => {
-                const value = e.target.value;
-                setRooms((prev) =>
-                  prev.map((r) =>
-                    r.id === editingId ? { ...r, name: value } : r
-                  )
-                );
+          return (
+            <div
+              className={styles.editingForm}
+              style={{
+                top: editingPos.y,
+                left: editingPos.x,
+                width: editingRoom.width - 8,
+                height: editingRoom.height - 8,
               }}
-              placeholder="이름"
-            />
-            <textarea
-              value={editingRoom.description || ''}
-              onChange={(e) => {
-                const value = e.target.value;
-                setRooms((prev) =>
-                  prev.map((r) =>
-                    r.id === editingId ? { ...r, description: value } : r
-                  )
-                );
-              }}
-              placeholder="상세 설명"
-              className={styles.editingTextarea}
-            />
-            <button onClick={() => setEditingId(null)} className={styles.editingButton}>
-              완료
-            </button>
-          </div>
-        );
-      })()}
+            >
+              <input
+                type="text"
+                autoFocus
+                value={editingRoom.name || ''}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setRooms((prev) =>
+                    prev.map((r) =>
+                      r.id === editingId ? { ...r, name: value } : r
+                    )
+                  );
+                }}
+                placeholder="이름"
+              />
+              <textarea
+                value={editingRoom.detail || ''}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setRooms((prev) =>
+                    prev.map((r) =>
+                      r.id === editingId ? { ...r, detail: value } : r
+                    )
+                  );
+                }}
+                placeholder="상세 설명"
+                className={styles.editingTextarea}
+              />
+              <button
+                onClick={() => setEditingId(null)}
+                className={styles.editingButton}
+              >
+                완료
+              </button>
+            </div>
+          );
+        })()}
 
       {/* Konva Stage */}
       <Stage
@@ -101,14 +114,18 @@ const Canvas: React.FC<CanvasProps> = ({
             <Group
               key={room.id}
               id={room.id}
-              x={room.x}
-              y={room.y}
+              x={room.positionX}
+              y={room.positionY}
               width={room.width}
               height={room.height}
               draggable
               onClick={() => handleRectClick(room)}
-              onDragEnd={(e) => handleDragEnd(room.id, e.target.x(), e.target.y())}
-              onTransformEnd={(e) => handleTransformEnd(room, e.target as Konva.Rect)}
+              onDragEnd={(e) =>
+                handleDragEnd(room.id, e.target.x(), e.target.y())
+              }
+              onTransformEnd={(e) =>
+                handleTransformEnd(room, e.target as Konva.Rect)
+              }
               onDblClick={() => handleEditStart(room)}
             >
               <React.Fragment key={room.id}>
@@ -123,7 +140,7 @@ const Canvas: React.FC<CanvasProps> = ({
                   text={
                     (room.name || '이름 입력') +
                     '\n\n' +
-                    (room.description || '상세 정보 입력')
+                    (room.detail || '상세 정보 입력')
                   }
                   x={room.width * 0.03}
                   y={room.height * 0.06}
@@ -136,7 +153,7 @@ const Canvas: React.FC<CanvasProps> = ({
                   listening={false}
                 />
               </React.Fragment>
-              
+
               {/* 편집 버튼 */}
               <Label
                 x={room.width * 0.82}
