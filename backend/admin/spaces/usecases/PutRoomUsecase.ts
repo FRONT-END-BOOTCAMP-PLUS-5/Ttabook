@@ -14,13 +14,13 @@ export class PutRoomUsecase {
     const updateDatas = roomData.rooms.map((room: RoomDto) => {
       return new UpdateRequest(
         room.id,
-        room.supplyId,
+        room.spaceId,
         room.roomName,
         room.roomDetail,
         room.positionX,
         room.positionY,
-        room.scaleX,
-        room.scaleY
+        room.width,
+        room.height
       );
     });
     this.roomRepository.upsert(updateDatas);

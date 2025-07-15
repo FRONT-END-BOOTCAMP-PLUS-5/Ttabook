@@ -7,12 +7,10 @@ export class GetRoomRsvUsecase {
   }
 
   async execute(
-    spaceId: number,
     roomId: number
   ): Promise<GetRoomReservationDto[]> {
     try {
       const reservations = await this.rsvRepository.findByRoomId(
-        spaceId,
         roomId
       );
 

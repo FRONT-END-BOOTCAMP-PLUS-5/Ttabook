@@ -14,7 +14,7 @@ export class GetUserRsvUsecase {
     return (
       reservations?.map((rsv: Rsv) => {
         return new GetUserRsvDto(
-          rsv.spaceId,
+          rsv.room ? rsv.room.spaceId : 0,
           rsv.space ? rsv.space.name : '',
           rsv.roomId,
           rsv.room ? rsv.room.name : '',

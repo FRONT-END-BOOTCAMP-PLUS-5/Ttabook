@@ -46,7 +46,6 @@ export async function POST(request: NextRequest) {
     if (
       !reservationData ||
       !reservationData.userId ||
-      !reservationData.spaceId ||
       !reservationData.roomId ||
       !reservationData.startTime ||
       !reservationData.endTime
@@ -64,7 +63,6 @@ export async function POST(request: NextRequest) {
     await postUserRsvUsecase.execute(
       new PostUserRsvDto(
         reservationData.userId,
-        reservationData.spaceId,
         reservationData.roomId,
         new Date(reservationData.startTime),
         new Date(reservationData.endTime)

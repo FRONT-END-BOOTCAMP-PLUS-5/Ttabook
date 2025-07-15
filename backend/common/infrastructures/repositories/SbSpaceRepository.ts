@@ -19,13 +19,11 @@ export class SbSpaceRepository implements SpaceRepository {
       .select(
         `
          *,
-        rooms: room (
-          *,
-          supplies (*)
-         )
+        rooms (*,
+          assets (*)
+        )
         `
       )
-      // .select('*')
       .eq('id', id)
       .single();
     if (error) {
