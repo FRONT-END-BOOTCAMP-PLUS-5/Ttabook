@@ -17,7 +17,14 @@ function validateNumberEnvVar(name: string, value: string | undefined): number {
 
   const numValue = Number(value);
   if (isNaN(numValue)) {
-    throw new Error(`${name} must be a valid number`);
+    throw new Error(`${name} must be a valid number, got: ${value}`);
+  }
+
+  // BCRYPT_ROUNDS specific validation
+  if (name === 'BCRYPT_ROUNDS') {
+    if (numValue < 4 || numValue > 20) {
+      throw new Error(`${name} must be between 4 and 20 for security and performance, got: ${numValue}`);
+    }
   }
 
   return numValue;
