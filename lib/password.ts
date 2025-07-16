@@ -6,9 +6,10 @@ function validateBcryptLibrary() {
   if (!bcrypt) {
     throw new Error('bcryptjs library is not properly loaded or configured');
   }
-  // In tests, mocked functions might not have the expected type
+  
+  // Check if essential functions exist (but skip validation in test environment when functions are mocked)
   if (process.env.NODE_ENV !== 'test' && 
-      (typeof bcrypt.genSalt !== 'function' || typeof bcrypt.hash !== 'function')) {
+      (typeof bcrypt.genSalt !== 'function' || typeof bcrypt.hash !== 'function' || typeof bcrypt.compare !== 'function')) {
     throw new Error('bcryptjs library is not properly loaded or configured');
   }
 }
