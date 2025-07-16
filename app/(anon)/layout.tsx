@@ -26,9 +26,7 @@ export default function AnonLayout({
         <LoggedOutHeader onSignin={setSigninOpen} onSignup={setSignupOpen} />
       )}
       {children}
-      <Footer>
-        <></>
-      </Footer>
+      <Footer />
     </div>
   );
 }
