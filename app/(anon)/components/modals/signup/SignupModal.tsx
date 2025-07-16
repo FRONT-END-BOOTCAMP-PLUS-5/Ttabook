@@ -4,14 +4,26 @@ import styles from './SignupModal.module.css';
 import Button from '@/ds/components/atoms/button/Button';
 import { useState } from 'react';
 import axios from 'axios';
-import { useMutation } from '@tanstack/react-query';
 import { isValidEmail, isValidPassword } from '@/utils/validation';
+import { usePosts } from '@/hooks/usePosts';
 
 interface SignupModalProps {
   onClose: (toggle: boolean) => void;
 }
 
 const SignupModal = ({ onClose }: SignupModalProps) => {
+  const onSuccess = () => {
+    alert('회원가입이 성공적으로 완료되었습니다!');
+    onClose(false);
+  };
+  const onError = (err: unknown) => {
+    console.error('회원가입 실패:', err);
+    if (axios.isAxiosError(err) && err.response?.data?.message) {
+      console.log(err.response.data.message);
+    } else {
+      console.log('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
+    }
+  };
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [name, setName] = useState('');
@@ -20,6 +32,10 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
   const [passwordError, setPasswordError] = useState('');
   const [passwordCheck, setPasswordCheck] = useState('');
   const [passwordCheckError, setPasswordCheckError] = useState('');
+  const { mutate } = usePosts({
+    onSuccess,
+    onError,
+  });
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isValidEmail(e.target.value)) {
@@ -61,30 +77,6 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
     setName(e.target.value);
   };
 
-  const { mutate } = useMutation({
-    mutationFn: async (signupData: {
-      email: string;
-      password: string;
-      name: string;
-    }) => {
-      const response = await axios.post('/api/signup', signupData);
-      return response.data;
-    },
-    onSuccess: (data) => {
-      console.log('회원가입 성공:', data);
-      alert('회원가입이 성공적으로 완료되었습니다!');
-      onClose(false);
-    },
-    onError: (err: unknown) => {
-      console.error('회원가입 실패:', err);
-      if (axios.isAxiosError(err) && err.response?.data?.message) {
-        console.log(err.response.data.message);
-      } else {
-        console.log('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
-      }
-    },
-  });
-
   const handleClickSignup = () => {
     if (!name || !email || !password || !passwordCheck) {
       alert('필수 값을 모두 입력하세요.');
@@ -95,7 +87,14 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
       return;
     }
     if (isValidEmail(email) && isValidPassword(password)) {
-      mutate({ email, password, name });
+      mutate({
+        postData: {
+          email,
+          password,
+          name,
+        },
+        path: '/signup',
+      });
     }
   };
 
