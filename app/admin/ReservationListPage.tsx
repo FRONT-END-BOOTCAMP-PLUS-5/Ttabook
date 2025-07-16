@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Reservation } from './types';
 import ReservationRow from './ReservationRow';
 import styles from './ReservationListPage.module.css';
+import { useGets } from '@/hooks/useGets';
 
 const reservations: Reservation[] = [
   {
@@ -49,6 +50,11 @@ const ReservationListPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(reservations.length / ITEMS_PER_PAGE);
 
+  const { data } = useGets<{ data: Reservation[] }>(
+      ['admin', 'reservations'],
+      '/admin/reservations',
+    );
+
   const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentReservations = reservations.slice(
     startIdx,
@@ -80,7 +86,7 @@ const ReservationListPage = () => {
         </thead>
 
         <tbody>
-          {currentReservations.map((res) => (
+          {data?.data.map((res) => (
             <ReservationRow key={res.id} reservation={res} />
           ))}
         </tbody>
