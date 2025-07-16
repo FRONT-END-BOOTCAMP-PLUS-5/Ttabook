@@ -1,8 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 
-const BASE_URL = '/api';
-
 interface PostProps {
   onSuccess: (data?: unknown) => void;
   onError: (err?: unknown) => void;
@@ -18,7 +16,10 @@ const usePosts = ({ onSuccess, onError }: PostProps) => {
         postData?: unknown;
         path: string;
       }) => {
-        const response = await axios.post(`${BASE_URL}/${path}`, postData);
+        const response = await axios.post(
+          `${process.env.BASE_URL}/${path}`,
+          postData
+        );
         return response.data;
       },
       onSuccess: onSuccess,
