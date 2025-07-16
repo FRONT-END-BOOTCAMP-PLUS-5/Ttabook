@@ -98,8 +98,9 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
     }
     const { data } = await refetch();
 
-    if (data?.available) {
+    if (data?.available && data?.message) {
       setCheckedDuplication(true);
+      alert(data?.message);
     }
   };
 
