@@ -1,1 +1,6 @@
-@import url("../ds/styles/globals.css");
+@import url('../ds/styles/globals.css');
+
+body {
+  margin: 0;
+  box-sizing: border-box;
+}

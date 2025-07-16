@@ -10,6 +10,7 @@ const Input: React.FC<InputProps> = ({
   variant = 'primary',
   error,
   required,
+  ref,
   ...props
 }) => {
   const className = [
@@ -26,7 +27,12 @@ const Input: React.FC<InputProps> = ({
           *
         </CaptionText>
       )}
-      <input className={className.filter(Boolean).join(' ')} {...props} />
+      <input
+        className={className.filter(Boolean).join(' ')}
+        ref={ref}
+        {...props}
+        style={{ width: isFullWidth ? '100%' : '', boxSizing: 'border-box' }}
+      />
       {error && <CaptionText variant="danger">{error}</CaptionText>}
     </div>
   );
