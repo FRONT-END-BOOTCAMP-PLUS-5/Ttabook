@@ -1,8 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Room } from '../../domains/entities/Room';
 import { Rsv } from '../../domains/entities/Rsv';
 import { RsvRepository } from '../../domains/repositories/RsvRepository';
-import { Space } from '../../domains/entities/Space';
 import {
   DeleteRequest,
   SaveRequest,
