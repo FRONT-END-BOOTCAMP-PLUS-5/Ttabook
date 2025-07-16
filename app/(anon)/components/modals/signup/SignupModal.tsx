@@ -4,14 +4,27 @@ import styles from './SignupModal.module.css';
 import Button from '@/ds/components/atoms/button/Button';
 import { useState } from 'react';
 import axios from 'axios';
-import { useMutation } from '@tanstack/react-query';
 import { isValidEmail, isValidPassword } from '@/utils/validation';
+import { usePosts } from '@/hooks/usePosts';
+import { useGets } from '@/hooks/useGets';
 
 interface SignupModalProps {
   onClose: (toggle: boolean) => void;
 }
 
 const SignupModal = ({ onClose }: SignupModalProps) => {
+  const onSuccess = () => {
+    alert('회원가입이 성공적으로 완료되었습니다!');
+    onClose(false);
+  };
+  const onError = (err: unknown) => {
+    console.error('회원가입 실패:', err);
+    if (axios.isAxiosError(err) && err.response?.data?.message) {
+      console.log(err.response.data.message);
+    } else {
+      console.log('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
+    }
+  };
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [name, setName] = useState('');
@@ -20,6 +33,19 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
   const [passwordError, setPasswordError] = useState('');
   const [passwordCheck, setPasswordCheck] = useState('');
   const [passwordCheckError, setPasswordCheckError] = useState('');
+  const [checkedDuplication, setCheckedDuplication] = useState(false);
+  const { mutate } = usePosts({
+    onSuccess,
+    onError,
+  });
+  const { refetch } = useGets<{ available: boolean; message: string }>(
+    ['duplicates'],
+    '/duplicates',
+    false,
+    {
+      email: email,
+    }
+  );
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isValidEmail(e.target.value)) {
@@ -53,6 +79,10 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!checkedDuplication) {
+      alert('이메일 중복 확인은 필수입니다.');
+      return;
+    }
     if (e.target.value?.length <= 0) {
       setNameError('이름은 필수값입니다.');
     } else {
@@ -61,29 +91,18 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
     setName(e.target.value);
   };
 
-  const { mutate } = useMutation({
-    mutationFn: async (signupData: {
-      email: string;
-      password: string;
-      name: string;
-    }) => {
-      const response = await axios.post('/api/signup', signupData);
-      return response.data;
-    },
-    onSuccess: (data) => {
-      console.log('회원가입 성공:', data);
-      alert('회원가입이 성공적으로 완료되었습니다!');
-      onClose(false);
-    },
-    onError: (err: unknown) => {
-      console.error('회원가입 실패:', err);
-      if (axios.isAxiosError(err) && err.response?.data?.message) {
-        console.log(err.response.data.message);
-      } else {
-        console.log('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
-      }
-    },
-  });
+  const handleClickCheckDup = async () => {
+    if (!isValidEmail(email)) {
+      alert('이메일 형식이 잘못되었습니다.');
+      return;
+    }
+    const { data } = await refetch();
+
+    if (data?.available && data?.message) {
+      setCheckedDuplication(true);
+      alert(data?.message);
+    }
+  };
 
   const handleClickSignup = () => {
     if (!name || !email || !password || !passwordCheck) {
@@ -95,7 +114,14 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
       return;
     }
     if (isValidEmail(email) && isValidPassword(password)) {
-      mutate({ email, password, name });
+      mutate({
+        postData: {
+          email,
+          password,
+          name,
+        },
+        path: '/signup',
+      });
     }
   };
 
@@ -124,7 +150,11 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
                 direction="column"
               />
               <div className={styles['modal-input-absolute']}>
-                <Button variant="outline" size="sm">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleClickCheckDup}
+                >
                   {' '}
                   중복확인
                 </Button>

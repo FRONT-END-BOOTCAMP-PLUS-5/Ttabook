@@ -1,8 +1,8 @@
-'use client';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { SessionProvider } from './providers/SessionProvider';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryProvider } from './providers/ReactQueryProvider';
+import { Metadata } from 'next';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -14,8 +14,10 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-const queryClient = new QueryClient();
-
+export const metadata: Metadata = {
+  title: 'ttabook | Ttabook',
+  description: '공간 예약 시스템',
+};
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,9 +28,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <QueryClientProvider client={queryClient}>
+        <ReactQueryProvider>
           <SessionProvider>{children}</SessionProvider>
-        </QueryClientProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );
