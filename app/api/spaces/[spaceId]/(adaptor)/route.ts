@@ -9,9 +9,9 @@ import { GetSpaceDto } from '@/backend/spaces/dtos/GetSpaceDto';
 // 관리자, 일반사용자를 위한 공간 조회 API
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ spaceId: string }> }
+  { params }: { params: { spaceId: string } }
 ) {
-  const { spaceId } = await params;
+  const { spaceId } = params;
   try {
     const supabase = await createClient();
 
