@@ -99,14 +99,5 @@ export class SbRoomRepository implements RoomRepository {
     return mapKeysToCamelCase(data) as Room[];
   }
 
-  async deleteRooms(roomIds: number[]): Promise<void> {
-    const { error } = await this.supabase
-      .from('rooms')
-      .delete()
-      .in('id', roomIds);
-
-    if (error) {
-      throw new Error(`Failed to delete rooms: ${error.message}`);
-    }
-  }
+  
 }

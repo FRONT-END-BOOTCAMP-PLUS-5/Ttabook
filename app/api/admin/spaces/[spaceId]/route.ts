@@ -3,21 +3,31 @@ import { createClient } from '@/backend/common/infrastructures/supabase/server';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { SbRoomRepository } from '@/backend/common/infrastructures/repositories/SbRoomRepository';
 import { PostRoomUsecase } from '@/backend/admin/spaces/usecases/PostRoomUsecase';
-import { PostRoomQueryDto, RoomDto as PostRoomDto } from '@/backend/admin/spaces/dtos/PostRoomQueryDto';
+import {
+  PostRoomQueryDto,
+  RoomDto as PostRoomDto,
+} from '@/backend/admin/spaces/dtos/PostRoomQueryDto';
 import { PutRoomUsecase } from '@/backend/admin/spaces/usecases/PutRoomUsecase';
-import { PutRoomQueryDto, RoomDto as PutRoomDto } from '@/backend/admin/spaces/dtos/PutRoomQueryDto';
-import { DeleteRoomUsecase } from '@/backend/admin/spaces/usecases/DeleteRoomUsecase';
-
-export async function POST(request: NextRequest, { params }: { params: { spaceId: string } }) {
+import {
+  PutRoomQueryDto,
+  RoomDto as PutRoomDto,
+} from '@/backend/admin/spaces/dtos/PutRoomQueryDto';
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ spaceId: string }> }
+) {
   const token = request.headers.get('Authorization');
   const body = await request.json();
-  const spaceId = parseInt(params.spaceId, 10);
+  const { spaceId } = await params;
 
   if (!token) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   if (!body.rooms) {
-    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Invalid request body' },
+      { status: 400 }
+    );
   }
 
   const supabase: SupabaseClient = await createClient();
@@ -26,9 +36,9 @@ export async function POST(request: NextRequest, { params }: { params: { spaceId
 
   try {
     const rooms = body.rooms.map(
-      (room: any) =>
+      (room: PostRoomDto) =>
         new PostRoomDto(
-          spaceId,
+          parseInt(spaceId),
           room.roomName,
           room.roomDetail,
           room.positionX,
@@ -39,20 +49,30 @@ export async function POST(request: NextRequest, { params }: { params: { spaceId
     );
     await postRoomUsecase.execute(new PostRoomQueryDto(token, rooms));
     return NextResponse.json({ message: 'success' });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to create rooms' }, { status: 500 });
+  } catch {
+    return NextResponse.json(
+      { error: 'Failed to create rooms' },
+      { status: 500 }
+    );
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { spaceId: string } }) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ spaceId: string }> }
+) {
   const token = request.headers.get('Authorization');
   const body = await request.json();
+  const { spaceId } = await params;
 
   if (!token) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   if (!body.rooms) {
-    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Invalid request body' },
+      { status: 400 }
+    );
   }
 
   const supabase: SupabaseClient = await createClient();
@@ -61,9 +81,9 @@ export async function PUT(request: NextRequest, { params }: { params: { spaceId:
 
   try {
     const rooms = body.rooms.map(
-      (room: any) =>
+      (room: PutRoomDto) =>
         new PutRoomDto(
-          room.roomId,
+          parseInt(spaceId),
           room.roomName,
           room.roomDetail,
           room.positionX,
@@ -74,30 +94,10 @@ export async function PUT(request: NextRequest, { params }: { params: { spaceId:
     );
     await putRoomUsecase.execute(new PutRoomQueryDto(token, rooms));
     return NextResponse.json({ message: 'success' });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to update rooms' }, { status: 500 });
-  }
-}
-
-export async function DELETE(request: NextRequest, { params }: { params: { spaceId: string } }) {
-  const token = request.headers.get('Authorization');
-  const body = await request.json();
-
-  if (!token) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  if (!body.roomIds) {
-    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
-  }
-
-  const supabase: SupabaseClient = await createClient();
-  const roomRepository = new SbRoomRepository(supabase);
-  const deleteRoomUsecase = new DeleteRoomUsecase(roomRepository);
-
-  try {
-    await deleteRoomUsecase.execute(token, body.roomIds);
-    return NextResponse.json({ message: 'success' });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to delete rooms' }, { status: 500 });
+  } catch {
+    return NextResponse.json(
+      { error: 'Failed to update rooms' },
+      { status: 500 }
+    );
   }
 }

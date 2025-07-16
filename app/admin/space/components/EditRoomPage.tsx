@@ -19,7 +19,6 @@ const EditRoomPage: React.FC<EditRoomPageProps> = ({
 }) => {
   const [adminName, setAdminName] = useState<string>(spaceName);
   const [rooms, setRooms] = useState<Room[]>(initialRooms);
-  const [deletedRoomIds, setDeletedRoomIds] = useState<number[]>([]);
   const [selectedId, setSelectedId] = useState<string | number | null>(null);
   const [editingId, setEditingId] = useState<string | number | null>(null);
   const [editingPos, setEditingPos] = useState<{ x: number; y: number }>({
@@ -93,9 +92,6 @@ const EditRoomPage: React.FC<EditRoomPageProps> = ({
 
   const handleDelete = (room: Room) => {
     if (room.id) {
-      if (typeof room.id === 'number') {
-        setDeletedRoomIds((prev) => [...prev, room.id as number]);
-      }
       setRooms((prev) => prev.filter((r) => r.id !== room.id));
       setSelectedId(null);
 
@@ -118,7 +114,7 @@ const EditRoomPage: React.FC<EditRoomPageProps> = ({
     try {
       let currentSpaceId = spaceId;
 
-      // Create new space and its rooms if spaceId is not present
+      // Create new space and its rooms if spaceId is not present // 수정!
       if (!currentSpaceId) {
         const spaceResponse = await fetch('/api/admin/spaces', {
           method: 'POST',
@@ -147,6 +143,7 @@ const EditRoomPage: React.FC<EditRoomPageProps> = ({
       } else {
         // Update existing space name
         await fetch(`/api/admin/spaces/${currentSpaceId}`, {
+          // 수정!
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -195,18 +192,6 @@ const EditRoomPage: React.FC<EditRoomPageProps> = ({
               })),
             }),
           });
-        }
-
-        if (deletedRoomIds.length > 0) {
-          await fetch(`/api/admin/spaces/${currentSpaceId}/rooms`, {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: 'temp-token',
-            },
-            body: JSON.stringify({ roomIds: deletedRoomIds }),
-          });
-          setDeletedRoomIds([]);
         }
       }
 
