@@ -17,7 +17,7 @@ const usePosts = ({ onSuccess, onError }: PostProps) => {
         path: string;
       }) => {
         const response = await axios.post(
-          `${process.env.BASE_URL}/${path}`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}${path}`,
           postData
         );
         return response.data;
