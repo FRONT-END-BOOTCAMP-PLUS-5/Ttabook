@@ -1,6 +1,18 @@
 import bcrypt from 'bcryptjs';
 import { BCRYPT_ROUNDS } from './config';
 
+// Runtime validation of bcryptjs library
+function validateBcryptLibrary() {
+  if (!bcrypt) {
+    throw new Error('bcryptjs library is not properly loaded or configured');
+  }
+  // In tests, mocked functions might not have the expected type
+  if (process.env.NODE_ENV !== 'test' && 
+      (typeof bcrypt.genSalt !== 'function' || typeof bcrypt.hash !== 'function')) {
+    throw new Error('bcryptjs library is not properly loaded or configured');
+  }
+}
+
 /**
  * 평문 패스워드를 bcrypt로 해시화합니다
  */
@@ -9,6 +21,9 @@ export async function hashPassword(plainPassword: string): Promise<string> {
     throw new Error('패스워드가 제공되지 않았습니다');
   }
 
+  // Runtime validation of bcryptjs
+  validateBcryptLibrary();
+
   try {
     const salt = await bcrypt.genSalt(BCRYPT_ROUNDS);
     const hashedPassword = await bcrypt.hash(plainPassword, salt);
@@ -16,7 +31,21 @@ export async function hashPassword(plainPassword: string): Promise<string> {
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : '알 수 없는 오류';
-    throw new Error(`패스워드 해시화 실패: ${errorMessage}`);
+    
+    // 더 자세한 컨텍스트 정보 추가
+    const contextInfo = {
+      bcryptRounds: BCRYPT_ROUNDS,
+      passwordLength: plainPassword?.length || 0,
+      errorType: error instanceof Error ? error.constructor.name : typeof error,
+    };
+    
+    console.error('Password hashing failed:', {
+      error: errorMessage,
+      context: contextInfo,
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+    
+    throw new Error(`패스워드 해시화 실패: ${errorMessage} (rounds: ${BCRYPT_ROUNDS})`);
   }
 }
 
@@ -34,6 +63,9 @@ export async function verifyPassword(
   if (!hashedPassword || hashedPassword.trim() === '') {
     throw new Error('해시된 패스워드가 제공되지 않았습니다');
   }
+
+  // Runtime validation of bcryptjs
+  validateBcryptLibrary();
 
   try {
     const isValid = await bcrypt.compare(plainPassword, hashedPassword);
