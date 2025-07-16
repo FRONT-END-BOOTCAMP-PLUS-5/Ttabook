@@ -1,5 +1,6 @@
 import { QueryKey, useQuery, UseQueryOptions } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
+import { useRef } from 'react';
 
 interface ApiErrorResponse {
   message: string;
@@ -17,19 +18,33 @@ export const useGets = <TData>(
     'queryKey' | 'queryFn'
   >
 ) => {
-  return useQuery<TData, AxiosError<ApiErrorResponse>, TData, QueryKey>({
+  const paramsRef = useRef(params);
+
+  const queryFn = async () => {
+    const response = await axios.get<TData>(
+      `${process.env.NEXT_PUBLIC_BASE_URL}${path}`,
+      {
+        params: paramsRef.current,
+        headers,
+      }
+    );
+    return response.data;
+  };
+
+  const query = useQuery<TData, AxiosError<ApiErrorResponse>, TData, QueryKey>({
     queryKey: queryKey,
-    queryFn: async () => {
-      const response = await axios.get<TData>(
-        `${process.env.NEXT_PUBLIC_BASE_URL}${path}`,
-        {
-          params: params,
-          headers: headers,
-        }
-      );
-      return response.data;
-    },
+    queryFn: queryFn,
     enabled,
     ...options,
   });
+
+  const refetchWithParams = (newParams: Record<string, string>) => {
+    paramsRef.current = newParams;
+    return query.refetch();
+  };
+
+  return {
+    ...query,
+    refetchWithParams,
+  };
 };
