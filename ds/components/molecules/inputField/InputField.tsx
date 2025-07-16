@@ -9,15 +9,19 @@ const InputField: React.FC<InputFieldProps> = ({
   labelProps,
   direction = 'column',
 }) => {
+  const { isFullWidth, ref, ...restInputProps } = inputProps;
+
   const className = [
     styles['ttabook-input-field'],
     styles[`ttabook-input-field--${direction}`],
-  ];
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
-    <div className={className.join(' ')}>
+    <div className={className}>
       <Label {...labelProps} />
-      <Input {...inputProps} />
+      <Input {...restInputProps} isFullWidth={isFullWidth} ref={ref} />
     </div>
   );
 };
