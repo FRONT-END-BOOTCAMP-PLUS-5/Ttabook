@@ -388,5 +388,80 @@ describe('/api/signup API 라우트', () => {
       expect(response.status).toBe(400);
       expect(data.error).toContain('요청 데이터');
     });
+
+    it('패스워드 해시화 실패 시 500을 반환해야 한다', async () => {
+      // 패스워드 해시화 실패 에러 시뮬레이션
+      mockSignupUsecase.execute.mockRejectedValue(
+        new Error('패스워드 해시화 실패: bcrypt genSalt failed (rounds: 12)')
+      );
+
+      const { POST } = await import('../../app/api/signup/(adaptor)/route');
+
+      const request = new NextRequest('http://localhost:3000/api/signup', {
+        method: 'POST',
+        body: JSON.stringify(validSignupData),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(data).toEqual({
+        error: '패스워드 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+      });
+    });
+
+    it('환경 변수 설정 에러 시 500을 반환해야 한다', async () => {
+      // 환경 변수 에러 시뮬레이션
+      mockSignupUsecase.execute.mockRejectedValue(
+        new Error('BCRYPT_ROUNDS environment variable is required')
+      );
+
+      const { POST } = await import('../../app/api/signup/(adaptor)/route');
+
+      const request = new NextRequest('http://localhost:3000/api/signup', {
+        method: 'POST',
+        body: JSON.stringify(validSignupData),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(data).toEqual({
+        error: '서버 설정 오류가 발생했습니다',
+      });
+    });
+
+    it('유효하지 않은 BCRYPT_ROUNDS 값 에러 시 500을 반환해야 한다', async () => {
+      // BCRYPT_ROUNDS 유효성 검사 실패 에러 시뮬레이션
+      mockSignupUsecase.execute.mockRejectedValue(
+        new Error('BCRYPT_ROUNDS must be a valid number, got: invalid')
+      );
+
+      const { POST } = await import('../../app/api/signup/(adaptor)/route');
+
+      const request = new NextRequest('http://localhost:3000/api/signup', {
+        method: 'POST',
+        body: JSON.stringify(validSignupData),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(data).toEqual({
+        error: '서버 설정 오류가 발생했습니다',
+      });
+    });
   });
 });

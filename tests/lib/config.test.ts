@@ -49,7 +49,36 @@ describe('config.ts', () => {
       await expect(async () => {
         jest.resetModules();
         await import('../../lib/config');
-      }).rejects.toThrow('BCRYPT_ROUNDS must be a valid number');
+      }).rejects.toThrow('BCRYPT_ROUNDS must be a valid number, got: not-a-number');
+    });
+
+    it('BCRYPT_ROUNDS가 범위를 벗어나면 에러를 발생시켜야 한다 (너무 작음)', async () => {
+      process.env.JWT_SECRET = 'test-secret-key-that-is-long-enough';
+      process.env.BCRYPT_ROUNDS = '3';
+
+      await expect(async () => {
+        jest.resetModules();
+        await import('../../lib/config');
+      }).rejects.toThrow('BCRYPT_ROUNDS must be between 4 and 20 for security and performance, got: 3');
+    });
+
+    it('BCRYPT_ROUNDS가 범위를 벗어나면 에러를 발생시켜야 한다 (너무 큼)', async () => {
+      process.env.JWT_SECRET = 'test-secret-key-that-is-long-enough';
+      process.env.BCRYPT_ROUNDS = '25';
+
+      await expect(async () => {
+        jest.resetModules();
+        await import('../../lib/config');
+      }).rejects.toThrow('BCRYPT_ROUNDS must be between 4 and 20 for security and performance, got: 25');
+    });
+
+    it('BCRYPT_ROUNDS가 유효한 범위 내에 있으면 성공해야 한다', async () => {
+      process.env.JWT_SECRET = 'test-secret-key-that-is-long-enough';
+      process.env.BCRYPT_ROUNDS = '8';
+
+      jest.resetModules();
+      const config = await import('../../lib/config');
+      expect(config.BCRYPT_ROUNDS).toBe(8);
     });
 
     it('모든 환경 변수가 올바르게 설정되면 성공해야 한다', async () => {

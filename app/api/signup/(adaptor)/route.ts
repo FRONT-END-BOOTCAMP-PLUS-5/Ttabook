@@ -106,6 +106,38 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 409 });
     }
 
+    // 패스워드 해시화 실패 에러 처리
+    if (
+      error instanceof Error &&
+      error.message.includes('패스워드 해시화 실패')
+    ) {
+      console.error('Password hashing failed with details:', {
+        errorMessage: error.message,
+        stack: error.stack,
+        env: {
+          BCRYPT_ROUNDS: process.env.BCRYPT_ROUNDS,
+          NODE_ENV: process.env.NODE_ENV,
+        }
+      });
+      return NextResponse.json(
+        { error: '패스워드 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.' },
+        { status: 500 }
+      );
+    }
+
+    // 환경 변수 관련 에러 처리
+    if (
+      error instanceof Error &&
+      (error.message.includes('environment variable is required') ||
+       error.message.includes('must be a valid number'))
+    ) {
+      console.error('Environment configuration error:', error.message);
+      return NextResponse.json(
+        { error: '서버 설정 오류가 발생했습니다' },
+        { status: 500 }
+      );
+    }
+
     // 기타 서버 에러
     return NextResponse.json(
       { error: '서버 오류가 발생했습니다' },

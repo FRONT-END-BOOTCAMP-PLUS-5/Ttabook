@@ -150,6 +150,58 @@ describe('Password 유틸리티', () => {
   });
 
   describe('에러 처리', () => {
+    it('bcryptjs 라이브러리가 로드되지 않으면 에러를 발생시켜야 한다', async () => {
+      // 프로덕션 환경으로 설정하여 함수 검증 활성화
+      const originalNodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'production';
+      
+      const { jest } = await import('@jest/globals');
+      
+      // bcryptjs 모듈을 빈 객체로 모킹 (함수들이 undefined)
+      jest.doMock('bcryptjs', () => ({
+        default: {},
+      }));
+
+      // 모듈 다시 로드하여 모킹 적용
+      jest.resetModules();
+      const { hashPassword } = await import('../../lib/password');
+      
+      await expect(hashPassword('testPassword')).rejects.toThrow(
+        'bcryptjs library is not properly loaded or configured'
+      );
+      
+      // NODE_ENV 복원
+      process.env.NODE_ENV = originalNodeEnv;
+    });
+
+    it('bcryptjs 함수가 없으면 에러를 발생시켜야 한다', async () => {
+      // 프로덕션 환경으로 설정하여 함수 검증 활성화
+      const originalNodeEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'production';
+      
+      const { jest } = await import('@jest/globals');
+      
+      // bcryptjs 모듈에서 함수들을 제거하여 모킹
+      jest.doMock('bcryptjs', () => ({
+        default: {
+          genSalt: undefined,
+          hash: undefined,
+          compare: undefined,
+        },
+      }));
+
+      // 모듈 다시 로드하여 모킹 적용
+      jest.resetModules();
+      const { hashPassword } = await import('../../lib/password');
+      
+      await expect(hashPassword('testPassword')).rejects.toThrow(
+        'bcryptjs library is not properly loaded or configured'
+      );
+      
+      // NODE_ENV 복원
+      process.env.NODE_ENV = originalNodeEnv;
+    });
+
     it('BCRYPT_ROUNDS가 설정되지 않으면 에러를 발생시켜야 한다', async () => {
       delete process.env.BCRYPT_ROUNDS;
 
