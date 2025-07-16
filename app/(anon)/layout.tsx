@@ -4,8 +4,8 @@ import { useSession } from '../providers/SessionProvider';
 import LoggedInHeader from '../components/LoggedInHeader';
 import LoggedOutHeader from '../components/LoggedOutHeader';
 import { useState } from 'react';
-import SigninModal from './components/modal/signin/SigninModal';
-import SignupModal from './components/modal/signup/SignupModal';
+import SigninModal from './components/modals/signin/SigninModal';
+import SignupModal from './components/modals/signup/SignupModal';
 
 export default function AnonLayout({
   children,
