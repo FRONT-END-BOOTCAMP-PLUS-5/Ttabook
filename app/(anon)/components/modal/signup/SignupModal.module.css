@@ -1,0 +1,32 @@
+.modal-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 50px;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: var(--spacing-10);
+}
+
+.modal-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal-button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-input-absolute-parents {
+  display: flex;
+  position: relative;
+}
+
+.modal-input-absolute {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
