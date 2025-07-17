@@ -18,7 +18,8 @@ export class GetRsvListUsecase {
           roomName: rsv.room?.name ?? '',
         },
         {
-          userId: rsv.userId,
+          userName: rsv.user?.name ?? '',
+          email: rsv.user?.email ?? '',
         },
         {
           rsvId: rsv.id,
