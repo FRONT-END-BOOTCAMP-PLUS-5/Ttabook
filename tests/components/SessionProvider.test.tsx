@@ -13,35 +13,16 @@ import { render, screen, waitFor, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 
-// JWT 유틸리티 모킹
-const mockSignAccessToken = jest.fn();
-const mockSignRefreshToken = jest.fn();
-const mockVerifyAccessToken = jest.fn();
-const mockVerifyRefreshToken = jest.fn();
+// Fetch API 모킹
+const mockFetch = jest.fn();
 
-jest.unstable_mockModule('../../lib/jwt', () => ({
-  signAccessToken: mockSignAccessToken,
-  signRefreshToken: mockSignRefreshToken,
-  verifyAccessToken: mockVerifyAccessToken,
-  verifyRefreshToken: mockVerifyRefreshToken,
-  UserJWTPayload: {},
-  UserForJWT: {},
-}));
+// API 서비스 모킹
+const mockGetCurrentUser = jest.fn();
 
-// 쿠키 모킹
-const mockGetCookie = jest.fn();
-const mockSetCookie = jest.fn();
-const mockDeleteCookie = jest.fn();
-
-jest.unstable_mockModule('js-cookie', () => ({
-  default: {
-    get: mockGetCookie,
-    set: mockSetCookie,
-    remove: mockDeleteCookie,
+jest.unstable_mockModule('../../app/services/api/auth', () => ({
+  authApiService: {
+    getCurrentUser: mockGetCurrentUser,
   },
-  get: mockGetCookie,
-  set: mockSetCookie,
-  remove: mockDeleteCookie,
 }));
 
 // 테스트 컴포넌트
@@ -63,6 +44,9 @@ describe('SessionProvider', () => {
 
     // 모든 mock 초기화
     jest.clearAllMocks();
+    
+    // fetch 글로벌 모킹
+    global.fetch = mockFetch;
   });
 
   afterEach(() => {
@@ -70,23 +54,19 @@ describe('SessionProvider', () => {
   });
 
   describe('세션 초기화', () => {
-    it('유효한 accessToken이 있으면 사용자 세션을 설정해야 한다', async () => {
-      const mockUser = {
-        id: 123, // number ID
-        id: 'user_123', // original UUID string
-        email: 'test@example.com',
-        type: 'user',
-        exp: Math.floor(Date.now() / 1000) + 3600,
-        iat: Math.floor(Date.now() / 1000),
+    it('HttpOnly 쿠키가 유효하면 사용자 세션을 설정해야 한다', async () => {
+      const mockApiResponse = {
+        success: true,
+        message: '사용자 정보 조회가 완료되었습니다',
+        user: {
+          id: 'user_123',
+          email: 'test@example.com',
+          name: 'Test User',
+          type: 'user',
+        },
       };
 
-      mockGetCookie.mockImplementation((name: string) => {
-        if (name === 'accessToken') return 'valid_access_token';
-        if (name === 'refreshToken') return 'valid_refresh_token';
-        return undefined;
-      });
-
-      mockVerifyAccessToken.mockResolvedValue(mockUser);
+      mockGetCurrentUser.mockResolvedValue(mockApiResponse);
 
       const { SessionProvider, useSession } = await import(
         '../../app/providers/SessionProvider.tsx'
@@ -128,94 +108,13 @@ describe('SessionProvider', () => {
         'test@example.com'
       );
       expect(screen.getByTestId('user-type')).toHaveTextContent('user');
-      expect(mockVerifyAccessToken).toHaveBeenCalledWith('valid_access_token');
+      expect(mockGetCurrentUser).toHaveBeenCalled();
     });
 
-    it('accessToken이 만료되었으면 refreshToken으로 갱신해야 한다', async () => {
-      const expiredError = new Error('Token expired');
-      const mockUser = {
-        id: 123, // number ID
-        id: 'user_123', // original UUID string
-        email: 'test@example.com',
-        type: 'user',
-        exp: Math.floor(Date.now() / 1000) + 3600,
-        iat: Math.floor(Date.now() / 1000),
-      };
+    it('HttpOnly 쿠키가 없거나 만료되면 로그아웃 상태여야 한다', async () => {
+      const expiredError = new Error('HTTP error! status: 401');
 
-      mockGetCookie.mockImplementation((name: string) => {
-        if (name === 'accessToken') return 'expired_access_token';
-        if (name === 'refreshToken') return 'valid_refresh_token';
-        return undefined;
-      });
-
-      mockVerifyAccessToken.mockRejectedValue(expiredError);
-      mockVerifyRefreshToken.mockResolvedValue(mockUser);
-      mockSignAccessToken.mockResolvedValue('new_access_token');
-
-      const { SessionProvider, useSession } = await import(
-        '../../app/providers/SessionProvider.tsx'
-      );
-
-      function TestConsumer() {
-        const { user, isLoading, isAuthenticated } = useSession();
-
-        if (isLoading) return <div data-testid="loading">로딩 중...</div>;
-
-        return (
-          <div>
-            <div data-testid="authenticated">
-              {isAuthenticated ? 'true' : 'false'}
-            </div>
-            <div data-testid="user-email">{user?.email || 'no-email'}</div>
-          </div>
-        );
-      }
-
-      render(
-        <QueryClientProvider client={queryClient}>
-          <SessionProvider>
-            <TestConsumer />
-          </SessionProvider>
-        </QueryClientProvider>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByTestId('authenticated')).toHaveTextContent('true');
-      });
-
-      expect(screen.getByTestId('user-email')).toHaveTextContent(
-        'test@example.com'
-      );
-      expect(mockVerifyAccessToken).toHaveBeenCalledWith(
-        'expired_access_token'
-      );
-      expect(mockVerifyRefreshToken).toHaveBeenCalledWith(
-        'valid_refresh_token'
-      );
-      expect(mockSignAccessToken).toHaveBeenCalledWith({
-        id: mockUser.id, // Use original UUID string
-        email: mockUser.email,
-        type: mockUser.type, // Map type to type
-      });
-      expect(mockSetCookie).toHaveBeenCalledWith(
-        'accessToken',
-        'new_access_token',
-        expect.objectContaining({
-          secure: false, // NODE_ENV이 production이 아니므로 false
-          sameSite: 'strict',
-        })
-      );
-    });
-
-    it('토큰이 모두 유효하지 않으면 로그아웃 상태여야 한다', async () => {
-      mockGetCookie.mockImplementation((name: string) => {
-        if (name === 'accessToken') return 'invalid_access_token';
-        if (name === 'refreshToken') return 'invalid_refresh_token';
-        return undefined;
-      });
-
-      mockVerifyAccessToken.mockRejectedValue(new Error('Invalid token'));
-      mockVerifyRefreshToken.mockRejectedValue(new Error('Invalid token'));
+      mockGetCurrentUser.mockRejectedValue(expiredError);
 
       const { SessionProvider, useSession } = await import(
         '../../app/providers/SessionProvider.tsx'
@@ -249,78 +148,43 @@ describe('SessionProvider', () => {
       });
 
       expect(screen.getByTestId('user-email')).toHaveTextContent('no-email');
-      expect(mockDeleteCookie).toHaveBeenCalledWith('accessToken');
-      expect(mockDeleteCookie).toHaveBeenCalledWith('refreshToken');
+      expect(mockGetCurrentUser).toHaveBeenCalled();
     });
 
-    it('토큰이 없으면 로그아웃 상태여야 한다', async () => {
-      mockGetCookie.mockReturnValue(undefined);
-
-      const { SessionProvider, useSession } = await import(
-        '../../app/providers/SessionProvider.tsx'
-      );
-
-      function TestConsumer() {
-        const { user, isLoading, isAuthenticated } = useSession();
-
-        if (isLoading) return <div data-testid="loading">로딩 중...</div>;
-
-        return (
-          <div>
-            <div data-testid="authenticated">
-              {isAuthenticated ? 'true' : 'false'}
-            </div>
-            <div data-testid="user-email">{user?.email || 'no-email'}</div>
-          </div>
-        );
-      }
-
-      render(
-        <QueryClientProvider client={queryClient}>
-          <SessionProvider>
-            <TestConsumer />
-          </SessionProvider>
-        </QueryClientProvider>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByTestId('authenticated')).toHaveTextContent('false');
-      });
-
-      expect(screen.getByTestId('user-email')).toHaveTextContent('no-email');
-      expect(mockVerifyAccessToken).not.toHaveBeenCalled();
-      expect(mockVerifyRefreshToken).not.toHaveBeenCalled();
-    });
   });
 
   describe('세션 관리 메서드', () => {
-    it('login 메서드는 토큰을 쿠키에 저장하고 사용자 정보를 설정해야 한다', async () => {
-      const mockUser = {
-        id: 123, // number ID
-        id: 'user_123', // original UUID string
-        email: 'test@example.com',
-        type: 'user',
-        exp: Math.floor(Date.now() / 1000) + 3600,
-        iat: Math.floor(Date.now() / 1000),
+    it('refreshSession 메서드는 HttpOnly 쿠키로부터 사용자 정보를 설정해야 한다', async () => {
+      const mockApiResponse = {
+        success: true,
+        message: '사용자 정보 조회가 완료되었습니다',
+        user: {
+          id: 'user_123',
+          email: 'test@example.com',
+          name: 'Test User',
+          type: 'user',
+        },
       };
 
-      mockGetCookie.mockReturnValue(undefined);
-      mockVerifyAccessToken.mockResolvedValue(mockUser);
+      // 초기에는 세션 없음, refreshSession 호출 후에는 세션 있음
+      mockGetCurrentUser
+        .mockRejectedValueOnce(new Error('No session'))
+        .mockResolvedValueOnce(mockApiResponse);
 
       const { SessionProvider, useSession } = await import(
         '../../app/providers/SessionProvider.tsx'
       );
 
       function TestConsumer() {
-        const { login, isAuthenticated, user } = useSession();
+        const { refreshSession, isAuthenticated, user } = useSession();
 
         return (
           <div>
             <button
-              data-testid="login-button"
-              onClick={() => login('new_access_token', 'new_refresh_token')}
+              data-testid="refresh-button"
+              onClick={() => refreshSession()}
             >
-              로그인
+              세션 새로고침
             </button>
             <div data-testid="authenticated">
               {isAuthenticated ? 'true' : 'false'}
@@ -343,9 +207,9 @@ describe('SessionProvider', () => {
         expect(screen.getByTestId('authenticated')).toHaveTextContent('false');
       });
 
-      // 로그인 실행
+      // 세션 새로고침 실행
       act(() => {
-        screen.getByTestId('login-button').click();
+        screen.getByTestId('refresh-button').click();
       });
 
       await waitFor(() => {
@@ -355,41 +219,29 @@ describe('SessionProvider', () => {
       expect(screen.getByTestId('user-email')).toHaveTextContent(
         'test@example.com'
       );
-      expect(mockSetCookie).toHaveBeenCalledWith(
-        'accessToken',
-        'new_access_token',
-        expect.objectContaining({
-          secure: false, // NODE_ENV이 production이 아니므로 false
-          sameSite: 'strict',
-        })
-      );
-      expect(mockSetCookie).toHaveBeenCalledWith(
-        'refreshToken',
-        'new_refresh_token',
-        expect.objectContaining({
-          secure: false, // NODE_ENV이 production이 아니므로 false
-          sameSite: 'strict',
-        })
-      );
+      expect(mockGetCurrentUser).toHaveBeenCalledTimes(2); // 초기화 + 세션 새로고침
     });
 
-    it('logout 메서드는 쿠키를 삭제하고 사용자 정보를 초기화해야 한다', async () => {
-      const mockUser = {
-        id: 123, // number ID
-        id: 'user_123', // original UUID string
-        email: 'test@example.com',
-        type: 'user',
-        exp: Math.floor(Date.now() / 1000) + 3600,
-        iat: Math.floor(Date.now() / 1000),
+    it('logout 메서드는 /api/logout를 호출하고 사용자 정보를 초기화해야 한다', async () => {
+      const mockApiResponse = {
+        success: true,
+        message: '사용자 정보 조회가 완료되었습니다',
+        user: {
+          id: 'user_123',
+          email: 'test@example.com',
+          name: 'Test User',
+          type: 'user',
+        },
       };
 
-      mockGetCookie.mockImplementation((name: string) => {
-        if (name === 'accessToken') return 'valid_access_token';
-        if (name === 'refreshToken') return 'valid_refresh_token';
-        return undefined;
+      // 초기에는 세션 있음
+      mockGetCurrentUser.mockResolvedValue(mockApiResponse);
+      
+      // /api/logout 호출 모킹
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ success: true, message: '로그아웃 완료' }),
       });
-
-      mockVerifyAccessToken.mockResolvedValue(mockUser);
 
       const { SessionProvider, useSession } = await import(
         '../../app/providers/SessionProvider.tsx'
@@ -434,8 +286,10 @@ describe('SessionProvider', () => {
       });
 
       expect(screen.getByTestId('user-email')).toHaveTextContent('no-email');
-      expect(mockDeleteCookie).toHaveBeenCalledWith('accessToken');
-      expect(mockDeleteCookie).toHaveBeenCalledWith('refreshToken');
+      expect(mockFetch).toHaveBeenCalledWith('/api/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
     });
   });
 
