@@ -1,5 +1,6 @@
 import { Room } from './Room';
 import { Space } from './Space';
+import { User } from './User';
 
 export class Rsv {
   constructor(
@@ -13,6 +14,7 @@ export class Rsv {
     public deletedAt: Date | null,
 
     public room: Room | null,
-    public space: Space | null
+    public space: Space | null,
+    public user: User | null
   ) {}
 }

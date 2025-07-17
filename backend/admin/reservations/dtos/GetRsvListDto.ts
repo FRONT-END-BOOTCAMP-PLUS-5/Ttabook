@@ -1,5 +1,6 @@
 type UserType = {
-  userId: string; // UUID
+  userName: string;
+  email: string;
 };
 
 type RoomType = {
