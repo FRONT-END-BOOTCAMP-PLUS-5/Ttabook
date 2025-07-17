@@ -9,13 +9,13 @@ import { usePosts } from '@/hooks/usePosts';
 import { useGets } from '@/hooks/useGets';
 
 interface SignupModalProps {
-  onClose: (toggle: boolean) => void;
+  onClose: () => void;
 }
 
 const SignupModal = ({ onClose }: SignupModalProps) => {
   const onSuccess = () => {
     alert('회원가입이 성공적으로 완료되었습니다!');
-    onClose(false);
+    onClose();
   };
   const onError = (err: unknown) => {
     console.error('회원가입 실패:', err);
@@ -219,7 +219,7 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
           </div>
         </div>
       </Modal.Body>
-      <Modal.CloseButton onClick={() => onClose(false)} />
+      <Modal.CloseButton onClick={onClose} />
     </Modal>
   );
 };
