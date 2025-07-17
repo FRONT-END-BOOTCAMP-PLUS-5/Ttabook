@@ -4,7 +4,7 @@ import React from 'react';
 import { ReservationRowProps } from './types';
 import styles from './ReservationRow.module.css';
 
-const ReservationRow = ({ reservation: rsv }: ReservationRowProps) => {
+const ReservationRow = ({ user, room, rsv }: ReservationRowProps) => {
   return (
     <tr className={styles.row}>
       <td className={`${styles.cell} ${styles.firstCell}`}>
@@ -12,13 +12,13 @@ const ReservationRow = ({ reservation: rsv }: ReservationRowProps) => {
       </td>
 
       <td className={styles.cell}>
-        <strong>{rsv.roomName}</strong>
+        <strong>{room.roomName}</strong>
       </td>
 
-      <td className={styles.cell}>{rsv.userName}</td>
+      <td className={styles.cell}>{user.userId}</td>
 
       <td className={`${styles.cell} ${styles.lastCell}`}>
-        {rsv.startTime} - {rsv.endTime}
+        {rsv.startTime.toLocaleString('ko-KR')} - {rsv.endTime.toLocaleString('ko-KR')}
       </td>
     </tr>
   );

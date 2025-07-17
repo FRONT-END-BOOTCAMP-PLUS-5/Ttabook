@@ -1,11 +1,27 @@
-export type Reservation = {
-  id: string;
+type User = {
+  userId: string;
+};
+
+type Room = {
+  roomId: number;
   roomName: string;
-  userName: string;
-  startTime: string;
-  endTime: string;
+};
+
+export type Rsv = {
+  rsvId: string;
+  startTime: Date;
+  endTime: Date;
 };
 
 export type ReservationRowProps = {
-  reservation: Reservation;
+  user: User;
+  room: Room;
+  rsv: Rsv;
 };
+
+export type AdminReservation = {
+  spaceId: number,
+  room: Room,
+  user: User,
+  rsv: Rsv
+}
