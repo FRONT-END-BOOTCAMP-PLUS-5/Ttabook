@@ -7,14 +7,17 @@ import axios from 'axios';
 import { isValidEmail, isValidPassword } from '@/utils/validation';
 import { usePosts } from '@/hooks/usePosts';
 import { useGets } from '@/hooks/useGets';
+import { useSession } from '@/app/providers/SessionProvider';
 
 interface SignupModalProps {
   onClose: () => void;
 }
 
 const SignupModal = ({ onClose }: SignupModalProps) => {
+  const { refreshSession } = useSession();
   const onSuccess = () => {
     alert('회원가입이 성공적으로 완료되었습니다!');
+    refreshSession();
     onClose();
   };
   const onError = (err: unknown) => {

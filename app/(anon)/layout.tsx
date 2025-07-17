@@ -12,7 +12,7 @@ export default function AnonLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { isAuthenticated, logout } = useSession();
+  const { isAuthenticated } = useSession();
   const { isModalOpen, openModal, closeModal } = useModalStore();
 
   return (
@@ -27,7 +27,7 @@ export default function AnonLayout({
         <SignupModal onClose={() => closeModal('signup')} />
       )}
       {isAuthenticated ? (
-        <LoggedInHeader onLogout={logout} />
+        <LoggedInHeader />
       ) : (
         <LoggedOutHeader
           onSignin={() => openModal('signin')}

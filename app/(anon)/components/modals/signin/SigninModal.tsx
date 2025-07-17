@@ -5,6 +5,7 @@ import Button from '@/ds/components/atoms/button/Button';
 import { CaptionText } from '@/ds/components/atoms/text/textWrapper';
 import { useRef } from 'react';
 import { usePosts } from '@/hooks/usePosts';
+import { useSession } from '@/app/providers/SessionProvider';
 
 interface SigninModalProps {
   onClose: () => void;
@@ -13,12 +14,13 @@ interface SigninModalProps {
 const SigninModal = ({ onClose, openSignup }: SigninModalProps) => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const { refreshSession } = useSession();
   const onSuccess = (data: {
     message: string;
     success: boolean;
     user: { email: string; id: string; name: string; type: string };
   }) => {
-    // login();
+    refreshSession();
     onClose();
   };
   const onError = () => {};
