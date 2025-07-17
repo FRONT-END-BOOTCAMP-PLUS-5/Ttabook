@@ -24,4 +24,4 @@ export type AdminReservation = {
   room: Room,
   user: User,
   rsv: Rsv
-}
+};
