@@ -18,12 +18,13 @@ export class GetRsvListUsecase {
           roomName: rsv.room?.name ?? '',
         },
         {
-          userId: rsv.userId,
+          userName: rsv.user?.name ?? '',
+          email: rsv.user?.email ?? '',
         },
         {
           rsvId: rsv.id,
-          startTime: rsv.startTime,
-          endTime: rsv.endTime,
+          startTime: new Date(rsv.startTime),
+          endTime: new Date(rsv.endTime),
         }
       );
     });
