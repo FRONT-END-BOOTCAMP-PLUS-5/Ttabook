@@ -5,10 +5,10 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/backend/common/infrastructures/supabase/server';
 
 export async function GET(request: NextRequest) {
-  const token = request.headers.get('Authorization');
-  if (!token) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  // const token = request.headers.get('Authorization');
+  // if (!token) {
+  //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  // }
   const supabase: SupabaseClient = await createClient();
 
   const rsvRepository = new SbRsvRepository(supabase);

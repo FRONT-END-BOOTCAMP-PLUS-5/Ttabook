@@ -1,5 +1,5 @@
 import React from 'react';
-import ReservationListPage from './ReservationListPage';
+import ReservationListPage from './components/ReservationListPage';
 
 const AdminPage: React.FC = () => {
   return <ReservationListPage />;
