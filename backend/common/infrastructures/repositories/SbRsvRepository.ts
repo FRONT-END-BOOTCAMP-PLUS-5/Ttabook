@@ -86,7 +86,7 @@ export class SbRsvRepository implements RsvRepository {
       return [];
     }
 
-    return data;
+    return mapKeysToCamelCase(data) as Rsv[];
   }
 
   async save(reservation: SaveRequest): Promise<void> {
