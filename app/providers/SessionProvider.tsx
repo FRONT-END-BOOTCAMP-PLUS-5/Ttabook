@@ -7,13 +7,7 @@ import React, {
   useState,
   ReactNode,
 } from 'react';
-import Cookies from 'js-cookie';
-import {
-  verifyAccessToken,
-  verifyRefreshToken,
-  signAccessToken,
-  UserJWTPayload,
-} from '@/lib/jwt';
+import { authApiService } from '@/app/services/api/auth';
 
 // 세션 사용자 타입 (JWT 페이로드에서 파생)
 export interface SessionUser {
@@ -27,8 +21,8 @@ interface SessionContextType {
   user: SessionUser | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (accessToken: string, refreshToken: string) => Promise<void>;
-  logout: () => void;
+  refreshSession: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 // 세션 컨텍스트 생성
@@ -43,114 +37,71 @@ export function SessionProvider({ children }: SessionProviderProps) {
   const [user, setUser] = useState<SessionUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 쿠키 설정 옵션
-  const getCookieOptions = () => ({
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict' as const,
-  });
 
-  // JWT 페이로드를 SessionUser로 변환
-  const jwtPayloadToUser = (payload: UserJWTPayload): SessionUser => ({
-    id: payload.id, // Use UUID string directly
-    email: payload.email,
-    type: payload.type,
-  });
-
-  // 세션 초기화 함수
+  // 세션 초기화 함수 (HttpOnly 쿠키 사용)
   const initializeSession = React.useCallback(async () => {
     try {
       setIsLoading(true);
 
-      const accessToken = Cookies.get('accessToken');
-      const refreshToken = Cookies.get('refreshToken');
-
-      // 토큰이 없으면 로그아웃 상태
-      if (!accessToken && !refreshToken) {
-        setUser(null);
-        return;
-      }
-
-      // accessToken 검증 시도
-      if (accessToken) {
-        try {
-          const payload = await verifyAccessToken(accessToken);
-          setUser(jwtPayloadToUser(payload));
-          return;
-        } catch {
-          // accessToken이 유효하지 않으면 refreshToken으로 갱신 시도
-        }
-      }
-
-      // refreshToken으로 새로운 accessToken 생성
-      if (refreshToken) {
-        try {
-          const payload = await verifyRefreshToken(refreshToken);
-          const newAccessToken = await signAccessToken({
-            id: payload.id, // Use UUID string directly
-            email: payload.email,
-            type: payload.type,
+      // HttpOnly 쿠키를 직접 읽을 수 없으므로, API 호출로 세션 확인
+      try {
+        const response = await authApiService.getCurrentUser();
+        if (response.success && response.user) {
+          setUser({
+            id: response.user.id,
+            email: response.user.email,
+            type: response.user.type,
           });
-
-          // 새 accessToken을 쿠키에 저장
-          Cookies.set('accessToken', newAccessToken, {
-            ...getCookieOptions(),
-            maxAge: 15 * 60, // 15분
-          });
-
-          setUser(jwtPayloadToUser(payload));
           return;
-        } catch {
-          // refreshToken도 유효하지 않으면 로그아웃
         }
+      } catch {
+        // 세션이 없거나 만료된 경우, 로그아웃 상태로 설정
       }
 
-      // 모든 토큰이 유효하지 않으면 정리하고 로그아웃
-      clearTokens();
       setUser(null);
     } catch (error) {
       console.error('세션 초기화 오류:', error);
-      clearTokens();
       setUser(null);
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  // 토큰 정리 함수
-  const clearTokens = () => {
-    Cookies.remove('accessToken');
-    Cookies.remove('refreshToken');
-  };
 
-  // 로그인 함수
-  const login = async (accessToken: string, refreshToken: string) => {
+  // 세션 새로고침 함수 (HttpOnly 쿠키가 이미 서버에서 설정된 후 호출)
+  const refreshSession = async () => {
     try {
-      // 쿠키에 토큰 저장
-      Cookies.set('accessToken', accessToken, {
-        ...getCookieOptions(),
-        maxAge: 15 * 60, // 15분
-      });
-
-      Cookies.set('refreshToken', refreshToken, {
-        ...getCookieOptions(),
-        maxAge: 14 * 24 * 60 * 60, // 14일
-      });
-
-      // accessToken 검증 및 사용자 정보 설정
-      const payload = await verifyAccessToken(accessToken);
-      setUser(jwtPayloadToUser(payload));
+      // 서버에서 사용자 정보 가져오기 (HttpOnly 쿠키 사용)
+      const response = await authApiService.getCurrentUser();
+      if (response.success && response.user) {
+        setUser({
+          id: response.user.id,
+          email: response.user.email,
+          type: response.user.type,
+        });
+      } else {
+        throw new Error(response.message || '사용자 정보를 가져올 수 없습니다');
+      }
     } catch (error) {
-      console.error('로그인 오류:', error);
-      clearTokens();
+      console.error('세션 새로고침 오류:', error);
       setUser(null);
       throw error;
     }
   };
 
-  // 로그아웃 함수
-  const logout = () => {
-    clearTokens();
-    setUser(null);
+  // 로그아웃 함수 (서버에서 HttpOnly 쿠키 삭제)
+  const logout = async () => {
+    try {
+      await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (error) {
+      console.error('로그아웃 API 호출 오류:', error);
+    } finally {
+      // API 호출 성공/실패 여부와 관계없이 클라이언트 상태 초기화
+      setUser(null);
+    }
   };
 
   // 컴포넌트 마운트 시 세션 초기화
@@ -163,7 +114,7 @@ export function SessionProvider({ children }: SessionProviderProps) {
     user,
     isLoading,
     isAuthenticated: !!user,
-    login,
+    refreshSession,
     logout,
   };
 
