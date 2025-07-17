@@ -22,8 +22,8 @@ export class GetRsvListUsecase {
         },
         {
           rsvId: rsv.id,
-          startTime: rsv.startTime,
-          endTime: rsv.endTime,
+          startTime: new Date(rsv.startTime),
+          endTime: new Date(rsv.endTime),
         }
       );
     });
