@@ -9,7 +9,7 @@ export type Room = {
 };
 
 export type Space = {
-  spaceId: Number;
+  spaceId: number;
   spaceName: string;
   roomInfo: Room[];
-}
+};

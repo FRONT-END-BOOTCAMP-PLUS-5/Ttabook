@@ -15,11 +15,7 @@ const SigninModal = ({ onClose, openSignup }: SigninModalProps) => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const { refreshSession } = useSession();
-  const onSuccess = (data: {
-    message: string;
-    success: boolean;
-    user: { email: string; id: string; name: string; type: string };
-  }) => {
+  const onSuccess = () => {
     refreshSession();
     onClose();
   };

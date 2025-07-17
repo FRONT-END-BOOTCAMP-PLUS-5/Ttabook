@@ -1,16 +1,7 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import {
-  Stage,
-  Layer,
-  Rect,
-  Text,
-  Transformer,
-  Group,
-  Label,
-  Tag,
-} from 'react-konva';
+import { Stage, Layer, Rect, Text, Group, Label, Tag } from 'react-konva';
 import Konva from 'konva';
 import styles from './Canvas.module.css';
 import { Room } from './types';
