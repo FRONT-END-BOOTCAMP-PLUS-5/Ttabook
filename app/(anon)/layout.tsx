@@ -19,7 +19,10 @@ export default function AnonLayout({
   return (
     <div style={{ position: 'relative' }}>
       {isModalOpen('signin') && (
-        <SigninModal onClose={() => closeModal('signin')} />
+        <SigninModal
+          onClose={() => closeModal('signin')}
+          openSignup={() => openModal('signup')}
+        />
       )}
       {isModalOpen('signup') && (
         <SignupModal onClose={() => closeModal('signup')} />
