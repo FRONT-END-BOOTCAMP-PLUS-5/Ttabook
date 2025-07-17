@@ -1,5 +1,11 @@
 import Konva from 'konva';
 
+export type Space = {
+  spaceId: number;
+  spaceName: string;
+  roomInfo: Room[];
+};
+
 export type Room = {
   id: number | string;
   positionX: number;

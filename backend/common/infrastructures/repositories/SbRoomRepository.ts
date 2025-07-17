@@ -82,7 +82,7 @@ export class SbRoomRepository implements RoomRepository {
       .select(
         `
         *, 
-        assets: room_id(
+        assets (
           type, 
           position_x, 
           position_y, 
@@ -98,6 +98,4 @@ export class SbRoomRepository implements RoomRepository {
 
     return mapKeysToCamelCase(data) as Room[];
   }
-
-  
 }

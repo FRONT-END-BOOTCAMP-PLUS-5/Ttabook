@@ -77,6 +77,7 @@ const EditRoomPage: React.FC<EditRoomPageProps> = ({
     const scaleY = node.scaleY();
 
     const updatedRoom: Room = {
+      // 배열이여야 함. 수정필요.
       ...room,
       positionX: node.x(),
       positionY: node.y(),
@@ -107,14 +108,13 @@ const EditRoomPage: React.FC<EditRoomPageProps> = ({
     setEditingPos({ x: room.positionX, y: room.positionY });
   };
 
-  const handleSave = async () => {
+  const spaceSave = async () => {
     const newRooms = rooms.filter((room) => typeof room.id === 'string');
     const updatedRooms = rooms.filter((room) => typeof room.id === 'number');
 
     try {
       let currentSpaceId = spaceId;
-
-      // Create new space and its rooms if spaceId is not present // 수정!
+      // space에 room이 없다면, POST하여 새로운 공간을 생성
       if (!currentSpaceId) {
         const spaceResponse = await fetch('/api/admin/spaces', {
           method: 'POST',
@@ -134,53 +134,52 @@ const EditRoomPage: React.FC<EditRoomPageProps> = ({
             })),
           }),
         });
-
         if (!spaceResponse.ok) {
           throw new Error('Failed to create space');
         }
         const spaceData = await spaceResponse.json();
         currentSpaceId = spaceData.spaceId; // Assuming the response contains spaceId
-      } else {
-        // Update existing space name
-        await fetch(`/api/admin/spaces/${currentSpaceId}`, {
-          // 수정!
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'temp-token',
-          },
-          body: JSON.stringify({ spaceName: adminName }),
-        });
+      } else if (currentSpaceId) {
+        // await fetch(`/api/admin/spaces/${currentSpaceId}`, {
+        // method: 'PUT',
+        // headers: {
+        //   'Content-Type': 'application/json',
+        //   Authorization: 'temp-token',
+        // },
+        // body: JSON.stringify({}),
+        // });
 
         // Handle new, updated, and deleted rooms for an existing space
-        if (newRooms.length > 0) {
-          await fetch(`/api/admin/spaces/${currentSpaceId}/rooms`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: 'temp-token',
-            },
-            body: JSON.stringify({
-              rooms: newRooms.map((room) => ({
-                name: room.name ?? '',
-                detail: room.detail ?? '',
-                positionX: room.positionX,
-                positionY: room.positionY,
-                width: room.width,
-                height: room.height,
-              })),
-            }),
-          });
-        }
+        // if (newRooms.length > 0) {
+        //   await fetch(`/api/admin/spaces/${currentSpaceId}`, {
+        //     method: 'POST',
+        //     headers: {
+        //       'Content-Type': 'application/json',
+        //       Authorization: 'temp-token',
+        //     },
+        //     body: JSON.stringify({
+        //       rooms: newRooms.map((room) => ({
+        //         name: room.name ?? '',
+        //         detail: room.detail ?? '',
+        //         positionX: room.positionX,
+        //         positionY: room.positionY,
+        //         width: room.width,
+        //         height: room.height,
+        //       })),
+        //     }),
+        //   });
+        // }
 
         if (updatedRooms.length > 0) {
-          await fetch(`/api/admin/spaces/${currentSpaceId}/rooms`, {
+          await fetch(`/api/admin/spaces/${currentSpaceId}`, {
+            // space에 room이 있다면, PUT 요청으로 공간을 업데이트
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
               Authorization: 'temp-token',
             },
             body: JSON.stringify({
+              // spaceName: adminName,
               rooms: updatedRooms.map((room) => ({
                 roomId: room.id,
                 name: room.name ?? '',
@@ -196,8 +195,8 @@ const EditRoomPage: React.FC<EditRoomPageProps> = ({
       }
 
       alert('저장되었습니다.');
-    } catch (error) {
-      console.error('Error saving rooms:', error);
+    } catch {
+      console.error('Error saving rooms:');
       alert('저장 중 오류가 발생했습니다.');
     }
   };
@@ -257,7 +256,7 @@ const EditRoomPage: React.FC<EditRoomPageProps> = ({
         </div>
       </div>
       <div>
-        <button className={styles.saveButton} onClick={handleSave}>
+        <button className={styles.saveButton} onClick={spaceSave}>
           저장
         </button>
       </div>
