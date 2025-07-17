@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   const rsvRepository = new SbRsvRepository(supabase);
 
   const getRsvListUsecase = new GetRsvListUsecase(rsvRepository);
-  const rsvList = await getRsvListUsecase.execute(token);
+  const rsvList = await getRsvListUsecase.execute();
 
-  return NextResponse.json({ data: rsvList });
+  return NextResponse.json(rsvList);
 }

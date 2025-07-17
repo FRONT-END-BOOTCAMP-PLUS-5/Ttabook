@@ -8,18 +8,14 @@ export class GetRsvListUsecase {
     this.repository = repository;
   }
 
-  async execute(token: string): Promise<GetRsvListDto[]> {
-    // Todo: token 관리자인지 확인 로직 필요
-    void token;
-
-    // if admin
+  async execute(): Promise<GetRsvListDto[]> {
     const rsvList: Rsv[] = await this.repository.findAll();
     return rsvList.map((rsv: Rsv) => {
       return new GetRsvListDto(
-        rsv.room ? rsv.room.spaceId : 0,
+        rsv.room?.spaceId ?? 0,
         {
           roomId: rsv.roomId,
-          roomName: rsv.room ? rsv.room.name : '',
+          roomName: rsv.room?.name ?? '',
         },
         {
           userId: rsv.userId,

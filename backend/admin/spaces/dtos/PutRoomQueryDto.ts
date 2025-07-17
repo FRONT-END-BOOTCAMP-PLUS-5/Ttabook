@@ -13,6 +13,7 @@ export class RoomDto {
 export class PutRoomQueryDto {
   constructor(
     public token: string,
+    public spaceId: number,
     public rooms: RoomDto[]
   ) {}
 }

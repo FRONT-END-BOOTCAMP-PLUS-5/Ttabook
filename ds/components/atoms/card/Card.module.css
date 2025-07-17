@@ -1,0 +1,19 @@
+.cardRoot {
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.25);
+  border-radius: var(--button-size-md-border-radius, 10px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: var(--spacing-8, 32px);
+  padding: var(--spacing-8, 32px);
+  background: var(--color-background, #f7fafc);
+}
+
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+} 

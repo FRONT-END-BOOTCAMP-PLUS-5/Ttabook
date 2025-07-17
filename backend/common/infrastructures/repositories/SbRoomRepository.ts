@@ -98,4 +98,15 @@ export class SbRoomRepository implements RoomRepository {
 
     return mapKeysToCamelCase(data) as Room[];
   }
+
+  async deleteBySapaceId(spaceId: number): Promise<void> {
+    const { error } = await this.supabase
+      .from('rooms')
+      .delete()
+      .eq('space_id', spaceId);
+
+    if (error) {
+      throw new Error(`Failed to delete rooms by space id: ${error.message}`);
+    }
+  }
 }
