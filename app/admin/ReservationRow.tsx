@@ -15,10 +15,10 @@ const ReservationRow = ({ user, room, rsv }: ReservationRowProps) => {
         <strong>{room.roomName}</strong>
       </td>
 
-      <td className={styles.cell}>{user.userId}</td>
+      <td className={styles.cell}>{user.userName}</td>
 
       <td className={`${styles.cell} ${styles.lastCell}`}>
-        {rsv.startTime.toLocaleString('ko-KR')} - {rsv.endTime.toLocaleString('ko-KR')}
+        {new Date(rsv.startTime).toLocaleString('ko-KR')} - {new Date(rsv.endTime).toLocaleString('ko-KR')}
       </td>
     </tr>
   );
