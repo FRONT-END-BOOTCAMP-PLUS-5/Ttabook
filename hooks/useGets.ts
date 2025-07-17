@@ -26,6 +26,7 @@ export const useGets = <TData>(
       {
         params: paramsRef.current,
         headers,
+        withCredentials: true,
       }
     );
     return response.data;

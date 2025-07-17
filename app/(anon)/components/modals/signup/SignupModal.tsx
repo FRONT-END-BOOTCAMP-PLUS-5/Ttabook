@@ -38,14 +38,12 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
     onSuccess,
     onError,
   });
-  const { refetch } = useGets<{ available: boolean; message: string }>(
-    ['duplicates'],
-    '/duplicates',
-    false,
-    {
-      email: email,
-    }
-  );
+  const { refetchWithParams } = useGets<{
+    available: boolean;
+    message: string;
+  }>(['duplicates'], '/duplicates', false, {
+    email: email,
+  });
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isValidEmail(e.target.value)) {
@@ -96,7 +94,7 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
       alert('이메일 형식이 잘못되었습니다.');
       return;
     }
-    const { data } = await refetch();
+    const { data } = await refetchWithParams({ email });
 
     if (data?.available && data?.message) {
       setCheckedDuplication(true);
