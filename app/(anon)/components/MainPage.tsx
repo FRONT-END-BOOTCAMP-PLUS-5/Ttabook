@@ -9,10 +9,7 @@ import { Space } from './types';
 
 const MainPage: React.FC = () => {
   const SPACE_ID = 150;
-  const { data } = useGets<Space>(
-    ['rooms'],
-    `/spaces/${SPACE_ID}`,
-  );
+  const { data } = useGets<Space>(['rooms'], `/spaces/${SPACE_ID}`);
 
   useEffect(() => {
     if (data) {

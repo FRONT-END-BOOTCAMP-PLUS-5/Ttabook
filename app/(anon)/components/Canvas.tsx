@@ -1,10 +1,21 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { Stage, Layer, Rect, Text, Transformer, Group, Label, Tag } from 'react-konva';
+import {
+  Stage,
+  Layer,
+  Rect,
+  Text,
+  Transformer,
+  Group,
+  Label,
+  Tag,
+} from 'react-konva';
 import Konva from 'konva';
 import styles from './Canvas.module.css';
 import { Room } from './types';
+import { useModalStore } from '@/hooks/useModal';
+import RoomRsvModal from './modals/rooms/reservations/RoomRsvModal';
 
 const STAGE_WIDTH = 800;
 const STAGE_HEIGHT = 700;
@@ -14,17 +25,19 @@ interface CanvasProps {
 }
 
 const Canvas: React.FC<CanvasProps> = ({ rooms }) => {
+  const { isModalOpen, openModal, closeModal } = useModalStore();
+  const [selectedRoom, setSelectedRoom] = useState<Room>();
   const stageRef = useRef<Konva.Stage>(null);
 
-  const handleOpenReservationModal = () => {
-    // To Do: 예약 모달 추가
-    alert(`해당 room의 예약 모달`);
-  }
+  const handleOpenReservationModal = (room: Room) => {
+    setSelectedRoom(room);
+    openModal('room-rsv');
+  };
 
-  const handleOpenInfoModal = (room : Room) => {
+  const handleOpenInfoModal = (room: Room) => {
     // To Do: room 상세 정보 모달 추가
     alert(`${room.name}\n\n${room.detail || '상세 정보 없음'}`);
-  }
+  };
 
   return (
     <div
@@ -34,12 +47,15 @@ const Canvas: React.FC<CanvasProps> = ({ rooms }) => {
         height: STAGE_HEIGHT,
       }}
     >
-
-      <Stage
-        width={STAGE_WIDTH}
-        height={STAGE_HEIGHT}
-        ref={stageRef}
-      >
+      {isModalOpen('room-rsv') && selectedRoom && (
+        <RoomRsvModal
+          onClose={() => {
+            closeModal('room-rsv');
+          }}
+          room={selectedRoom}
+        />
+      )}
+      <Stage width={STAGE_WIDTH} height={STAGE_HEIGHT} ref={stageRef}>
         <Layer>
           {rooms?.map((room) => (
             <Group
@@ -57,7 +73,7 @@ const Canvas: React.FC<CanvasProps> = ({ rooms }) => {
                   width={room.width}
                   height={room.height}
                   fill="#B8D4A8"
-                  onClick={handleOpenReservationModal}
+                  onClick={() => handleOpenReservationModal(room)}
                   onMouseEnter={() => {
                     document.body.style.cursor = 'pointer';
                   }}
@@ -66,9 +82,7 @@ const Canvas: React.FC<CanvasProps> = ({ rooms }) => {
                   }}
                 />
                 <Text
-                  text={
-                    (room.name || '이름 입력')
-                  }
+                  text={room.name || '이름 입력'}
                   x={room.width * 0.03}
                   y={room.height * 0.06}
                   width={room.width * 0.92}
@@ -80,26 +94,26 @@ const Canvas: React.FC<CanvasProps> = ({ rooms }) => {
                   listening={false}
                 />
                 <Label
-                    x={room.width * 0.9}
-                    y={room.height * 0.05}
-                    onClick={() => {
-                        handleOpenInfoModal(room);
-                    }}
+                  x={room.width * 0.9}
+                  y={room.height * 0.05}
+                  onClick={() => {
+                    handleOpenInfoModal(room);
+                  }}
                 >
-                    <Tag fill="transparent" />
-                    <Text
+                  <Tag fill="transparent" />
+                  <Text
                     text="ⓘ"
                     fontSize={room.height * 0.09}
                     fill="black"
                     padding={0}
                     listening={true}
                     onMouseEnter={() => {
-                        document.body.style.cursor = 'pointer';
+                      document.body.style.cursor = 'pointer';
                     }}
                     onMouseLeave={() => {
-                        document.body.style.cursor = 'default';
+                      document.body.style.cursor = 'default';
                     }}
-                    />
+                  />
                 </Label>
               </React.Fragment>
             </Group>
