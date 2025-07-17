@@ -38,8 +38,8 @@ export class GetUserRsvUsecase {
       }
 
       for (
-        let i = e.startTime.getHours() - RESERVATION_START_TIME;
-        i <= e.endTime.getHours() - RESERVATION_START_TIME;
+        let i = new Date(e.startTime).getHours() - RESERVATION_START_TIME;
+        i <= new Date(e.endTime).getHours() - RESERVATION_START_TIME;
         i++
       ) {
           reservationStatus.get(e.roomId)!.schedule[i] = 1;
