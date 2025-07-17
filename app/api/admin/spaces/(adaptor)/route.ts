@@ -96,7 +96,9 @@ export async function PUT(request: NextRequest) {
     await putSpaceUsecase.execute(
       new PutSpaceQueryDto(token, body.spaceId, body.spaceName)
     );
-    await putRoomUsecase.execute(new PutRoomQueryDto(token, body.rooms));
+    await putRoomUsecase.execute(
+      new PutRoomQueryDto(token, body.spaceId, body.rooms)
+    );
     return NextResponse.json({ message: 'success' });
   } catch {
     return NextResponse.json(

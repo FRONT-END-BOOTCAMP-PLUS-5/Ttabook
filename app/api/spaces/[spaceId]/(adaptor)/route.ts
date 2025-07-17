@@ -25,9 +25,9 @@ export async function GET(
     const getRoomsRepository = new GetRoomsInSpaceUsecase(roomRepository);
     const rooms = await getRoomsRepository.execute(Number(spaceId));
 
-    return NextResponse.json({
-      data: new GetSpaceDto(spaceInfo.id, spaceInfo.name, rooms),
-    });
+    return NextResponse.json(
+      new GetSpaceDto(spaceInfo.id, spaceInfo.name, rooms)
+    );
   } catch (error) {
     console.error('Error fetching spaces:', error);
     return NextResponse.json(
