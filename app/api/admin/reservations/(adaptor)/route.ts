@@ -16,5 +16,5 @@ export async function GET(request: NextRequest) {
   const getRsvListUsecase = new GetRsvListUsecase(rsvRepository);
   const rsvList = await getRsvListUsecase.execute();
 
-  return NextResponse.json({ data: rsvList });
+  return NextResponse.json(rsvList);
 }
