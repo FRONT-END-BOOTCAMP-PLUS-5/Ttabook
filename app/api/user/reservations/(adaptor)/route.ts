@@ -64,8 +64,8 @@ export async function POST(request: NextRequest) {
       new PostUserRsvDto(
         reservationData.userId,
         reservationData.roomId,
-        new Date(reservationData.startTime),
-        new Date(reservationData.endTime)
+        reservationData.startTime,
+        reservationData.endTime
       )
     );
     return NextResponse.json({ message: 'success' });
