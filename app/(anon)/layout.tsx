@@ -15,7 +15,6 @@ export default function AnonLayout({
   const { isAuthenticated, logout } = useSession();
   const { isModalOpen, openModal, closeModal } = useModalStore();
 
-  console.log(isAuthenticated);
   return (
     <div style={{ position: 'relative' }}>
       {isModalOpen('signin') && (
