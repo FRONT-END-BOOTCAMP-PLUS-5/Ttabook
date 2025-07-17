@@ -78,16 +78,17 @@ interface SessionContextValue {
   user: SessionUser | null; // 현재 로그인한 사용자 정보
   isLoading: boolean; // 로딩 상태
   isAuthenticated: boolean; // 인증 여부
-  login: (accessToken: string, refreshToken: string) => Promise<void>;
+  refreshSession: () => Promise<void>; // 세션 상태 새로고침
   logout: () => Promise<void>;
 }
 ```
 
 #### 자동 기능
 
-- **토큰 자동 갱신**: 액세스 토큰 만료 시 자동으로 리프레시 토큰으로 갱신
-- **세션 복원**: 페이지 새로고침 시 쿠키에서 세션 복원
-- **오류 처리**: 토큰 오류 시 자동 로그아웃
+- **HttpOnly 쿠키**: 보안을 위해 서버에서만 접근 가능한 쿠키 사용
+- **세션 복원**: 페이지 새로고침 시 서버 API를 통해 세션 복원  
+- **자동 만료 처리**: 토큰 만료 시 자동 로그아웃
+- **CSRF 보호**: HttpOnly 쿠키로 XSS/CSRF 공격 방지
 
 ### ProtectedRoute
 
@@ -170,7 +171,7 @@ interface UseSessionReturn {
   user: SessionUser | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (accessToken: string, refreshToken: string) => Promise<void>;
+  refreshSession: () => Promise<void>; // HttpOnly 쿠키에서 세션 정보 새로고침
   logout: () => Promise<void>;
 }
 ```
@@ -201,6 +202,7 @@ function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const { refreshSession } = useSession();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -222,9 +224,9 @@ function LoginForm() {
       const data = await response.json();
 
       if (response.ok) {
-        // 2. 쿠키가 자동으로 설정되므로 SessionProvider가 세션을 인식
+        // 2. 서버가 HttpOnly 쿠키를 설정함, 클라이언트 세션 상태 새로고침
+        await refreshSession(); // SessionProvider 상태 업데이트
         router.push('/dashboard'); // 로그인 성공 시 리다이렉트
-        router.refresh(); // SessionProvider가 새 세션을 인식하도록
       } else {
         setError(data.error || '로그인에 실패했습니다');
       }
@@ -310,9 +312,9 @@ function SignupForm() {
       const data = await response.json();
 
       if (response.ok) {
-        // 회원가입 성공 시 자동 로그인됨 (쿠키 설정)
+        // 회원가입 성공 시 자동 로그인됨 (HttpOnly 쿠키 설정)
+        // refreshSession은 이미 로그인 폼에서 호출했으므로 여기서는 생략 가능
         router.push('/dashboard');
-        router.refresh(); // SessionProvider가 새 세션을 인식하도록
       } else {
         setError(data.error || '회원가입에 실패했습니다');
       }
@@ -375,7 +377,9 @@ function SignupForm() {
 
 ## API 직접 사용
 
-SessionProvider를 통하지 않고 API를 직접 호출해야 하는 경우의 사용법입니다. 일반적으로는 위의 예제처럼 API를 직접 호출하고, 쿠키가 자동으로 설정되어 SessionProvider가 세션을 인식하게 하는 것이 권장됩니다.
+SessionProvider를 통하지 않고 API를 직접 호출해야 하는 경우의 사용법입니다. 
+
+**⚠️ 중요**: 로그인/회원가입 후에는 반드시 `refreshSession()`을 호출하여 클라이언트 세션 상태를 업데이트해야 합니다. HttpOnly 쿠키는 JavaScript에서 직접 읽을 수 없으므로 서버 API를 통해 세션 정보를 가져와야 합니다.
 
 ### 회원가입 API
 
@@ -681,20 +685,32 @@ function ProfilePage() {
 ```tsx
 function LoginForm() {
   const [error, setError] = useState<string | null>(null);
-  const { login } = useSession();
+  const { refreshSession } = useSession();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     try {
-      await login(email, password);
+      // 1. API로 로그인 요청
+      const response = await fetch('/api/signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        // 2. 성공 시 세션 상태 새로고침
+        await refreshSession();
+      } else {
+        const data = await response.json();
+        setError(data.error || '로그인에 실패했습니다');
+      }
     } catch (err) {
       if (err instanceof Error) {
-        // 서버에서 온 구체적인 에러 메시지 표시
         setError(err.message);
       } else {
-        // 예상치 못한 에러
         setError('로그인 중 오류가 발생했습니다');
         console.error('Login error:', err);
       }
@@ -774,13 +790,13 @@ const MockSessionProvider = ({ children, value }: any) => (
 );
 
 describe('LoginForm', () => {
-  it('로그인 성공 시 login 함수가 호출된다', async () => {
-    const mockLogin = jest.fn().mockResolvedValue(undefined);
+  it('로그인 성공 시 refreshSession 함수가 호출된다', async () => {
+    const mockRefreshSession = jest.fn().mockResolvedValue(undefined);
     const sessionValue = {
       user: null,
       isLoading: false,
       isAuthenticated: false,
-      login: mockLogin,
+      refreshSession: mockRefreshSession,
       logout: jest.fn(),
     };
 
@@ -799,17 +815,17 @@ describe('LoginForm', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(mockLogin).toHaveBeenCalledWith('test@example.com', 'password123');
+      expect(mockRefreshSession).toHaveBeenCalled();
     });
   });
 
   it('에러 메시지가 표시된다', async () => {
-    const mockLogin = jest.fn().mockRejectedValue(new Error('로그인 실패'));
+    const mockRefreshSession = jest.fn().mockRejectedValue(new Error('로그인 실패'));
     const sessionValue = {
       user: null,
       isLoading: false,
       isAuthenticated: false,
-      login: mockLogin,
+      refreshSession: mockRefreshSession,
       logout: jest.fn(),
     };
 
@@ -1053,7 +1069,7 @@ export interface SessionContextValue {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  refreshSession: () => Promise<void>; // HttpOnly 쿠키에서 세션 상태 새로고침
   logout: () => Promise<void>;
 }
 
@@ -1238,6 +1254,12 @@ function Dashboard() {
 ```bash
 yarn add @supabase/supabase-js zod jose bcryptjs
 yarn add -D @types/bcryptjs
+```
+
+**참고**: 이전 버전에서 `js-cookie`를 사용했다면 제거하세요. HttpOnly 쿠키 사용으로 더 이상 필요하지 않습니다:
+
+```bash
+yarn remove js-cookie @types/js-cookie
 ```
 
 ### 2. 환경 변수 설정
