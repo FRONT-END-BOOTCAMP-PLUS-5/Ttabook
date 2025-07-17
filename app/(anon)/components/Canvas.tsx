@@ -16,6 +16,7 @@ import styles from './Canvas.module.css';
 import { Room } from './types';
 import { useModalStore } from '@/hooks/useModal';
 import RoomRsvModal from './modals/rooms/reservations/RoomRsvModal';
+import RoomInfoModal from './modals/rooms/infos/RoomInfoModal';
 
 const STAGE_WIDTH = 800;
 const STAGE_HEIGHT = 700;
@@ -27,6 +28,7 @@ interface CanvasProps {
 const Canvas: React.FC<CanvasProps> = ({ rooms }) => {
   const { isModalOpen, openModal, closeModal } = useModalStore();
   const [selectedRoom, setSelectedRoom] = useState<Room>();
+  const [selectedRoomInfo, setSelectedRoomInfo] = useState<Room>();
   const stageRef = useRef<Konva.Stage>(null);
 
   const handleOpenReservationModal = (room: Room) => {
@@ -35,8 +37,8 @@ const Canvas: React.FC<CanvasProps> = ({ rooms }) => {
   };
 
   const handleOpenInfoModal = (room: Room) => {
-    // To Do: room 상세 정보 모달 추가
-    alert(`${room.name}\n\n${room.detail || '상세 정보 없음'}`);
+    setSelectedRoomInfo(room);
+    openModal('room-info');
   };
 
   return (
@@ -53,6 +55,14 @@ const Canvas: React.FC<CanvasProps> = ({ rooms }) => {
             closeModal('room-rsv');
           }}
           room={selectedRoom}
+        />
+      )}
+      {isModalOpen('room-info') && selectedRoomInfo && (
+        <RoomInfoModal
+          onClose={() => {
+            closeModal('room-info');
+          }}
+          room={selectedRoomInfo}
         />
       )}
       <Stage width={STAGE_WIDTH} height={STAGE_HEIGHT} ref={stageRef}>
