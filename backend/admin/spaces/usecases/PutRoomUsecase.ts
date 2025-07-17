@@ -1,6 +1,6 @@
 import { RoomRepository } from '@/backend/common/domains/repositories/RoomRepository';
 import { PutRoomQueryDto, RoomDto } from '../dtos/PutRoomQueryDto';
-import { UpdateRequest } from '@/backend/common/domains/repositories/roomRequest';
+import { SaveRequest } from '@/backend/common/domains/repositories/roomRequest';
 
 export class PutRoomUsecase {
   private roomRepository: RoomRepository;
@@ -10,9 +10,10 @@ export class PutRoomUsecase {
   }
 
   async execute(roomData: PutRoomQueryDto): Promise<void> {
-    // roomData.token 처리
+    await this.roomRepository.deleteBySapaceId(roomData.spaceId);
+
     const updateDatas = roomData.rooms.map((room: RoomDto) => {
-      return new UpdateRequest(
+      return new SaveRequest(
         room.roomId,
         room.roomName,
         room.roomDetail,
@@ -22,6 +23,6 @@ export class PutRoomUsecase {
         room.height
       );
     });
-    this.roomRepository.upsert(updateDatas);
+    this.roomRepository.saveAll(updateDatas);
   }
 }

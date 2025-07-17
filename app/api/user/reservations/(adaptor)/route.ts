@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     const getUserRsvUsecase = new GetUserRsvUsecase(rsvRepository);
     const reservations = await getUserRsvUsecase.execute(userId);
 
-    return NextResponse.json({ data: reservations });
+    return NextResponse.json(reservations);
   } catch (error) {
     console.error('Error fetching reservations:', error);
     return NextResponse.json(
