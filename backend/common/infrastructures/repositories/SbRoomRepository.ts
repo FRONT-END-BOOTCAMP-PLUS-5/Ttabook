@@ -1,9 +1,9 @@
 import { RoomRepository } from '@/backend/common/domains/repositories/RoomRepository';
-import { Room } from '../../domains/entities/Room';
+import { Room } from '@/backend/common/domains/entities/Room';
 import {
   SaveRequest,
   UpdateRequest,
-} from '../../domains/repositories/roomRequest';
+} from '@/backend/common/domains/repositories/roomRequest';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { mapKeysToCamelCase } from '../utils';
 
@@ -61,6 +61,7 @@ export class SbRoomRepository implements RoomRepository {
   async upsert(rooms: UpdateRequest[]): Promise<void> {
     const updates = rooms.map((room) => ({
       id: room.roomId,
+      space_id: room.spaceId,
       name: room.roomName,
       detail: room.roomDetail,
       position_x: room.positionX,
@@ -69,9 +70,10 @@ export class SbRoomRepository implements RoomRepository {
       height: room.height,
     }));
 
-    const { error } = await this.supabase.from('rooms').upsert(updates);
+    const { data, error } = await this.supabase.from('rooms').upsert(updates, { onConflict: 'id' });
 
     if (error) {
+      console.error('Supabase upsert error:', error.message, error.details, error.hint);
       throw new Error(`Failed to update rooms: ${error.message}`);
     }
   }
@@ -96,6 +98,7 @@ export class SbRoomRepository implements RoomRepository {
       throw new Error(`Failed to find rooms by space id: ${error.message}`);
     }
 
+    if (!data) return null;
     return mapKeysToCamelCase(data) as Room[];
   }
 
@@ -107,6 +110,22 @@ export class SbRoomRepository implements RoomRepository {
 
     if (error) {
       throw new Error(`Failed to delete rooms by space id: ${error.message}`);
+    }
+  }
+
+  /**
+   * [추가된 메서드]
+   * 제공된 ID 배열에 해당하는 모든 방을 삭제합니다.
+   */
+  async deleteByIds(ids: number[]): Promise<void> {
+    if (!ids || ids.length === 0) {
+      return; // 삭제할 ID가 없으면 아무 작업도 하지 않음
+    }
+
+    const { error } = await this.supabase.from('rooms').delete().in('id', ids);
+
+    if (error) {
+      throw new Error(`Failed to delete rooms by ids: ${error.message}`);
     }
   }
 }
