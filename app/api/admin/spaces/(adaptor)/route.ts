@@ -14,14 +14,14 @@ import { PutRoomUsecase } from '@/backend/admin/spaces/usecases/PutRoomUsecase';
 import { PutRoomQueryDto } from '@/backend/admin/spaces/dtos/PutRoomQueryDto';
 import { createClient } from '@/backend/common/infrastructures/supabase/server';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { tokenValidation } from '@/utils/validation';
 
 export async function POST(request: NextRequest) {
-  const token = request.headers.get('Authorization');
-  const body = await request.json();
-
-  if (!token) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!tokenValidation(request)) {
+    return NextResponse.json({ error: '인증이 필요합니다' }, { status: 401 });
   }
+
+  const body = await request.json();
   if (!body.spaceName) {
     return NextResponse.json(
       { error: 'Invalid request body' },
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const spaceId = await postSpaceUsecase.execute(
-      new PostSpaceQueryDto(token, body.spaceName)
+      new PostSpaceQueryDto(body.spaceName)
     );
     const rooms = body.rooms.map(
       (room: {
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
           room.height
         )
     );
-    await postRoomUsecase.execute(new PostRoomQueryDto(token, rooms));
+    await postRoomUsecase.execute(new PostRoomQueryDto(rooms));
     return NextResponse.json({ message: 'success' });
   } catch {
     return NextResponse.json(
@@ -71,12 +71,11 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-  const token = request.headers.get('Authorization');
-  const body = await request.json();
-
-  if (!token) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!tokenValidation(request)) {
+    return NextResponse.json({ error: '인증이 필요합니다' }, { status: 401 });
   }
+
+  const body = await request.json();
   if (!body.spaceId) {
     return NextResponse.json(
       { error: 'Invalid request body' },
@@ -94,11 +93,9 @@ export async function PUT(request: NextRequest) {
 
   try {
     await putSpaceUsecase.execute(
-      new PutSpaceQueryDto(token, body.spaceId, body.spaceName)
+      new PutSpaceQueryDto(body.spaceId, body.spaceName)
     );
-    await putRoomUsecase.execute(
-      new PutRoomQueryDto(token, body.spaceId, body.rooms)
-    );
+    await putRoomUsecase.execute(new PutRoomQueryDto(body.spaceId, body.rooms));
     return NextResponse.json({ message: 'success' });
   } catch {
     return NextResponse.json(
