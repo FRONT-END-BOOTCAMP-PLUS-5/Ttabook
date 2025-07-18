@@ -4,15 +4,23 @@
 
 ## 개요
 
-인증 시스템은 NextAuth.js와 Supabase를 기반으로 구축되었으며, 자격 증명 기반 인증(이메일/비밀번호)을 제공합니다.
+인증 시스템은 **JWT + HttpOnly 쿠키**와 **Clean Architecture**를 기반으로 구축되었으며, 자격 증명 기반 인증(이메일/비밀번호)을 제공합니다.
+
+### 기술 스택
+
+- **Database**: Supabase PostgreSQL
+- **Authentication**: JWT (jose 라이브러리)
+- **Password Hashing**: bcryptjs
+- **Session Management**: HttpOnly 쿠키
+- **Architecture**: Clean Architecture 패턴
 
 ## API 엔드포인트
 
-### 1. 사용자 등록 (Registration)
+### 1. 회원가입 (Registration)
 
 새로운 사용자 계정을 생성합니다.
 
-**엔드포인트:** `POST /api/auth/register`
+**엔드포인트:** `POST /api/signup`
 
 **요청 헤더:**
 
@@ -26,7 +34,7 @@ Content-Type: application/json
 {
   "email": "user@example.com",
   "password": "your-password",
-  "type": "user" // 선택사항, 기본값: "user", 가능한 값: "user" | "admin"
+  "name": "사용자 이름"
 }
 ```
 
@@ -34,10 +42,12 @@ Content-Type: application/json
 
 ```json
 {
-  "message": "사용자 등록이 완료되었습니다.",
+  "success": true,
+  "message": "회원가입이 완료되었습니다",
   "user": {
     "id": "123e4567-e89b-12d3-a456-426614174000",
     "email": "user@example.com",
+    "name": "사용자 이름",
     "type": "user"
   }
 }
@@ -47,22 +57,22 @@ Content-Type: application/json
 
 ```json
 {
-  "error": "이메일과 비밀번호는 필수입니다."
+  "error": "이메일과 패스워드는 필수입니다"
 }
 ```
 
-**응답 (실패 - 500):**
+**응답 (실패 - 409):**
 
 ```json
 {
-  "error": "이미 존재하는 이메일입니다."
+  "error": "이미 사용 중인 이메일입니다"
 }
 ```
 
 **사용 예시:**
 
 ```javascript
-const response = await fetch('/api/auth/register', {
+const response = await fetch('/api/signup', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -70,171 +80,227 @@ const response = await fetch('/api/auth/register', {
   body: JSON.stringify({
     email: 'newuser@example.com',
     password: 'securepassword123',
-    type: 'user',
+    name: '새로운 사용자',
   }),
+  credentials: 'include', // 쿠키 포함
 });
 
 const data = await response.json();
 ```
 
-### 2. 로그인 (NextAuth 엔드포인트)
+### 2. 로그인 (Sign In)
 
-NextAuth를 통한 로그인을 처리합니다.
+사용자 인증을 처리합니다.
 
-**엔드포인트:** `POST /api/auth/signin`
+**엔드포인트:** `POST /api/signin`
 
-이 엔드포인트는 NextAuth가 자동으로 생성하며, 주로 NextAuth 클라이언트 라이브러리를 통해 사용됩니다.
+**요청 헤더:**
 
-**프론트엔드에서 사용법:**
+```
+Content-Type: application/json
+```
+
+**요청 본문:**
+
+```json
+{
+  "email": "user@example.com",
+  "password": "your-password"
+}
+```
+
+**응답 (성공 - 200):**
+
+```json
+{
+  "success": true,
+  "message": "로그인이 완료되었습니다",
+  "user": {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "email": "user@example.com",
+    "name": "사용자 이름",
+    "type": "user"
+  }
+}
+```
+
+**응답 (실패 - 401):**
+
+```json
+{
+  "error": "이메일 또는 패스워드가 올바르지 않습니다"
+}
+```
+
+**사용 예시:**
 
 ```javascript
-import { signIn } from 'next-auth/react';
-
-// 로그인 시도
-const result = await signIn('credentials', {
-  email: 'user@example.com',
-  password: 'your-password',
-  redirect: false, // 자동 리다이렉트 방지
+const response = await fetch('/api/signin', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    email: 'user@example.com',
+    password: 'your-password',
+  }),
+  credentials: 'include', // 쿠키 포함
 });
 
-if (result?.error) {
-  console.error('로그인 실패:', result.error);
-} else {
-  console.log('로그인 성공');
-}
+const data = await response.json();
 ```
 
 ### 3. 로그아웃
 
-**엔드포인트:** `POST /api/auth/signout`
+사용자 세션을 종료합니다.
 
-**프론트엔드에서 사용법:**
+**엔드포인트:** `POST /api/logout`
 
-```javascript
-import { signOut } from 'next-auth/react';
+**요청 헤더:**
 
-// 로그아웃
-await signOut({
-  redirect: true, // 로그인 페이지로 리다이렉트
-  callbackUrl: '/', // 리다이렉트할 URL
-});
+```
+Cookie: accessToken=...; refreshToken=...
 ```
 
-### 4. 세션 확인
-
-현재 로그인된 사용자의 세션 정보를 확인합니다.
-
-**엔드포인트:** `GET /api/auth/session`
-
-**응답 (로그인됨):**
+**응답 (성공 - 200):**
 
 ```json
 {
+  "success": true,
+  "message": "로그아웃이 완료되었습니다"
+}
+```
+
+**사용 예시:**
+
+```javascript
+const response = await fetch('/api/logout', {
+  method: 'POST',
+  credentials: 'include', // 쿠키 포함
+});
+
+const data = await response.json();
+```
+
+### 4. 현재 사용자 정보 조회
+
+현재 로그인된 사용자의 정보를 확인합니다.
+
+**엔드포인트:** `GET /api/me`
+
+**요청 헤더:**
+
+```
+Cookie: accessToken=...; refreshToken=...
+```
+
+**응답 (성공 - 200):**
+
+```json
+{
+  "success": true,
+  "message": "사용자 정보 조회가 완료되었습니다",
   "user": {
     "id": "123e4567-e89b-12d3-a456-426614174000",
     "email": "user@example.com",
-    "name": "user@example.com",
+    "name": "사용자 이름",
     "type": "user"
-  },
-  "expires": "2024-01-31T12:00:00.000Z"
+  }
 }
 ```
 
-**응답 (로그인되지 않음):**
-
-```json
-{}
-```
-
-**프론트엔드에서 사용법:**
-
-```javascript
-import { getSession } from 'next-auth/react';
-
-// 세션 확인
-const session = await getSession();
-if (session) {
-  console.log('로그인된 사용자:', session.user);
-} else {
-  console.log('로그인되지 않음');
-}
-```
-
-### 5. CSRF 토큰
-
-**엔드포인트:** `GET /api/auth/csrf`
-
-CSRF 보호를 위한 토큰을 반환합니다.
-
-**응답:**
+**응답 (실패 - 401):**
 
 ```json
 {
-  "csrfToken": "abc123..."
+  "error": "인증이 필요합니다"
 }
 ```
 
-## NextAuth Hook 사용법
-
-### useSession
-
-컴포넌트에서 세션 정보에 접근할 때 사용합니다.
+**사용 예시:**
 
 ```javascript
-import { useSession } from 'next-auth/react';
+const response = await fetch('/api/me', {
+  method: 'GET',
+  credentials: 'include', // 쿠키 포함
+});
 
-function MyComponent() {
-  const { data: session, status } = useSession();
+const data = await response.json();
+```
 
-  if (status === 'loading') return <p>로딩 중...</p>;
+### 5. 토큰 새로고침
 
-  if (status === 'unauthenticated') {
-    return <p>로그인이 필요합니다.</p>;
+만료된 액세스 토큰을 새로고침합니다.
+
+**엔드포인트:** `POST /api/refresh`
+
+**요청 헤더:**
+
+```
+Cookie: refreshToken=...
+```
+
+**응답 (성공 - 200):**
+
+```json
+{
+  "success": true,
+  "message": "토큰 새로고침이 완료되었습니다",
+  "user": {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "email": "user@example.com",
+    "name": "사용자 이름",
+    "type": "user"
   }
-
-  return (
-    <div>
-      <p>안녕하세요, {session.user.email}님!</p>
-      <p>사용자 타입: {session.user.type}</p>
-    </div>
-  );
 }
 ```
 
-### 서버 사이드에서 세션 확인
+**응답 (실패 - 401):**
+
+```json
+{
+  "error": "리프레시 토큰이 유효하지 않습니다"
+}
+```
+
+### 6. 이메일 중복 확인
+
+회원가입 시 이메일 중복 여부를 확인합니다.
+
+**엔드포인트:** `GET /api/duplicates?email={email}`
+
+**쿼리 파라미터:**
+- `email`: 확인할 이메일 주소 (URL 인코딩 필요)
+
+**응답 (성공 - 200):**
+
+```json
+{
+  "available": true,
+  "message": "사용 가능한 이메일입니다"
+}
+```
+
+**응답 (이메일 중복 - 200):**
+
+```json
+{
+  "available": false,
+  "message": "이미 사용 중인 이메일입니다"
+}
+```
+
+**사용 예시:**
 
 ```javascript
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/infrastructure/next-auth/auth.config';
+const email = 'test@example.com';
+const response = await fetch(`/api/duplicates?email=${encodeURIComponent(email)}`);
+const data = await response.json();
 
-// API 라우트에서
-export async function GET(request) {
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    return new Response('인증되지 않음', { status: 401 });
-  }
-
-  // 인증된 사용자만 접근 가능한 로직
-  return Response.json({ message: '성공' });
-}
-
-// 페이지에서
-export async function getServerSideProps(context) {
-  const session = await getServerSession(context.req, context.res, authOptions);
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: '/auth/signin',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: { session },
-  };
+if (data.available) {
+  console.log('사용 가능한 이메일');
+} else {
+  console.log('이미 사용 중인 이메일');
 }
 ```
 
@@ -243,98 +309,266 @@ export async function getServerSideProps(context) {
 ### 1. 회원가입 플로우
 
 ```
-1. POST /api/auth/register (이메일, 비밀번호)
-2. 성공 시 자동으로 로그인 페이지로 이동
-3. signIn() 호출하여 로그인
+1. POST /api/signup (이메일, 패스워드, 이름)
+2. 패스워드 해싱 (bcrypt)
+3. 사용자 생성 (Supabase)
+4. JWT 토큰 생성 (액세스 토큰 15분, 리프레시 토큰 14일)
+5. HttpOnly 쿠키 설정
+6. 사용자 정보 반환
 ```
 
 ### 2. 로그인 플로우
 
 ```
-1. signIn('credentials', { email, password })
-2. 백엔드에서 자격 증명 검증
-3. 성공 시 JWT 토큰 생성 및 세션 설정
-4. 클라이언트에 세션 정보 반환
+1. POST /api/signin (이메일, 패스워드)
+2. 사용자 조회 (Supabase)
+3. 패스워드 검증 (bcrypt)
+4. JWT 토큰 생성
+5. HttpOnly 쿠키 설정
+6. 사용자 정보 반환
 ```
 
-### 3. 인증이 필요한 페이지 접근
+### 3. 인증이 필요한 API 접근
 
 ```
-1. useSession() 또는 getServerSession()로 세션 확인
-2. 세션이 없으면 로그인 페이지로 리다이렉트
-3. 세션이 있으면 페이지 렌더링
+1. 클라이언트 요청 (HttpOnly 쿠키 자동 포함)
+2. 서버에서 쿠키 추출
+3. 액세스 토큰 검증
+4. 사용자 정보 확인
+5. API 응답 반환
+```
+
+### 4. 토큰 만료 처리
+
+```
+1. 액세스 토큰 만료 감지
+2. 리프레시 토큰 검증
+3. 새로운 액세스 토큰 생성
+4. HttpOnly 쿠키 업데이트
+5. 요청 계속 처리
 ```
 
 ## 오류 처리
 
 ### 일반적인 오류 상황
 
-1. **잘못된 자격 증명**
-   - 응답: `CredentialsSignin` 오류
-   - 처리: 사용자에게 "이메일 또는 비밀번호가 올바르지 않습니다" 메시지 표시
+1. **잘못된 자격 증명 (401)**
+   - 이메일 또는 패스워드 불일치
+   - 처리: "이메일 또는 패스워드가 올바르지 않습니다" 메시지
 
-2. **이미 존재하는 이메일**
-   - 응답: `500` 상태 코드와 "이미 존재하는 이메일입니다" 메시지
-   - 처리: 사용자에게 다른 이메일 사용 안내
+2. **이메일 중복 (409)**
+   - 회원가입 시 이미 존재하는 이메일
+   - 처리: "이미 사용 중인 이메일입니다" 메시지
 
-3. **세션 만료**
-   - 응답: 빈 세션 객체 `{}`
-   - 처리: 자동으로 로그인 페이지로 리다이렉트
+3. **토큰 만료 (401)**
+   - 액세스 토큰 만료
+   - 처리: 자동 토큰 새로고침 또는 재로그인 요청
+
+4. **유효하지 않은 토큰 (401)**
+   - 손상된 JWT 토큰
+   - 처리: 자동 로그아웃 및 재로그인 요청
 
 ### 오류 처리 예시
 
 ```javascript
 // 로그인 오류 처리
-const handleLogin = async (email, password) => {
+const handleSignin = async (email, password) => {
   try {
-    const result = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
+    const response = await fetch('/api/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+      credentials: 'include',
     });
 
-    if (result?.error) {
-      switch (result.error) {
-        case 'CredentialsSignin':
-          setError('이메일 또는 비밀번호가 올바르지 않습니다.');
+    const data = await response.json();
+
+    if (response.ok) {
+      // 로그인 성공
+      console.log('로그인 성공:', data.user);
+    } else {
+      // 로그인 실패
+      switch (response.status) {
+        case 401:
+          alert('이메일 또는 패스워드가 올바르지 않습니다');
+          break;
+        case 400:
+          alert('입력 정보를 확인해주세요');
           break;
         default:
-          setError('로그인 중 오류가 발생했습니다.');
+          alert('로그인 중 오류가 발생했습니다');
       }
-    } else {
-      // 로그인 성공
-      router.push('/dashboard');
     }
   } catch (error) {
-    setError('네트워크 오류가 발생했습니다.');
+    console.error('네트워크 오류:', error);
+    alert('네트워크 오류가 발생했습니다');
   }
 };
 ```
 
 ## 보안 고려사항
 
-1. **비밀번호 해싱**: bcrypt를 사용하여 salt rounds 12로 해싱
-2. **JWT 토큰**: NextAuth가 자동으로 JWT 토큰 관리
-3. **CSRF 보호**: NextAuth가 자동으로 CSRF 토큰 처리
-4. **환경 변수**: 민감한 정보는 환경 변수로 관리
+### 1. 패스워드 보안
 
-## 필수 환경 변수
+- **해싱**: bcrypt 사용 (Salt rounds: 12)
+- **최소 길이**: 8자 이상
+- **복잡성**: 프론트엔드에서 검증
+
+### 2. JWT 토큰 보안
+
+- **HttpOnly 쿠키**: XSS 공격 방지
+- **SameSite=Strict**: CSRF 공격 방지
+- **Secure**: HTTPS에서만 전송 (프로덕션)
+- **짧은 만료**: 액세스 토큰 15분
+
+### 3. 세션 관리
+
+- **토큰 로테이션**: 리프레시 시 새로운 토큰 발급
+- **자동 만료**: 리프레시 토큰 14일 후 만료
+- **강제 로그아웃**: 보안 사고 시 모든 세션 무효화
+
+### 4. API 보안
+
+- **입력 검증**: Zod 스키마 사용
+- **에러 메시지**: 최소한의 정보만 노출
+- **로깅**: 보안 이벤트 기록
+
+## 환경 변수
+
+### 필수 환경 변수
 
 ```env
-NEXTAUTH_SECRET=your-secret-key
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+# Supabase 연결 설정
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# JWT 보안 설정
+JWT_SECRET=your-super-secret-jwt-key-minimum-32-characters
+BCRYPT_ROUNDS=12
+
+# 환경 설정
+NODE_ENV=production
 ```
+
+### 환경 변수 검증
+
+시스템 시작 시 자동으로 검증됩니다:
+
+- `JWT_SECRET`: 최소 32자 이상
+- `SUPABASE_SERVICE_ROLE_KEY`: 존재 여부
+- `NEXT_PUBLIC_SUPABASE_URL`: 유효한 URL 형식
 
 ## 데이터베이스 스키마
 
 ```sql
+-- 사용자 테이블
 CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
-  type TEXT CHECK (type IN ('user', 'admin')) DEFAULT 'user'
+  name TEXT NOT NULL,
+  type TEXT CHECK (type IN ('user', 'admin')) DEFAULT 'user',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- 인덱스 생성
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_type ON users(type);
 ```
+
+## Clean Architecture 구조
+
+```
+app/api/
+├── signin/(adaptor)/route.ts       # 로그인 API 어댑터
+├── signup/(adaptor)/route.ts       # 회원가입 API 어댑터
+├── logout/(adaptor)/route.ts       # 로그아웃 API 어댑터
+├── me/(adaptor)/route.ts           # 사용자 정보 조회 API 어댑터
+├── refresh/(adaptor)/route.ts      # 토큰 새로고침 API 어댑터
+└── duplicates/(adaptor)/route.ts   # 이메일 중복 확인 API 어댑터
+
+backend/auth/
+├── signin/
+│   ├── dtos/                       # 데이터 전송 객체
+│   └── usecases/                   # 비즈니스 로직
+├── signup/
+│   ├── dtos/
+│   └── usecases/
+├── me/
+│   ├── dtos/
+│   └── usecases/
+└── refresh/
+    ├── dtos/
+    └── usecases/
+
+backend/common/
+├── domains/
+│   ├── entities/                   # 도메인 엔티티
+│   └── repositories/               # 리포지토리 인터페이스
+└── infrastructures/
+    ├── auth/                       # 인증 서비스
+    └── repositories/               # 리포지토리 구현
+```
+
+## 테스트 방법
+
+### cURL 예시
+
+```bash
+# 회원가입
+curl -X POST http://localhost:3000/api/signup \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "test@example.com",
+    "password": "password123",
+    "name": "테스트 사용자"
+  }'
+
+# 로그인
+curl -X POST http://localhost:3000/api/signin \
+  -H "Content-Type: application/json" \
+  -c cookies.txt \
+  -d '{
+    "email": "test@example.com",
+    "password": "password123"
+  }'
+
+# 사용자 정보 조회
+curl -X GET http://localhost:3000/api/me \
+  -b cookies.txt
+
+# 로그아웃
+curl -X POST http://localhost:3000/api/logout \
+  -b cookies.txt
+```
+
+### Postman 설정
+
+1. **쿠키 설정**: Settings → Cookies → Enable cookies
+2. **환경 변수**: `{{baseUrl}}` = `http://localhost:3000`
+3. **자동 쿠키 관리**: 로그인 후 자동으로 쿠키 저장
+
+## 성능 최적화
+
+### 1. 데이터베이스 최적화
+
+- 이메일 필드 인덱싱
+- 쿼리 최적화
+- 연결 풀링
+
+### 2. JWT 토큰 최적화
+
+- 페이로드 최소화
+- 적절한 만료 시간 설정
+- 토큰 캐싱 (선택적)
+
+### 3. API 응답 최적화
+
+- 압축 활성화
+- 캐싱 헤더 설정
+- 에러 응답 최적화
 
 이 가이드를 통해 Ttabook 프로젝트의 인증 시스템을 효과적으로 활용할 수 있습니다.

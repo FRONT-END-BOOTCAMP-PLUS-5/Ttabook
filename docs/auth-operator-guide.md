@@ -15,7 +15,7 @@ Frontend (Next.js)
 └── Auth Hooks (useSession)
 
 Backend API (Clean Architecture)
-├── API Routes (/api/signup/(adaptor), /signin/(adaptor), /me/(adaptor), /refresh/(adaptor), /logout/(adaptor))
+├── API Routes (/api/signup, /api/signin, /api/me, /api/refresh, /api/logout)
 │   └── Next.js API route handlers in (adaptor) folders following Clean Architecture
 ├── Use Cases (비즈니스 로직 - /backend/auth/*/usecases/)
 ├── Domain Services (AuthService, CookieService - /backend/common/infrastructures/auth/)
@@ -52,7 +52,7 @@ PORT=3000
 
 ### 환경 변수 검증
 
-시스템 시작 시 `/lib/config.ts`에서 자동 검증:
+시스템 시작 시 자동 검증:
 
 - JWT_SECRET 길이 검증 (최소 32자)
 - Supabase URL 형식 검증
@@ -102,7 +102,7 @@ Alert: < 90% (5분간)
 
 측정 방법:
 - 2xx 응답 / 전체 인증 요청
-- 엔드포인트별 분석 (/signin, /signup, /refresh)
+- 엔드포인트별 분석 (/api/signin, /api/signup, /api/refresh)
 ```
 
 #### 2. 토큰 만료율
@@ -424,7 +424,6 @@ echo "마지막 변경일: $(stat -c %y .env | cut -d' ' -f1)"
 
 # 2. 의존성 취약점 스캔
 yarn audit
-npm audit
 
 # 3. 로그 보안 이벤트 분석
 grep -i "failed\|error\|unauthorized" /var/log/ttabook/auth.log | \
@@ -550,7 +549,7 @@ LIMIT 10;
 const payload = {
   id: user.id, // 필수만 포함
   email: user.email,
-  role: user.type,
+  type: user.type,
   // 불필요한 데이터 제거
 };
 ```
