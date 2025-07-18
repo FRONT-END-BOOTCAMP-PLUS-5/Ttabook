@@ -8,6 +8,7 @@ import { isValidEmail, isValidPassword } from '@/utils/validation';
 import { usePosts } from '@/hooks/usePosts';
 import { useGets } from '@/hooks/useGets';
 import { useSession } from '@/app/providers/SessionProvider';
+import { useToastStore } from '@/hooks/useToast';
 
 interface SignupModalProps {
   onClose: () => void;
@@ -15,8 +16,9 @@ interface SignupModalProps {
 
 const SignupModal = ({ onClose }: SignupModalProps) => {
   const { refreshSession } = useSession();
+  const { showToast } = useToastStore();
   const onSuccess = () => {
-    alert('회원가입이 성공적으로 완료되었습니다!');
+    showToast('회원가입이 성공적으로 완료되었습니다!', 'primary');
     refreshSession();
     onClose();
   };
@@ -44,9 +46,16 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
   const { refetchWithParams } = useGets<{
     available: boolean;
     message: string;
-  }>(['duplicates'], '/duplicates', false, {
-    email: email,
-  }, undefined, { retry: false });
+  }>(
+    ['duplicates'],
+    '/duplicates',
+    false,
+    {
+      email: email,
+    },
+    undefined,
+    { retry: false }
+  );
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isValidEmail(e.target.value)) {
@@ -81,7 +90,7 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!checkedDuplication) {
-      alert('이메일 중복 확인은 필수입니다.');
+      showToast('이메일 중복 확인은 필수입니다.', 'danger');
       return;
     }
     if (e.target.value?.length <= 0) {
@@ -94,27 +103,31 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
 
   const handleClickCheckDup = async () => {
     if (!isValidEmail(email)) {
-      alert('이메일 형식이 잘못되었습니다.');
+      showToast('이메일 형식이 잘못되었습니다.', 'danger');
       return;
     }
     const { data, error } = await refetchWithParams({ email });
 
     if (data?.available === true && data?.message) {
       setCheckedDuplication(true);
-      alert(data?.message);
+      showToast(data?.message, 'danger');
     }
-    if (error && axios.isAxiosError<{ available: boolean; message: string }>(error) && error.response?.data?.available === false) {
-      alert(error.response.data.message);
+    if (
+      error &&
+      axios.isAxiosError<{ available: boolean; message: string }>(error) &&
+      error.response?.data?.available === false
+    ) {
+      showToast(error.response.data.message, 'danger');
     }
   };
 
   const handleClickSignup = () => {
     if (!name || !email || !password || !passwordCheck) {
-      alert('필수 값을 모두 입력하세요.');
+      showToast('필수 값을 모두 입력하세요.', 'danger');
       return;
     }
     if (password !== passwordCheck) {
-      alert('비밀번호가 일치하지 않습니다.');
+      showToast('비밀번호가 일치하지 않습니다.', 'danger');
       return;
     }
     if (isValidEmail(email) && isValidPassword(password)) {

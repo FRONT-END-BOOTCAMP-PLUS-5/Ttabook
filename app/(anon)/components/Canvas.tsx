@@ -46,7 +46,8 @@ const Canvas: React.FC<CanvasProps> = ({ rooms }) => {
           onClose={() => {
             closeModal('room-rsv');
           }}
-          room={selectedRoom}
+          roomId={Number(selectedRoom.id)}
+          roomName={selectedRoom.name ?? ""}
         />
       )}
       {isModalOpen('room-info') && selectedRoomInfo && (

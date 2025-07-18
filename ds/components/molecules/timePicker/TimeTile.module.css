@@ -25,8 +25,12 @@
   cursor: not-allowed;
 }
 
-.time-tile:not(:disabled):not(.selected):hover {
+.time-tile:not(:disabled):not(.selected):not(.readonly):hover {
   background-color: #cbd5e0;
+}
+
+.time-tile.readonly {
+  cursor: default;
 }
 
 .time-label-container {

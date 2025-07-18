@@ -10,14 +10,19 @@ export const TimeTile = ({
   isSelected,
   onClick,
   isLastTile,
+  readonly = false,
 }: TimeTileProps) => {
   const handleClick = () => {
-    if (!isReserved) {
+    if (!isReserved && !readonly) {
       onClick(time);
     }
   };
 
-  const tileNames = [styles['time-tile'], isSelected ? styles['selected'] : ''];
+  const tileNames = [
+    styles['time-tile'], 
+    isSelected ? styles['selected'] : '',
+    readonly ? styles['readonly'] : ''
+  ];
   return (
     <div className={styles['time-tile-wrapper']}>
       <button
