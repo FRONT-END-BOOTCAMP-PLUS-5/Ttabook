@@ -7,6 +7,7 @@ import { useRef } from 'react';
 import { usePosts } from '@/hooks/usePosts';
 import { useSession } from '@/app/providers/SessionProvider';
 import { useRouter } from 'next/navigation';
+import { useToastStore } from '@/hooks/useToast';
 
 interface SigninModalProps {
   onClose: () => void;
@@ -17,6 +18,7 @@ const SigninModal = ({ onClose, openSignup }: SigninModalProps) => {
   const passwordRef = useRef<HTMLInputElement>(null);
   const { refreshSession } = useSession();
   const router = useRouter();
+  const { showToast } = useToastStore();
   const onSuccess = (data: {
     message: string;
     success: boolean;
@@ -34,7 +36,9 @@ const SigninModal = ({ onClose, openSignup }: SigninModalProps) => {
     }
     onClose();
   };
-  const onError = () => {};
+  const onError = () => {
+    showToast('아이디 또는 비밀번호 오류!', 'accent');
+  };
   const { mutate } = usePosts({ onSuccess, onError });
 
   const handleClickSignin = async () => {
