@@ -46,7 +46,7 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
     message: string;
   }>(['duplicates'], '/duplicates', false, {
     email: email,
-  });
+  }, undefined, { retry: false });
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isValidEmail(e.target.value)) {
@@ -97,11 +97,14 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
       alert('이메일 형식이 잘못되었습니다.');
       return;
     }
-    const { data } = await refetchWithParams({ email });
+    const { data, error } = await refetchWithParams({ email });
 
-    if (data?.available && data?.message) {
+    if (data?.available === true && data?.message) {
       setCheckedDuplication(true);
       alert(data?.message);
+    }
+    if (error && axios.isAxiosError<{ available: boolean; message: string }>(error) && error.response?.data?.available === false) {
+      alert(error.response.data.message);
     }
   };
 
