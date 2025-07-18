@@ -1,5 +1,6 @@
 .canvasContainer {
   position: relative;
   border-radius: 10px;
-  box-shadow: 5px 5px 10px rgb(0 0 255 / 0.15);
+  background-color: #F6F6F6;
+  box-shadow: 5px 5px 5px rgb(0 0 255 / 0.1);
 }

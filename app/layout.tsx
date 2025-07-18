@@ -3,6 +3,7 @@ import './globals.css';
 import { SessionProvider } from './providers/SessionProvider';
 import { ReactQueryProvider } from './providers/ReactQueryProvider';
 import { Metadata } from 'next';
+import ToastContainer from '@/app/components/ToastContainer';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -29,7 +30,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ReactQueryProvider>
-          <SessionProvider>{children}</SessionProvider>
+          <SessionProvider>
+            {children}
+            <ToastContainer />
+          </SessionProvider>
         </ReactQueryProvider>
       </body>
     </html>
