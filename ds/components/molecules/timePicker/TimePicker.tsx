@@ -8,6 +8,7 @@ const TimePicker = ({
   availableTimes,
   reservedTimes = [],
   onTimeSelect,
+  readonly = false,
 }: TimePickerProps) => {
   const [startTime, setStartTime] = useState<number | null>(null);
   const [endTime, setEndTime] = useState<number | null>(null);
@@ -60,6 +61,7 @@ const TimePicker = ({
           isSelected={isSelected(time)}
           onClick={handleTileClick}
           isLastTile={index === availableTimes.length - 1}
+          readonly={readonly}
         />
       ))}
     </div>

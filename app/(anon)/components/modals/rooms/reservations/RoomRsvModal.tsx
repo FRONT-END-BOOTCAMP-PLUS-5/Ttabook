@@ -1,5 +1,4 @@
 import Modal from '@/ds/components/atoms/modal/Modal';
-import { Room } from '../../../types';
 import styles from './RoomRsvModal.module.css';
 import { useGets } from '@/hooks/useGets';
 import TimePicker from '@/ds/components/molecules/timePicker/TimePicker';
@@ -15,7 +14,8 @@ import LoadingSpinner from '@/ds/components/atoms/loading/LoadingSpinner';
 
 interface RoomRsvModalProps {
   onClose: () => void;
-  room: Room;
+  roomId : number;
+  roomName: string;
 }
 
 const START_TIME = 9;
@@ -32,7 +32,7 @@ const numberHourToDate = (hour: number): string => {
   return date.toISOString();
 };
 
-const RoomRsvModal = ({ onClose, room }: RoomRsvModalProps) => {
+const RoomRsvModal = ({ onClose, roomId, roomName }: RoomRsvModalProps) => {
   const router = useRouter();
   const onSuccess = () => {
     onClose();
@@ -45,7 +45,7 @@ const RoomRsvModal = ({ onClose, room }: RoomRsvModalProps) => {
     '/rooms/reservations',
     true,
     {
-      roomId: room.id,
+      roomId: roomId.toString()
     }
   );
   const [reservedTimes, setReservedTimes] = useState(
@@ -86,7 +86,7 @@ const RoomRsvModal = ({ onClose, room }: RoomRsvModalProps) => {
 
     const rsvData = {
       userId: user?.id,
-      roomId: room.id,
+      roomId,
       startTime: numberHourToDate(reservationTime.current[0]),
       endTime: numberHourToDate(reservationTime.current[1]),
     };
@@ -101,7 +101,7 @@ const RoomRsvModal = ({ onClose, room }: RoomRsvModalProps) => {
 
   return (
     <Modal width={960} height={600}>
-      <Modal.Title>{room.name}의 방</Modal.Title>
+      <Modal.Title>{roomName}의 방</Modal.Title>
       <Modal.Body>
         <div className={styles['modal-container']}>
           <div className={styles['image-container']}>
