@@ -20,26 +20,33 @@ cp .env.example .env.local
 ### 2. 기본 사용법
 
 ```tsx
+// app/layout.tsx
 import { SessionProvider } from '@/app/providers/SessionProvider';
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html>
+      <body>
+        <SessionProvider>
+          {children}
+        </SessionProvider>
+      </body>
+    </html>
+  );
+}
+
+// app/dashboard/page.tsx
 import { ProtectedRoute } from '@/app/components/ProtectedRoute';
 
-function App() {
+export default function DashboardPage() {
   return (
-    <SessionProvider>
-      <Router>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </Router>
-    </SessionProvider>
+    <ProtectedRoute>
+      <div>대시보드 내용</div>
+    </ProtectedRoute>
   );
 }
 ```
@@ -74,7 +81,7 @@ export default function RootLayout({
 #### Context 값
 
 ```typescript
-interface SessionContextValue {
+interface SessionContextType {
   user: SessionUser | null; // 현재 로그인한 사용자 정보
   isLoading: boolean; // 로딩 상태
   isAuthenticated: boolean; // 인증 여부
@@ -104,13 +111,13 @@ import { ProtectedRoute } from '@/app/components/ProtectedRoute';
   <DashboardPage />
 </ProtectedRoute>
 
-// 특정 역할만 접근 가능
-<ProtectedRoute allowedRoles={['admin']}>
+// 특정 타입만 접근 가능
+<ProtectedRoute type="admin">
   <AdminPanel />
 </ProtectedRoute>
 
-// 여러 역할 허용
-<ProtectedRoute allowedRoles={['admin', 'moderator']}>
+// 여러 타입 허용
+<ProtectedRoute type={['admin', 'moderator']}>
   <ModeratorPanel />
 </ProtectedRoute>
 ```
@@ -120,8 +127,8 @@ import { ProtectedRoute } from '@/app/components/ProtectedRoute';
 ```typescript
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  allowedRoles?: string | string[]; // 허용할 역할 ('user', 'admin')
-  fallback?: React.ReactNode; // 로딩 중 표시할 컴포넌트
+  type?: string | string[]; // 허용할 사용자 타입 ('user', 'admin')
+  loadingComponent?: React.ReactNode; // 로딩 중 표시할 컴포넌트
 }
 ```
 
@@ -167,7 +174,7 @@ function UserProfile() {
 #### 반환값
 
 ```typescript
-interface UseSessionReturn {
+interface SessionContextType {
   user: SessionUser | null;
   isLoading: boolean;
   isAuthenticated: boolean;
@@ -180,10 +187,10 @@ interface UseSessionReturn {
 
 ```typescript
 // SessionProvider에서 사용하는 사용자 타입 (JWT 페이로드에서 파생)
-interface SessionUser {
+export interface SessionUser {
   id: string; // 사용자 UUID
   email: string; // 이메일 주소
-  type: string; // 사용자 역할 ('user' | 'admin')
+  type: string; // 사용자 타입 ('user' | 'admin')
 }
 ```
 
@@ -276,6 +283,7 @@ function LoginForm() {
 ```tsx
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from '@/app/providers/SessionProvider';
 
 function SignupForm() {
   const [formData, setFormData] = useState({
@@ -287,6 +295,7 @@ function SignupForm() {
   const [error, setError] = useState('');
 
   const router = useRouter();
+  const { refreshSession } = useSession();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
@@ -307,13 +316,14 @@ function SignupForm() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
+        credentials: 'include', // 쿠키 포함
       });
 
       const data = await response.json();
 
       if (response.ok) {
         // 회원가입 성공 시 자동 로그인됨 (HttpOnly 쿠키 설정)
-        // refreshSession은 이미 로그인 폼에서 호출했으므로 여기서는 생략 가능
+        await refreshSession(); // 클라이언트 세션 상태 업데이트
         router.push('/dashboard');
       } else {
         setError(data.error || '회원가입에 실패했습니다');
@@ -525,7 +535,7 @@ async function checkEmailDuplicate(email: string): Promise<boolean> {
   }
 
   const data: DuplicateCheckResponse = await response.json();
-  return !data.available; // available이 false면 중복(true 반환)
+  return data.available; // available이 true면 사용 가능
 }
 
 // 사용 예시
@@ -539,8 +549,8 @@ function EmailInput() {
 
     setIsChecking(true);
     try {
-      const isDuplicateResult = await checkEmailDuplicate(email);
-      setIsDuplicate(isDuplicateResult);
+      const isAvailable = await checkEmailDuplicate(email);
+      setIsDuplicate(!isAvailable); // available이 false면 중복
     } catch (error) {
       console.error('이메일 확인 실패:', error);
     } finally {
@@ -600,24 +610,24 @@ function Navigation() {
 ### 역할 기반 컴포넌트
 
 ```tsx
-interface RoleBasedProps {
+interface TypeBasedProps {
   children: React.ReactNode;
-  allowedRoles: string[];
+  allowedTypes: string[];
   fallback?: React.ReactNode;
 }
 
-function RoleBased({
+function TypeBased({
   children,
-  allowedRoles,
+  allowedTypes,
   fallback = null,
-}: RoleBasedProps) {
+}: TypeBasedProps) {
   const { user, isAuthenticated } = useSession();
 
   if (!isAuthenticated || !user) {
     return fallback;
   }
 
-  if (!allowedRoles.includes(user.type)) {
+  if (!allowedTypes.includes(user.type)) {
     return fallback;
   }
 
@@ -627,12 +637,12 @@ function RoleBased({
 // 사용 예시
 function AdminSection() {
   return (
-    <RoleBased
-      allowedRoles={['admin']}
+    <TypeBased
+      allowedTypes={['admin']}
       fallback={<div>관리자만 접근 가능합니다</div>}
     >
       <AdminPanel />
-    </RoleBased>
+    </TypeBased>
   );
 }
 ```
@@ -1065,8 +1075,8 @@ export interface SessionUser {
   type: string; // 'user' | 'admin'
 }
 
-export interface SessionContextValue {
-  user: User | null;
+export interface SessionContextType {
+  user: SessionUser | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   refreshSession: () => Promise<void>; // HttpOnly 쿠키에서 세션 상태 새로고침
@@ -1206,8 +1216,8 @@ const OptimizedProtectedRoute = memo(
       if (!isAuthenticated || !user) return false;
       if (!type) return true;
 
-      const roles = Array.isArray(type) ? type : [type];
-      return roles.includes(user.type);
+      const types = Array.isArray(type) ? type : [type];
+      return types.includes(user.type);
     }, [isAuthenticated, user, type]);
 
     if (isLoading) return <LoadingSpinner />;
@@ -1252,7 +1262,7 @@ function Dashboard() {
 ### 1. 의존성 설치
 
 ```bash
-yarn add @supabase/supabase-js zod jose bcryptjs
+yarn add @supabase/supabase-js @supabase/ssr zod jose bcryptjs
 yarn add -D @types/bcryptjs
 ```
 
