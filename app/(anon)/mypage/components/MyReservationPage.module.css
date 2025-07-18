@@ -1,0 +1,108 @@
+.container {
+  width: 100vw;
+  height: 100%;
+  background: var(--color-background);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.carouselContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: var(--spacing-3);
+}
+
+.carouselStyle {
+  align-self: stretch;
+  padding: var(--spacing-3);
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.title {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  width: 236px;
+  height: 50px;
+  color: var(--color-text-primary);
+  font-size: 32px;
+  font-family: 'Nanum Gothic';
+  font-weight: 700;
+}
+
+.reservationCard {
+  padding: var(--spacing-8);
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.25);
+  border-radius: var(--button-size-sm-border-radius);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: var(--spacing-8);
+}
+
+.spaceInfo {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: var(--spacing-3);
+}
+
+.spaceName {
+  color: var(--color-text-secondary);
+  font-size: var(--text-size-xl-font-size);
+  font-family: 'NanumGothic';
+  font-weight: 700;
+}
+
+.roomName {
+  color: var(--color-text-secondary);
+  font-size: var(--text-size-md-font-size);
+  font-family: 'Inter';
+  font-weight: 700;
+}
+
+.timePickerContainer {
+  width: 100%;
+  padding: var(--spacing-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.buttonContainer {
+  align-self: stretch;
+  padding: var(--spacing-3);
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.actionButton {
+  min-width: var(--button-size-md-min-width);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-primary);
+  border-radius: var(--button-size-sm-border-radius);
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-primary);
+  font-size: var(--text-size-lg-font-size);
+  font-family: 'Inter';
+  font-weight: 500;
+  text-align: center;
+}
+
+.actionButton:hover {
+  background: var(--color-secondary);
+}

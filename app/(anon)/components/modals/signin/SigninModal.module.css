@@ -1,0 +1,28 @@
+.modal-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 50px;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: var(--spacing-10);
+}
+
+.modal-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-button-signup-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 40px;
+  align-items: center;
+}

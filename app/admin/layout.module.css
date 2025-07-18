@@ -1,0 +1,66 @@
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 240px;
+  height: 100%;
+  background-color: #f8f9fa;
+}
+
+.topSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.adminTitle {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 20px 10px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.navLink {
+  text-decoration: none;
+  color: #333;
+  padding: 15px 5px;
+}
+
+.navLink:hover {
+  background-color: #e2e8f0;
+}
+
+.active {
+  background-color: #cbd5e0;
+  font-weight: bold;
+}
+
+.LogoutButton {
+  margin-top: 40px;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 15px 5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.backButton:hover {
+  background-color: #dc2626;
+}
+
+/* 오른쪽 메인 콘텐츠 */
+.main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}

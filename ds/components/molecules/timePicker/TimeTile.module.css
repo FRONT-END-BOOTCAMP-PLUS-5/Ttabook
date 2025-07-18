@@ -1,0 +1,52 @@
+.time-tile-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.time-tile {
+  height: 35px;
+  width: 100%;
+  min-width: 60px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #e2e8f0;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.time-tile.selected {
+  background-color: var(--color-primary);
+}
+
+.time-tile:disabled {
+  background-color: var(--color-disabled);
+  cursor: not-allowed;
+}
+
+.time-tile:not(:disabled):not(.selected):not(.readonly):hover {
+  background-color: #cbd5e0;
+}
+
+.time-tile.readonly {
+  cursor: default;
+}
+
+.time-label-container {
+  display: flex;
+  justify-content: space-between;
+  width: calc(100% + var(--spacing-2) * 2);
+  color: var(--color-text-secondary);
+  position: absolute;
+  top: calc(35px + var(--spacing-1));
+  left: calc(var(--spacing-2) * -1);
+}
+
+.time-label-start {
+  text-align: left;
+}
+
+.time-label-end {
+  text-align: right;
+}

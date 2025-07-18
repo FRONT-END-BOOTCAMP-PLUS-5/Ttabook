@@ -1,0 +1,10 @@
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  min-height: 150px;
+  box-sizing: border-box;
+  background-color: var(--color-primary);
+  padding: var(--spacing-8);
+}
