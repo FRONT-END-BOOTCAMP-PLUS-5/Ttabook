@@ -12,13 +12,6 @@ export class UpdateSpaceUsecase {
   async execute(spaceId: number, data: UpdateSpaceBody) {
     const { spaceName, rooms: incomingRooms } = data;
 
-    // Supabase의 트랜잭션 기능을 사용하기 위해 rpc를 호출해야 합니다.
-    // 여기서는 설명을 위해 개별 쿼리를 순차적으로 실행하지만,
-    // 실제 프로덕션에서는 반드시 하나의 트랜잭션으로 묶어야 합니다.
-    console.warn(
-      'Warning: This operation is not transactional. Partial updates may occur on failure.'
-    );
-
     // 1. 공간 이름 업데이트
     const { error: spaceUpdateError } = await this.supabase
       .from('spaces')

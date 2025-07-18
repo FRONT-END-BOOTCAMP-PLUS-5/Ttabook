@@ -70,9 +70,10 @@ export class SbRoomRepository implements RoomRepository {
       height: room.height,
     }));
 
-    const { error } = await this.supabase.from('rooms').upsert(updates);
+    const { data, error } = await this.supabase.from('rooms').upsert(updates, { onConflict: 'id' });
 
     if (error) {
+      console.error('Supabase upsert error:', error.message, error.details, error.hint);
       throw new Error(`Failed to update rooms: ${error.message}`);
     }
   }

@@ -62,14 +62,18 @@ const EditRoomPage: React.FC<EditRoomPageProps> = ({
     setSelectedId(null);
   };
 
-  const handleDragEnd = (
-    id: string | number,
-    positionX: number,
-    positionY: number
-  ) => {
-    setRooms((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, positionX, positionY } : r))
-    );
+  const handleDragEnd = (room: RoomDto, node: Konva.Rect) => {
+    const updatedRoom: RoomDto = {
+      ...room,
+      positionX: node.x(),
+      positionY: node.y(),
+    };
+    setRooms((prev) => {
+      const updatedRooms = prev.map((r) =>
+        r.id === room.id ? updatedRoom : r
+      );
+      return updatedRooms;
+    });
   };
 
   const handleTransformEnd = (room: RoomDto, node: Konva.Rect) => {
@@ -84,7 +88,12 @@ const EditRoomPage: React.FC<EditRoomPageProps> = ({
     };
     node.scaleX(1);
     node.scaleY(1);
-    setRooms((prev) => prev.map((r) => (r.id === room.id ? updatedRoom : r)));
+    setRooms((prev) => {
+      const updatedRooms = prev.map((r) =>
+        r.id === room.id ? updatedRoom : r
+      );
+      return updatedRooms;
+    });
   };
 
   const handleEditStart = (room: RoomDto) => {

@@ -36,7 +36,7 @@ export interface CanvasProps {
   handleDrop: (e: React.DragEvent) => void;
   handleDragOver: (e: React.DragEvent) => void;
   handleRectClick: (room: RoomDto) => void;
-  handleDragEnd: (id: string, x: number, y: number) => void;
+  handleDragEnd: (room: RoomDto, node: Konva.Rect) => void;
   handleTransformEnd: (room: RoomDto, node: Konva.Rect) => void;
   handleDelete: (room: RoomDto) => void;
   handleEditStart: (room: RoomDto) => void;

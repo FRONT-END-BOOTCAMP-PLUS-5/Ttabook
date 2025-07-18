@@ -120,9 +120,7 @@ const Canvas: React.FC<CanvasProps> = ({
               height={room.height}
               draggable
               onClick={() => handleRectClick(room)}
-              onDragEnd={(e) =>
-                handleDragEnd(room.id.toString(), e.target.x(), e.target.y())
-              }
+              onDragEnd={(e) => handleDragEnd(room, e.target as Konva.Rect)}
               onTransformEnd={(e) =>
                 handleTransformEnd(room, e.target as Konva.Rect)
               }
