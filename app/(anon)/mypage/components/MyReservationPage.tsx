@@ -72,19 +72,21 @@ const MyReservationPage = () => {
         />
       )}
       <div className={styles.container}>
-        <div className={styles.title}>나의 예약 현황</div>
-        {reservations ? (
-          <ReservationCarousel
-            reservations={reservations}
-            availableTimes={nineToFive}
-            currentIndex={carouselIndex}
-            onIndexChange={setCarouselIndex}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        ) : (
-          <div></div>
-        )}
+        <div className="titleset">
+          <div className={styles.title}>나의 예약 현황</div>
+          {reservations ? (
+            <ReservationCarousel
+              reservations={reservations}
+              availableTimes={nineToFive}
+              currentIndex={carouselIndex}
+              onIndexChange={setCarouselIndex}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ) : (
+            <div></div>
+          )}
+        </div>
       </div>
     </>
   );

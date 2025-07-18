@@ -34,7 +34,7 @@ const ReservationCarousel = ({
         {reservations?.map((e, i) => (
           <Card
             key={i}
-            width={900}
+            width={912}
             height={280}
             background="white"
             className={styles.reservationCard}
