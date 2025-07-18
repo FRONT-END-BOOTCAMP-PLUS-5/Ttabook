@@ -4,15 +4,54 @@ import styles from './SigninModal.module.css';
 import Button from '@/ds/components/atoms/button/Button';
 import { CaptionText } from '@/ds/components/atoms/text/textWrapper';
 import { useRef } from 'react';
+import { usePosts } from '@/hooks/usePosts';
+import { useSession } from '@/app/providers/SessionProvider';
+import { useRouter } from 'next/navigation';
 
 interface SigninModalProps {
-  onClose: (toggle: boolean) => void;
+  onClose: () => void;
+  openSignup: () => void;
 }
-const SigninModal = ({ onClose }: SigninModalProps) => {
+const SigninModal = ({ onClose, openSignup }: SigninModalProps) => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
-  const handleClickSignin = () => {
-    console.log(emailRef.current?.value);
+  const { refreshSession } = useSession();
+  const router = useRouter();
+  const onSuccess = (data: {
+    message: string;
+    success: boolean;
+    user: {
+      email: string;
+      id: string;
+      name: string;
+      type: string;
+    };
+  }) => {
+    refreshSession();
+    if (data.user.type === 'admin') {
+      router.push('/admin');
+      return;
+    }
+    onClose();
+  };
+  const onError = () => {};
+  const { mutate } = usePosts({ onSuccess, onError });
+
+  const handleClickSignin = async () => {
+    if (emailRef.current?.value && passwordRef.current?.value) {
+      mutate({
+        postData: {
+          email: emailRef.current?.value,
+          password: passwordRef.current?.value,
+        },
+        path: '/signin',
+      });
+    }
+  };
+
+  const handleClickSignup = () => {
+    onClose();
+    openSignup();
   };
 
   return (
@@ -26,7 +65,6 @@ const SigninModal = ({ onClose }: SigninModalProps) => {
                 _size: 'sm',
                 isFullWidth: true,
                 variant: 'primary',
-                placeholder: 'asdf',
                 ref: emailRef,
               }}
               labelProps={{
@@ -60,14 +98,19 @@ const SigninModal = ({ onClose }: SigninModalProps) => {
               <CaptionText size="sm" variant="disabled">
                 아직 회원이 아니신가요?
               </CaptionText>
-              <Button variant="ghost" size="sm" style={{ fontSize: 12 }}>
+              <Button
+                variant="ghost"
+                size="sm"
+                style={{ fontSize: 12 }}
+                onClick={handleClickSignup}
+              >
                 회원가입
               </Button>
             </div>
           </div>
         </div>
       </Modal.Body>
-      <Modal.CloseButton onClick={() => onClose(false)} />
+      <Modal.CloseButton onClick={() => onClose()} />
     </Modal>
   );
 };

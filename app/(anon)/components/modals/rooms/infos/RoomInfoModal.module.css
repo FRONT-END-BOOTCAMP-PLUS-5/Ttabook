@@ -1,0 +1,5 @@
+.info-detail {
+  padding: var(--spacing-10);
+  display: flex;
+  align-items: flex-start;
+}

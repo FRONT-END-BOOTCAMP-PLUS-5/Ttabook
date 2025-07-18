@@ -1,14 +1,22 @@
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
-interface PostProps {
-  onSuccess: (data?: unknown) => void;
-  onError: (err?: unknown) => void;
+interface PostProps<TResponse> {
+  onSuccess: (data: TResponse) => void;
+  onError: (err: unknown) => void;
 }
 
-const usePosts = ({ onSuccess, onError }: PostProps) => {
+interface MutateProps<TRequest> {
+  postData?: TRequest;
+  path: string;
+}
+
+const usePosts = <TRequest, TResponse>({
+  onSuccess,
+  onError,
+}: PostProps<TResponse>) => {
   const { isError, isPending, isPaused, isSuccess, mutate, mutateAsync } =
-    useMutation({
+    useMutation<TResponse, unknown, MutateProps<TRequest>>({
       mutationFn: async ({
         postData,
         path,
@@ -16,9 +24,10 @@ const usePosts = ({ onSuccess, onError }: PostProps) => {
         postData?: unknown;
         path: string;
       }) => {
-        const response = await axios.post(
+        const response: AxiosResponse<TResponse> = await axios.post(
           `${process.env.NEXT_PUBLIC_BASE_URL}${path}`,
-          postData
+          postData,
+          { withCredentials: true }
         );
         return response.data;
       },

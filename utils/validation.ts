@@ -1,3 +1,6 @@
+import { CookieService } from '@/backend/common/infrastructures/auth';
+import { NextRequest, NextResponse } from 'next/server';
+
 export function isValidEmail(email: string): boolean {
   // RFC 5322에 기반한 일반적인 이메일 정규식 (완벽하지는 않지만 대부분의 경우 유효)
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -33,3 +36,20 @@ export function isValidPassword(password: string): boolean {
 
   return true;
 }
+
+export const tokenValidation = (request: NextRequest): boolean => {
+  const cookieHeader = request.headers.get('Cookie');
+  if (!cookieHeader) {
+    return false;
+  }
+
+  const cookieService = new CookieService();
+  const accessToken = cookieService.extractTokenFromCookies(
+    cookieHeader,
+    'accessToken'
+  );
+  if (!accessToken || accessToken.trim() === '') {
+    return false;
+  }
+  return true;
+};

@@ -7,15 +7,18 @@ import axios from 'axios';
 import { isValidEmail, isValidPassword } from '@/utils/validation';
 import { usePosts } from '@/hooks/usePosts';
 import { useGets } from '@/hooks/useGets';
+import { useSession } from '@/app/providers/SessionProvider';
 
 interface SignupModalProps {
-  onClose: (toggle: boolean) => void;
+  onClose: () => void;
 }
 
 const SignupModal = ({ onClose }: SignupModalProps) => {
+  const { refreshSession } = useSession();
   const onSuccess = () => {
     alert('회원가입이 성공적으로 완료되었습니다!');
-    onClose(false);
+    refreshSession();
+    onClose();
   };
   const onError = (err: unknown) => {
     console.error('회원가입 실패:', err);
@@ -38,14 +41,12 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
     onSuccess,
     onError,
   });
-  const { refetch } = useGets<{ available: boolean; message: string }>(
-    ['duplicates'],
-    '/duplicates',
-    false,
-    {
-      email: email,
-    }
-  );
+  const { refetchWithParams } = useGets<{
+    available: boolean;
+    message: string;
+  }>(['duplicates'], '/duplicates', false, {
+    email: email,
+  });
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isValidEmail(e.target.value)) {
@@ -96,7 +97,7 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
       alert('이메일 형식이 잘못되었습니다.');
       return;
     }
-    const { data } = await refetch();
+    const { data } = await refetchWithParams({ email });
 
     if (data?.available && data?.message) {
       setCheckedDuplication(true);
@@ -221,7 +222,7 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
           </div>
         </div>
       </Modal.Body>
-      <Modal.CloseButton onClick={() => onClose(false)} />
+      <Modal.CloseButton onClick={onClose} />
     </Modal>
   );
 };
