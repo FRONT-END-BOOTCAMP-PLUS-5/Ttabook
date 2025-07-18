@@ -11,6 +11,7 @@ import { usePosts } from '@/hooks/usePosts';
 import { useSession } from '@/app/providers/SessionProvider';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/ds/components/atoms/loading/LoadingSpinner';
+import { useToastStore } from '@/hooks/useToast';
 
 interface RoomRsvModalProps {
   onClose: () => void;
@@ -53,6 +54,7 @@ const RoomRsvModal = ({ onClose, roomId, roomName }: RoomRsvModalProps) => {
   );
   const { user } = useSession();
   const reservationTime = useRef<number[] | null>(null);
+  const { showToast } = useToastStore();
 
   const onTimeSelect = (start: number | null, end: number | null) => {
     if (start && end) {
@@ -76,11 +78,11 @@ const RoomRsvModal = ({ onClose, roomId, roomName }: RoomRsvModalProps) => {
 
   const handleClickRsv = () => {
     if (!user) {
-      alert('로그인 후 사용해주세요!');
+      showToast('로그인 후 사용해주세요!', 'danger');
       return;
     }
     if (!reservationTime.current || reservationTime.current.length < 2) {
-      alert('예약시간을 정확히 선택해주세요');
+      showToast('예약시간을 정확히 선택해주세요', 'accent');
       return;
     }
 

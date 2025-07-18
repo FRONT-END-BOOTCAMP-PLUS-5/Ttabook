@@ -77,6 +77,16 @@
   --text-size-xl-font-weight: 800;
   --text-size-xl-line-height: 32px;
 
+  /* Toast Variant Tokens */
+  --toast-variant-primary-bg: var(--color-primary-dark);
+  --toast-variant-primary-color: var(--color-background);
+  --toast-variant-secondary-bg: var(--color-primary);
+  --toast-variant-secondary-color: var(--color-text-primary);
+  --toast-variant-accent-bg: var(--color-accent);
+  --toast-variant-accent-color: var(--color-text-primary);
+  --toast-variant-danger-bg: var(--color-error-dark);
+  --toast-variant-danger-color: var(--color-background);
+
   /* Button Variant Tokens */
   /* Primary */
   --button-variant-primary-bg: var(--color-primary);
