@@ -12,6 +12,7 @@ export class SaveRequest {
 
 export class UpdateRequest {
   constructor(
+    public spaceId: number,
     public roomId: number,
     public roomName: string,
     public roomDetail: string,
