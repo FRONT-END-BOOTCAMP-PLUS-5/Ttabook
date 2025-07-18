@@ -40,8 +40,8 @@ const ReservationCarousel = ({
             className={styles.reservationCard}
           >
             <div className={styles.spaceInfo}>
-              <div className={styles.spaceName}>멋쟁이 사자 공간</div>
-              <div className={styles.roomName}>멋쟁이의 방</div>
+              <div className={styles.spaceName}>{e.spaceName}</div>
+              <div className={styles.roomName}>{e.roomName}</div>
             </div>
 
             <div className={styles.timePickerContainer}>
