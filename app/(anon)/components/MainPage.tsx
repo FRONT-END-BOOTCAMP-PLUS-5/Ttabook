@@ -6,10 +6,11 @@ import styles from './MainPage.module.css';
 import { TitleText } from '@/ds/components/atoms/text/textWrapper';
 import { useGets } from '@/hooks/useGets';
 import { Space } from './types';
+import LoadingSpinner from '@/ds/components/atoms/loading/LoadingSpinner';
 
 const MainPage: React.FC = () => {
   const SPACE_ID = 150;
-  const { data } = useGets<Space>(['rooms'], `/spaces/${SPACE_ID}`);
+  const { data, isLoading } = useGets<Space>(['rooms'], `/spaces/${SPACE_ID}`);
 
   useEffect(() => {
     if (data) {
@@ -19,10 +20,19 @@ const MainPage: React.FC = () => {
 
   return (
     <div className={styles.mainPageContainer}>
-      <TitleText variant="primary" style={{ fontSize: 32, fontWeight: 'bold' }}>
-        {data?.spaceName}의 공간
-      </TitleText>
-      <Canvas rooms={data?.roomInfo || []} />
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <>
+          <TitleText
+            variant="primary"
+            style={{ fontSize: 32, fontWeight: 'bold' }}
+          >
+            {data?.spaceName}의 공간
+          </TitleText>
+          <Canvas rooms={data?.roomInfo || []} />
+        </>
+      )}
     </div>
   );
 };
