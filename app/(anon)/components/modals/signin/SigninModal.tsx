@@ -6,6 +6,7 @@ import { CaptionText } from '@/ds/components/atoms/text/textWrapper';
 import { useRef } from 'react';
 import { usePosts } from '@/hooks/usePosts';
 import { useSession } from '@/app/providers/SessionProvider';
+import { useRouter } from 'next/navigation';
 
 interface SigninModalProps {
   onClose: () => void;
@@ -15,8 +16,22 @@ const SigninModal = ({ onClose, openSignup }: SigninModalProps) => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const { refreshSession } = useSession();
-  const onSuccess = () => {
+  const router = useRouter();
+  const onSuccess = (data: {
+    message: string;
+    success: boolean;
+    user: {
+      email: string;
+      id: string;
+      name: string;
+      type: string;
+    };
+  }) => {
     refreshSession();
+    if (data.user.type === 'admin') {
+      router.push('/admin');
+      return;
+    }
     onClose();
   };
   const onError = () => {};
@@ -50,7 +65,6 @@ const SigninModal = ({ onClose, openSignup }: SigninModalProps) => {
                 _size: 'sm',
                 isFullWidth: true,
                 variant: 'primary',
-                placeholder: 'asdf',
                 ref: emailRef,
               }}
               labelProps={{

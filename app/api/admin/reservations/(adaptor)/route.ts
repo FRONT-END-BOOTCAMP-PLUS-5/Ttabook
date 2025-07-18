@@ -3,12 +3,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { GetRsvListUsecase } from '@/backend/admin/reservations/usecases/GetRsvListUsecase';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/backend/common/infrastructures/supabase/server';
+import { tokenValidation } from '@/utils/validation';
 
 export async function GET(request: NextRequest) {
-  const token = request.headers.get('Authorization');
-  if (!token) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!tokenValidation(request)) {
+    return NextResponse.json({ error: '인증이 필요합니다' }, { status: 401 });
   }
+
   const supabase: SupabaseClient = await createClient();
 
   const rsvRepository = new SbRsvRepository(supabase);
