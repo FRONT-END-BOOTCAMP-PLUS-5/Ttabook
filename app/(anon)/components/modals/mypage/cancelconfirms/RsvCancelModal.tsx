@@ -49,7 +49,6 @@ const RsvCancelModal: React.FC<RsvCancelModalProps> = ({
             variant="primary"
             size="md"
             onClick={handleConfirm}
-            className={styles.confirmButton}
           >
             확인
           </Button>
