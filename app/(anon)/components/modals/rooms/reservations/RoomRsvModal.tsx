@@ -5,7 +5,6 @@ import TimePicker from '@/ds/components/molecules/timePicker/TimePicker';
 import { useEffect, useRef, useState } from 'react';
 import Button from '@/ds/components/atoms/button/Button';
 import Image from 'next/image';
-import Ttabook from '@/public/ttabook-basic.svg';
 import { CaptionText } from '@/ds/components/atoms/text/textWrapper';
 import { usePosts } from '@/hooks/usePosts';
 import { useSession } from '@/app/providers/SessionProvider';
@@ -105,7 +104,7 @@ const RoomRsvModal = ({ onClose, roomId, roomName }: RoomRsvModalProps) => {
       <Modal.Body>
         <div className={styles['modal-container']}>
           <div className={styles['image-container']}>
-            <Image src={Ttabook} alt="ttabook basic image" width={160} />
+            <Image src={'/ttabook-basic.png'} alt="ttabook basic image" width={166} height={200} />
             <CaptionText style={{ margin: 0 }} variant="secondary">
               최대 4시간 예약이 가능합니다
             </CaptionText>
