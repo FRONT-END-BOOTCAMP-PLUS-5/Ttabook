@@ -1,7 +1,7 @@
 'use client';
 import { create } from 'zustand';
 
-type ModalType = 'signin' | 'signup' | 'room-rsv' | 'room-info' | 'cancel-confirm';
+type ModalType = 'signin' | 'signup' | 'room-rsv' | 'room-info' | 'cancel-confirm' | 'rsv-edit';
 
 interface ModalState {
   openModals: ModalType[];

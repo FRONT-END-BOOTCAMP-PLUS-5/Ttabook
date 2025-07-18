@@ -1,5 +1,5 @@
 import Modal from '@/ds/components/atoms/modal/Modal';
-import styles from './RoomRsvModal.module.css';
+import styles from './RsvEditModal.module.css';
 import { useGets } from '@/hooks/useGets';
 import TimePicker from '@/ds/components/molecules/timePicker/TimePicker';
 import { useEffect, useRef, useState } from 'react';
@@ -10,9 +10,8 @@ import { usePosts } from '@/hooks/usePosts';
 import { useSession } from '@/app/providers/SessionProvider';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/ds/components/atoms/loading/LoadingSpinner';
-import { useToastStore } from '@/hooks/useToast';
 
-interface RoomRsvModalProps {
+interface RsvEditModalProps {
   onClose: () => void;
   roomId : number;
   roomName: string;
@@ -32,7 +31,7 @@ const numberHourToDate = (hour: number): string => {
   return date.toISOString();
 };
 
-const RoomRsvModal = ({ onClose, roomId, roomName }: RoomRsvModalProps) => {
+const RsvEditModal = ({ onClose, roomId, roomName }: RsvEditModalProps) => {
   const router = useRouter();
   const onSuccess = () => {
     onClose();
@@ -53,7 +52,6 @@ const RoomRsvModal = ({ onClose, roomId, roomName }: RoomRsvModalProps) => {
   );
   const { user } = useSession();
   const reservationTime = useRef<number[] | null>(null);
-  const { showToast } = useToastStore();
 
   const onTimeSelect = (start: number | null, end: number | null) => {
     if (start && end) {
@@ -77,11 +75,11 @@ const RoomRsvModal = ({ onClose, roomId, roomName }: RoomRsvModalProps) => {
 
   const handleClickRsv = () => {
     if (!user) {
-      showToast('로그인 후 사용해주세요!', 'danger');
+      alert('로그인 후 사용해주세요!');
       return;
     }
     if (!reservationTime.current || reservationTime.current.length < 2) {
-      showToast('예약시간을 정확히 선택해주세요', 'accent');
+      alert('예약시간을 정확히 선택해주세요');
       return;
     }
 
@@ -106,7 +104,7 @@ const RoomRsvModal = ({ onClose, roomId, roomName }: RoomRsvModalProps) => {
       <Modal.Body>
         <div className={styles['modal-container']}>
           <div className={styles['image-container']}>
-            <Image src={'/ttabook-basic.png'} alt="ttabook basic image" width={166} height={200} />
+          <Image src={'/ttabook-basic.png'} alt="ttabook basic image" width={166} height={200} />
             <CaptionText style={{ margin: 0 }} variant="secondary">
               최대 4시간 예약이 가능합니다
             </CaptionText>
@@ -122,7 +120,7 @@ const RoomRsvModal = ({ onClose, roomId, roomName }: RoomRsvModalProps) => {
           )}
           <div className={styles['button-container']}>
             <Button variant="primary" size="sm" onClick={handleClickRsv}>
-              예약하기
+              수정
             </Button>
           </div>
         </div>
@@ -132,4 +130,4 @@ const RoomRsvModal = ({ onClose, roomId, roomName }: RoomRsvModalProps) => {
   );
 };
 
-export default RoomRsvModal;
+export default RsvEditModal;

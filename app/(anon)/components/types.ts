@@ -13,3 +13,16 @@ export type Space = {
   spaceName: string;
   roomInfo: Room[];
 };
+
+export interface RoomFurnitureProps {
+  x: number;
+  y: number;
+  roomWidth: number;
+  roomHeight: number;
+}
+
+export interface PersonIconProps {
+  x: number;
+  y: number;
+  color?: string;
+}
