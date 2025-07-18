@@ -14,7 +14,8 @@ const meta = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: 'A flexible modal component with compound pattern for composable content.',
+        component:
+          'A flexible modal component with compound pattern for composable content.',
       },
     },
   },
@@ -70,9 +71,13 @@ export const SignUpForm: Story = {
       <>
         <Modal.Title>Sign Up</Modal.Title>
         <Modal.Body>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div
+            style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}
+          >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <label style={{ width: '70px', fontSize: '14px', fontWeight: '500' }}>
+              <label
+                style={{ width: '70px', fontSize: '14px', fontWeight: '500' }}
+              >
                 Email
               </label>
               <input
@@ -100,7 +105,9 @@ export const SignUpForm: Story = {
               </button>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <label style={{ width: '70px', fontSize: '14px', fontWeight: '500' }}>
+              <label
+                style={{ width: '70px', fontSize: '14px', fontWeight: '500' }}
+              >
                 Password
               </label>
               <input
@@ -116,7 +123,9 @@ export const SignUpForm: Story = {
               />
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <label style={{ width: '70px', fontSize: '14px', fontWeight: '500' }}>
+              <label
+                style={{ width: '70px', fontSize: '14px', fontWeight: '500' }}
+              >
                 Confirm
               </label>
               <input
@@ -167,7 +176,10 @@ export const Large: Story = {
           <div>
             <h3>Large Content Area</h3>
             <p>This modal demonstrates a larger size configuration.</p>
-            <p>You can put more content here, including forms, images, or any other components.</p>
+            <p>
+              You can put more content here, including forms, images, or any
+              other components.
+            </p>
             <ul>
               <li>Feature 1</li>
               <li>Feature 2</li>
@@ -190,11 +202,34 @@ export const Small: Story = {
         <Modal.Title>Confirm</Modal.Title>
         <Modal.Body>
           <p>Are you sure you want to delete this item?</p>
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '20px' }}>
-            <button style={{ padding: '8px 16px', background: '#e87a74', color: 'white', border: 'none', borderRadius: '8px' }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: '10px',
+              justifyContent: 'center',
+              marginTop: '20px',
+            }}
+          >
+            <button
+              style={{
+                padding: '8px 16px',
+                background: '#e87a74',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+              }}
+            >
               Delete
             </button>
-            <button style={{ padding: '8px 16px', background: '#718096', color: 'white', border: 'none', borderRadius: '8px' }}>
+            <button
+              style={{
+                padding: '8px 16px',
+                background: '#718096',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+              }}
+            >
               Cancel
             </button>
           </div>
@@ -213,7 +248,10 @@ export const WithoutCloseButton: Story = {
       <>
         <Modal.Title>Important Notice</Modal.Title>
         <Modal.Body>
-          <p>This modal requires explicit action and cannot be closed with the X button.</p>
+          <p>
+            This modal requires explicit action and cannot be closed with the X
+            button.
+          </p>
           <button
             style={{
               marginTop: '20px',
@@ -245,8 +283,9 @@ export const ContentOverflow: Story = {
             <h3>Long Content</h3>
             {Array.from({ length: 20 }, (_, i) => (
               <p key={i}>
-                This is paragraph {i + 1}. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                This is paragraph {i + 1}. Lorem ipsum dolor sit amet,
+                consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
+                labore et dolore magna aliqua.
               </p>
             ))}
           </div>

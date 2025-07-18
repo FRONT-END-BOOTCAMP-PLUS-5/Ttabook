@@ -12,7 +12,7 @@ const meta = {
   },
   tags: ['autodocs'],
   argTypes: {
-    onClick: fn()
+    onClick: fn(),
   },
 } satisfies Meta<typeof Text>;
 

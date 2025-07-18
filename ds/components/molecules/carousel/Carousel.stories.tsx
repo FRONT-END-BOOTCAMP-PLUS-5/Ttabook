@@ -23,4 +23,4 @@ export const Default: Story = {
       <Card key={3}>Slide 3</Card>,
     ],
   },
-}; 
+};

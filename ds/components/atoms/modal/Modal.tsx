@@ -59,7 +59,10 @@ const Modal: React.FC<ModalProps> & {
   };
 
   const modalContent = (
-    <div className={styles['ttabook-modal-backdrop']} onClick={handleBackdropClick}>
+    <div
+      className={styles['ttabook-modal-backdrop']}
+      onClick={handleBackdropClick}
+    >
       <div
         className={styles['ttabook-modal']}
         style={{ width, height }}
@@ -79,7 +82,10 @@ const Modal: React.FC<ModalProps> & {
     : modalContent;
 };
 
-const ModalTitle: React.FC<ModalTitleProps> = ({ children, className = '' }) => {
+const ModalTitle: React.FC<ModalTitleProps> = ({
+  children,
+  className = '',
+}) => {
   return (
     <div className={`${styles['ttabook-modal-title']} ${className}`}>
       {children}
@@ -95,9 +101,12 @@ const ModalBody: React.FC<ModalBodyProps> = ({ children, className = '' }) => {
   );
 };
 
-const ModalCloseButton: React.FC<ModalCloseButtonProps> = ({ className = '', onClick }) => {
+const ModalCloseButton: React.FC<ModalCloseButtonProps> = ({
+  className = '',
+  onClick,
+}) => {
   const modalContext = useModalContext();
-  
+
   const handleClick = () => {
     if (onClick) {
       onClick();

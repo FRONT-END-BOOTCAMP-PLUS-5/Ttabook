@@ -44,7 +44,7 @@ describe('SessionProvider', () => {
 
     // 모든 mock 초기화
     jest.clearAllMocks();
-    
+
     // fetch 글로벌 모킹
     global.fetch = mockFetch;
   });
@@ -150,7 +150,6 @@ describe('SessionProvider', () => {
       expect(screen.getByTestId('user-email')).toHaveTextContent('no-email');
       expect(mockGetCurrentUser).toHaveBeenCalled();
     });
-
   });
 
   describe('세션 관리 메서드', () => {
@@ -236,11 +235,12 @@ describe('SessionProvider', () => {
 
       // 초기에는 세션 있음
       mockGetCurrentUser.mockResolvedValue(mockApiResponse);
-      
+
       // /api/logout 호출 모킹
       mockFetch.mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({ success: true, message: '로그아웃 완료' }),
+        json: () =>
+          Promise.resolve({ success: true, message: '로그아웃 완료' }),
       });
 
       const { SessionProvider, useSession } = await import(

@@ -14,9 +14,9 @@ export class GetRoomRsvUsecase {
       const RESERVATION_START_TIME = 9;
       const RESERVATION_END_TIME = 18;
 
-      const reservationStatus = new GetRoomReservationDto(new Array(
-        RESERVATION_END_TIME - RESERVATION_START_TIME
-      ).fill(0));
+      const reservationStatus = new GetRoomReservationDto(
+        new Array(RESERVATION_END_TIME - RESERVATION_START_TIME).fill(0)
+      );
 
       if (!reservations) {
         return reservationStatus;

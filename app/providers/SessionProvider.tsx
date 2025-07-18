@@ -37,7 +37,6 @@ export function SessionProvider({ children }: SessionProviderProps) {
   const [user, setUser] = useState<SessionUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-
   // 세션 초기화 함수 (HttpOnly 쿠키 사용)
   const initializeSession = React.useCallback(async () => {
     try {
@@ -66,7 +65,6 @@ export function SessionProvider({ children }: SessionProviderProps) {
       setIsLoading(false);
     }
   }, []);
-
 
   // 세션 새로고침 함수 (HttpOnly 쿠키가 이미 서버에서 설정된 후 호출)
   const refreshSession = async () => {

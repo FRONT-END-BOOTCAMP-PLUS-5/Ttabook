@@ -54,7 +54,6 @@ export default function SpaceLayout({ children }: { children: ReactNode }) {
 
         <main className={styles.main}>{children}</main>
       </div>
-
     </ProtectedRoute>
   );
 }

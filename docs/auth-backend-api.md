@@ -270,6 +270,7 @@ Cookie: refreshToken=...
 **엔드포인트:** `GET /api/duplicates?email={email}`
 
 **쿼리 파라미터:**
+
 - `email`: 확인할 이메일 주소 (URL 인코딩 필요)
 
 **응답 (성공 - 200):**
@@ -294,7 +295,9 @@ Cookie: refreshToken=...
 
 ```javascript
 const email = 'test@example.com';
-const response = await fetch(`/api/duplicates?email=${encodeURIComponent(email)}`);
+const response = await fetch(
+  `/api/duplicates?email=${encodeURIComponent(email)}`
+);
 const data = await response.json();
 
 if (data.available) {

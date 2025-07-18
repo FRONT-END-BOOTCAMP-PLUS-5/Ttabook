@@ -6,10 +6,14 @@ function validateBcryptLibrary() {
   if (!bcrypt) {
     throw new Error('bcryptjs library is not properly loaded or configured');
   }
-  
+
   // Check if essential functions exist (but skip validation in test environment when functions are mocked)
-  if (process.env.NODE_ENV !== 'test' && 
-      (typeof bcrypt.genSalt !== 'function' || typeof bcrypt.hash !== 'function' || typeof bcrypt.compare !== 'function')) {
+  if (
+    process.env.NODE_ENV !== 'test' &&
+    (typeof bcrypt.genSalt !== 'function' ||
+      typeof bcrypt.hash !== 'function' ||
+      typeof bcrypt.compare !== 'function')
+  ) {
     throw new Error('bcryptjs library is not properly loaded or configured');
   }
 }
@@ -32,21 +36,23 @@ export async function hashPassword(plainPassword: string): Promise<string> {
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : '알 수 없는 오류';
-    
+
     // 더 자세한 컨텍스트 정보 추가
     const contextInfo = {
       bcryptRounds: BCRYPT_ROUNDS,
       passwordLength: plainPassword?.length || 0,
       errorType: error instanceof Error ? error.constructor.name : typeof error,
     };
-    
+
     console.error('Password hashing failed:', {
       error: errorMessage,
       context: contextInfo,
       stack: error instanceof Error ? error.stack : undefined,
     });
-    
-    throw new Error(`패스워드 해시화 실패: ${errorMessage} (rounds: ${BCRYPT_ROUNDS})`);
+
+    throw new Error(
+      `패스워드 해시화 실패: ${errorMessage} (rounds: ${BCRYPT_ROUNDS})`
+    );
   }
 }
 

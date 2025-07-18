@@ -136,7 +136,6 @@ describe('JWT 유틸리티', () => {
     });
   });
 
-
   describe('verifyRefreshToken', () => {
     it('유효한 리프레시 토큰을 검증하고 사용자 정보를 반환해야 한다', async () => {
       const { signRefreshToken, verifyRefreshToken } = await import(
@@ -169,9 +168,9 @@ describe('JWT 유틸리티', () => {
     it('잘못된 리프레시 토큰에 대해 에러를 발생시켜야 한다', async () => {
       const { verifyRefreshToken } = await import('../../lib/jwt');
 
-      await expect(
-        verifyRefreshToken('invalid.refresh.token')
-      ).rejects.toThrow('토큰 검증 실패:');
+      await expect(verifyRefreshToken('invalid.refresh.token')).rejects.toThrow(
+        '토큰 검증 실패:'
+      );
     });
   });
 
@@ -215,7 +214,5 @@ describe('JWT 유틸리티', () => {
         verifyAccessToken('completely.invalid.token')
       ).rejects.toThrow('토큰 검증 실패:');
     });
-
-
   });
 });

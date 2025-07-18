@@ -1,5 +1,3 @@
 export class GetRoomReservationDto {
-  constructor(
-    public schedule: number[]
-  ) {}
+  constructor(public schedule: number[]) {}
 }

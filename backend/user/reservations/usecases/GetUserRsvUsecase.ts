@@ -42,8 +42,8 @@ export class GetUserRsvUsecase {
         i <= new Date(e.endTime).getHours() - RESERVATION_START_TIME;
         i++
       ) {
-          reservationStatus.get(e.roomId)!.schedule[i] = 1;
-        }
+        reservationStatus.get(e.roomId)!.schedule[i] = 1;
+      }
     });
 
     return Array.from(reservationStatus.values());

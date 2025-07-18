@@ -77,7 +77,7 @@ describe('config.ts', () => {
       jest.resetModules();
       const config = await import('../../lib/config');
       expect(config.NODE_ENV).toBe('development');
-      
+
       process.env = tempEnv;
     });
 
@@ -91,7 +91,7 @@ describe('config.ts', () => {
       jest.resetModules();
       const config = await import('../../lib/config');
       expect(config.PORT).toBe('3000');
-      
+
       process.env = tempEnv;
     });
   });

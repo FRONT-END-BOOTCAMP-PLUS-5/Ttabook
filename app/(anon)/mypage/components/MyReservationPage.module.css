@@ -7,7 +7,7 @@
   align-items: center;
 }
 
-.carouselContainer {  
+.carouselContainer {
   display: flex;
   flex-direction: row;
   justify-content: center;

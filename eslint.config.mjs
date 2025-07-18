@@ -23,7 +23,11 @@ const eslintConfig = [
       'public/',
       'temp/',
     ],
-    extends: ['next/core-web-vitals', 'next/typescript', 'plugin:storybook/recommended'],
+    extends: [
+      'next/core-web-vitals',
+      'next/typescript',
+      'plugin:storybook/recommended',
+    ],
     overrides: [
       {
         files: ['*.ts', '*.tsx', '*.js', '*.jsx'],
