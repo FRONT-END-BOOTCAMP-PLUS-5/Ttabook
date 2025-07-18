@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import EditRoomPage from './components/EditRoomPage';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
@@ -11,7 +11,7 @@ const SpacePage: React.FC = () => {
     const res = await axios.get('http://localhost:3000/api/spaces/155');
 
     const space = res.data;
-    return space.data;
+    return space;
   };
 
   const { data, isLoading, error } = useQuery<Space>({

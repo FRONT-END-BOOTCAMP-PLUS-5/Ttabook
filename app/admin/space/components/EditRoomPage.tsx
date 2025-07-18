@@ -4,21 +4,21 @@ import React, { useRef, useState, useEffect } from 'react';
 import Konva from 'konva';
 import styles from './EditRoomPage.module.css';
 import Canvas from './Canvas';
-import { Room } from './types';
+import { RoomDto } from './types';
 
 interface EditRoomPageProps {
   spaceId?: number;
-  initialRooms?: Room[];
+  initialRooms?: RoomDto[];
   spaceName?: string;
 }
 
 const EditRoomPage: React.FC<EditRoomPageProps> = ({
   spaceId,
   initialRooms = [],
-  spaceName = '멋쟁이 사자',
+  spaceName = '공간 이름',
 }) => {
   const [adminName, setAdminName] = useState<string>(spaceName);
-  const [rooms, setRooms] = useState<Room[]>(initialRooms);
+  const [rooms, setRooms] = useState<RoomDto[]>(initialRooms);
   const [selectedId, setSelectedId] = useState<string | number | null>(null);
   const [editingId, setEditingId] = useState<string | number | null>(null);
   const [editingPos, setEditingPos] = useState<{ x: number; y: number }>({
@@ -35,200 +35,135 @@ const EditRoomPage: React.FC<EditRoomPageProps> = ({
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-
     if (!stageRef.current) return;
     const stage = stageRef.current.getStage();
     const stageBox = stage.container().getBoundingClientRect();
-
     const dropX = e.clientX - stageBox.left;
     const dropY = e.clientY - stageBox.top;
 
-    const newRoom: Room = {
-      id: Date.now().toString(),
+    const newRoom: RoomDto = {
+      id: `new_${Date.now()}`, // DB에 없는 임시 ID
       positionX: dropX,
       positionY: dropY,
       width: 120,
       height: 100,
-      name: '',
+      name: '새로운 방',
       detail: '',
     };
-
     setRooms((prev) => [...prev, newRoom]);
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
+  const handleDragOver = (e: React.DragEvent) => e.preventDefault();
+
+  const handleRectClick = (room: RoomDto) => setSelectedId(room.id);
+
+  const handleDelete = (room: RoomDto) => {
+    setRooms((prev) => prev.filter((r) => r.id !== room.id));
+    setSelectedId(null);
   };
 
-  const handleRectClick = (room: Room) => {
-    setSelectedId(room.id);
-  };
-
-  const handleDragEnd = (id: string, positionX: number, positionY: number) => {
+  const handleDragEnd = (
+    id: string | number,
+    positionX: number,
+    positionY: number
+  ) => {
     setRooms((prev) =>
-      prev.map((room) =>
-        room.id.toString() === id ? { ...room, positionX, positionY } : room
-      )
+      prev.map((r) => (r.id === id ? { ...r, positionX, positionY } : r))
     );
   };
 
-  const handleTransformEnd = (room: Room, node: Konva.Rect) => {
+  const handleTransformEnd = (room: RoomDto, node: Konva.Rect) => {
     const scaleX = node.scaleX();
     const scaleY = node.scaleY();
-
-    const updatedRoom: Room = {
-      // 배열이여야 함. 수정필요.
+    const updatedRoom: RoomDto = {
       ...room,
       positionX: node.x(),
       positionY: node.y(),
       width: Math.max(30, node.width() * scaleX),
       height: Math.max(30, node.height() * scaleY),
     };
-
     node.scaleX(1);
     node.scaleY(1);
-
     setRooms((prev) => prev.map((r) => (r.id === room.id ? updatedRoom : r)));
   };
 
-  const handleDelete = (room: Room) => {
-    if (room.id) {
-      setRooms((prev) => prev.filter((r) => r.id !== room.id));
-      setSelectedId(null);
-
-      if (transformerRef.current) {
-        transformerRef.current.nodes([]);
-        transformerRef.current.getLayer()?.batchDraw();
-      }
-    }
-  };
-
-  const handleEditStart = (room: Room) => {
+  const handleEditStart = (room: RoomDto) => {
     setEditingId(room.id);
     setEditingPos({ x: room.positionX, y: room.positionY });
   };
 
   const spaceSave = async () => {
-    const newRooms = rooms.filter((room) => typeof room.id === 'string');
-    const updatedRooms = rooms.filter((room) => typeof room.id === 'number');
+    if (!spaceId) {
+      alert('공간 정보가 올바르지 않아 저장할 수 없습니다.');
+      console.error('spaceSave error: spaceId is missing.');
+      return;
+    }
 
     try {
-      let currentSpaceId = spaceId;
-      // space에 room이 없다면, POST하여 새로운 공간을 생성
-      if (!currentSpaceId) {
-        const spaceResponse = await fetch('/api/admin/spaces', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'temp-token',
-          },
-          body: JSON.stringify({
-            spaceName: adminName,
-            rooms: newRooms.map((room) => ({
-              name: room.name ?? '',
-              detail: room.detail ?? '',
-              positionX: room.positionX,
-              positionY: room.positionY,
-              width: room.width,
-              height: room.height,
-            })),
-          }),
-        });
-        if (!spaceResponse.ok) {
-          throw new Error('Failed to create space');
-        }
-        const spaceData = await spaceResponse.json();
-        currentSpaceId = spaceData.spaceId; // Assuming the response contains spaceId
-      } else if (currentSpaceId) {
-        // await fetch(`/api/admin/spaces/${currentSpaceId}`, {
-        // method: 'PUT',
-        // headers: {
-        //   'Content-Type': 'application/json',
-        //   Authorization: 'temp-token',
-        // },
-        // body: JSON.stringify({}),
-        // });
+      const response = await fetch(`/api/admin/spaces/${spaceId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'temp-token', // TODO: 실제 인증 로직으로 교체
+        },
+        body: JSON.stringify({
+          spaceName: adminName,
+          rooms: rooms.map((room) => ({
+            roomId: typeof room.id === 'number' ? room.id : undefined,
+            name: room.name ?? '이름 없음',
+            detail: room.detail ?? '',
+            positionX: room.positionX,
+            positionY: room.positionY,
+            width: room.width,
+            height: room.height,
+          })),
+        }),
+      });
 
-        // Handle new, updated, and deleted rooms for an existing space
-        // if (newRooms.length > 0) {
-        //   await fetch(`/api/admin/spaces/${currentSpaceId}`, {
-        //     method: 'POST',
-        //     headers: {
-        //       'Content-Type': 'application/json',
-        //       Authorization: 'temp-token',
-        //     },
-        //     body: JSON.stringify({
-        //       rooms: newRooms.map((room) => ({
-        //         name: room.name ?? '',
-        //         detail: room.detail ?? '',
-        //         positionX: room.positionX,
-        //         positionY: room.positionY,
-        //         width: room.width,
-        //         height: room.height,
-        //       })),
-        //     }),
-        //   });
-        // }
-
-        if (updatedRooms.length > 0) {
-          await fetch(`/api/admin/spaces/${currentSpaceId}`, {
-            // space에 room이 있다면, PUT 요청으로 공간을 업데이트
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: 'temp-token',
-            },
-            body: JSON.stringify({
-              // spaceName: adminName,
-              rooms: updatedRooms.map((room) => ({
-                roomId: room.id,
-                name: room.name ?? '',
-                detail: room.detail ?? '',
-                positionX: room.positionX,
-                positionY: room.positionY,
-                width: room.width,
-                height: room.height,
-              })),
-            }),
-          });
-        }
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update space');
       }
 
       alert('저장되었습니다.');
-    } catch {
-      console.error('Error saving rooms:');
-      alert('저장 중 오류가 발생했습니다.');
+      // 선택사항: 저장 후 페이지를 새로고침하여 서버 ID를 반영할 수 있습니다.
+      // window.location.reload();
+    } catch (error) {
+      console.error('Error saving space:', error);
+      alert(
+        `저장 중 오류가 발생했습니다: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   };
 
   useEffect(() => {
     const transformer = transformerRef.current;
-    const stage = stageRef.current?.getStage();
-    if (!transformer || !stage) return;
+    if (!transformer || !stageRef.current) return;
+    const stage = stageRef.current.getStage();
 
     if (selectedId && !editingId) {
-      const groupNode = stage.findOne(`#${selectedId.toString()}`);
-      if (groupNode) {
-        transformer.nodes([groupNode]);
-        transformer.getLayer()?.batchDraw();
+      const node = stage.findOne(`#${selectedId.toString()}`);
+      if (node) {
+        transformer.nodes([node]);
+      } else {
+        transformer.nodes([]);
       }
     } else {
       transformer.nodes([]);
     }
+    transformer.getLayer()?.batchDraw();
   }, [selectedId, editingId, rooms]);
 
   return (
     <div className={styles.container}>
       <div className={styles.canvasContainer}>
-        <div>
-          <input
-            type="text"
-            value={adminName}
-            onChange={(e) => setAdminName(e.target.value)}
-            className={styles.titleInput}
-          />
-        </div>
-
+        <input
+          type="text"
+          value={adminName}
+          onChange={(e) => setAdminName(e.target.value)}
+          className={styles.titleInput}
+        />
+        {/* Canvas 컴포넌트에 필요한 props를 모두 전달합니다. */}
         <Canvas
           rooms={rooms}
           setRooms={setRooms}
@@ -246,7 +181,6 @@ const EditRoomPage: React.FC<EditRoomPageProps> = ({
           stageRef={stageRef}
           transformerRef={transformerRef}
         />
-
         <div
           draggable
           onDragStart={handleDragStart}

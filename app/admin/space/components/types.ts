@@ -3,10 +3,10 @@ import Konva from 'konva';
 export type Space = {
   spaceId: number;
   spaceName: string;
-  roomInfo: Room[];
+  roomInfo: RoomDto[];
 };
 
-export type Room = {
+export type RoomDto = {
   id: number | string;
   positionX: number;
   positionY: number;
@@ -16,20 +16,30 @@ export type Room = {
   detail?: string;
 };
 
+export type incomingRooms = {
+  spaceId: number;
+  rooms: RoomDto[];
+};
+
+export type existingRooms = {
+  spaceId: number;
+  rooms: RoomDto[];
+};
+
 export interface CanvasProps {
-  rooms: Room[];
-  setRooms: React.Dispatch<React.SetStateAction<Room[]>>;
+  rooms: RoomDto[];
+  setRooms: React.Dispatch<React.SetStateAction<RoomDto[]>>;
   setSelectedId: (id: string | number | null) => void;
   editingId: string | number | null;
   setEditingId: (id: string | number | null) => void;
   editingPos: { x: number; y: number };
   handleDrop: (e: React.DragEvent) => void;
   handleDragOver: (e: React.DragEvent) => void;
-  handleRectClick: (room: Room) => void;
+  handleRectClick: (room: RoomDto) => void;
   handleDragEnd: (id: string, x: number, y: number) => void;
-  handleTransformEnd: (room: Room, node: Konva.Rect) => void;
-  handleDelete: (room: Room) => void;
-  handleEditStart: (room: Room) => void;
+  handleTransformEnd: (room: RoomDto, node: Konva.Rect) => void;
+  handleDelete: (room: RoomDto) => void;
+  handleEditStart: (room: RoomDto) => void;
   stageRef: React.RefObject<Konva.Stage | null>;
   transformerRef: React.RefObject<Konva.Transformer | null>;
 }
