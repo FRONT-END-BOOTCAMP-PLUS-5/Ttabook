@@ -55,7 +55,7 @@
 - **TodoWrite**: 작업 추적 필수, Ori님 승인없이 폐기 금지
 - **저널**: 기술통찰/실패접근법/사용자선호도 기록
 
-## 참조
+## 작업 전 읽어야 할 파일
 
 - @shared/yarn_context.md
 - @shared/coding_convention.md

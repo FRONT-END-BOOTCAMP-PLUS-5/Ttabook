@@ -4,4 +4,5 @@ export interface TimeTileProps {
   isSelected: boolean;
   onClick: (time: number) => void;
   isLastTile: boolean;
+  readonly?: boolean;
 }

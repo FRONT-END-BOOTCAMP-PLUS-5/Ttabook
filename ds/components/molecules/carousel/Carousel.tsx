@@ -5,12 +5,35 @@ import { CarouselProps } from './Carousel.type';
 /**
  * General-purpose Carousel component. Shows one slide at a time with left/right navigation and sliding animation.
  */
-const Carousel: React.FC<CarouselProps> = ({ children, className = '', style }) => {
-  const [current, setCurrent] = useState(0);
+const Carousel: React.FC<CarouselProps> = ({ 
+  children, 
+  className = '', 
+  style, 
+  currentIndex, 
+  onIndexChange 
+}) => {
+  const [internalCurrent, setInternalCurrent] = useState(0);
   const total = React.Children.count(children);
-
-  const goLeft = () => setCurrent((prev) => (prev === 0 ? total - 1 : prev - 1));
-  const goRight = () => setCurrent((prev) => (prev === total - 1 ? 0 : prev + 1));
+  
+  const current = currentIndex !== undefined ? currentIndex : internalCurrent;
+  
+  const goLeft = () => {
+    const newIndex = current === 0 ? total - 1 : current - 1;
+    if (onIndexChange) {
+      onIndexChange(newIndex);
+    } else {
+      setInternalCurrent(newIndex);
+    }
+  };
+  
+  const goRight = () => {
+    const newIndex = current === total - 1 ? 0 : current + 1;
+    if (onIndexChange) {
+      onIndexChange(newIndex);
+    } else {
+      setInternalCurrent(newIndex);
+    }
+  };
 
   return (
     <div
