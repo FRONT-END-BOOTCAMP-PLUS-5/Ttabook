@@ -1,5 +1,4 @@
 import Modal from '@/ds/components/atoms/modal/Modal';
-import { Room } from '../../../types';
 import styles from './RoomRsvModal.module.css';
 import { useGets } from '@/hooks/useGets';
 import TimePicker from '@/ds/components/molecules/timePicker/TimePicker';
@@ -12,10 +11,12 @@ import { usePosts } from '@/hooks/usePosts';
 import { useSession } from '@/app/providers/SessionProvider';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/ds/components/atoms/loading/LoadingSpinner';
+import { useToastStore } from '@/hooks/useToast';
 
 interface RoomRsvModalProps {
   onClose: () => void;
-  room: Room;
+  roomId : number;
+  roomName: string;
 }
 
 const START_TIME = 9;
@@ -32,7 +33,7 @@ const numberHourToDate = (hour: number): string => {
   return date.toISOString();
 };
 
-const RoomRsvModal = ({ onClose, room }: RoomRsvModalProps) => {
+const RoomRsvModal = ({ onClose, roomId, roomName }: RoomRsvModalProps) => {
   const router = useRouter();
   const onSuccess = () => {
     onClose();
@@ -45,7 +46,7 @@ const RoomRsvModal = ({ onClose, room }: RoomRsvModalProps) => {
     '/rooms/reservations',
     true,
     {
-      roomId: room.id,
+      roomId: roomId.toString()
     }
   );
   const [reservedTimes, setReservedTimes] = useState(
@@ -53,6 +54,7 @@ const RoomRsvModal = ({ onClose, room }: RoomRsvModalProps) => {
   );
   const { user } = useSession();
   const reservationTime = useRef<number[] | null>(null);
+  const { showToast } = useToastStore();
 
   const onTimeSelect = (start: number | null, end: number | null) => {
     if (start && end) {
@@ -76,17 +78,17 @@ const RoomRsvModal = ({ onClose, room }: RoomRsvModalProps) => {
 
   const handleClickRsv = () => {
     if (!user) {
-      alert('로그인 후 사용해주세요!');
+      showToast('로그인 후 사용해주세요!', 'danger');
       return;
     }
     if (!reservationTime.current || reservationTime.current.length < 2) {
-      alert('예약시간을 정확히 선택해주세요');
+      showToast('예약시간을 정확히 선택해주세요', 'accent');
       return;
     }
 
     const rsvData = {
       userId: user?.id,
-      roomId: room.id,
+      roomId,
       startTime: numberHourToDate(reservationTime.current[0]),
       endTime: numberHourToDate(reservationTime.current[1]),
     };
@@ -101,7 +103,7 @@ const RoomRsvModal = ({ onClose, room }: RoomRsvModalProps) => {
 
   return (
     <Modal width={960} height={600}>
-      <Modal.Title>{room.name}의 방</Modal.Title>
+      <Modal.Title>{roomName}의 방</Modal.Title>
       <Modal.Body>
         <div className={styles['modal-container']}>
           <div className={styles['image-container']}>

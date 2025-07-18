@@ -13,8 +13,8 @@ import { SupabaseClient } from '@supabase/supabase-js';
 
 export async function GET(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { userId } = body;
+    const { searchParams } = request.nextUrl;
+    const userId = searchParams.get('userId');
 
     if (!userId) {
       return NextResponse.json(
@@ -22,6 +22,7 @@ export async function GET(request: NextRequest) {
         { status: 400 }
       );
     }
+    console.log('userId', userId);
 
     const supabase: SupabaseClient = await createClient();
     const rsvRepository = new SbRsvRepository(supabase);

@@ -52,14 +52,14 @@ export class SbRsvRepository implements RsvRepository {
       id,
       user_id,
       room_id,
+      start_time,
+      end_time,
       room:room_id(
         name,
         space_id,
         space:space_id(name)
-      ),
-      start_time,
-      end_time,
-    `
+      )
+        `
       )
       .eq('user_id', id);
 
