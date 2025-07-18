@@ -6,8 +6,10 @@ import { useGets } from '@/hooks/useGets';
 import { useSession } from '@/app/providers/SessionProvider';
 import { useModalStore } from '@/hooks/useModal';
 import { GetUserRsvDto } from '@/backend/user/reservations/dtos/GetUserRsvDto';
-import RoomRsvModal from '../../components/modals/rooms/reservations/RoomRsvModal';
 import ReservationCarousel from './ReservationCarousel';
+import Image from 'next/image';
+import RsvEditModal from '../../components/modals/mypage/reservations/RsvEditModal';
+import RsvCancelModal from '../../components/modals/mypage/cancelconfirms/RsvCancelModal';
 
 const START_TIME = 9;
 const TIME_PERIOD = 9; //
@@ -55,36 +57,52 @@ const MyReservationPage = () => {
   }, [data]);
 
   const handleEdit = () => {
-    openModal('room-rsv');
+    openModal('rsv-edit');
   };
 
   const handleDelete = () => {
-    prompt();
+    openModal('cancel-confirm');
   };
 
   return (
     <>
-      {isModalOpen('room-rsv') && reservations && (
-        <RoomRsvModal
+      {isModalOpen('rsv-edit') && reservations && (
+        <RsvEditModal
           roomId={reservations[carouselIndex].roomId}
           roomName={reservations[carouselIndex].roomName}
-          onClose={() => closeModal('signup')}
+          onClose={() => closeModal('rsv-edit')}
+        />
+      )}
+      {isModalOpen('cancel-confirm') && reservations && (
+        <RsvCancelModal
+          onConfirm={() => {}}
+          onClose={() => closeModal('cancel-confirm')}
         />
       )}
       <div className={styles.container}>
         <div className="titleset">
-          <div className={styles.title}>나의 예약 현황</div>
           {reservations ? (
-            <ReservationCarousel
-              reservations={reservations}
-              availableTimes={nineToFive}
-              currentIndex={carouselIndex}
-              onIndexChange={setCarouselIndex}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
+            <>
+              <div className={styles.title}>나의 예약 현황</div>
+              <ReservationCarousel
+                reservations={reservations}
+                availableTimes={nineToFive}
+                currentIndex={carouselIndex}
+                onIndexChange={setCarouselIndex}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            </>
           ) : (
-            <div></div>
+            <div className={styles.container}>
+              <div className={styles.title}>예약이 없습니다!</div>
+              <Image
+                src={'/ttabook-surprised.png'}
+                width={400}
+                height={600}
+                alt=""
+              />
+            </div>
           )}
         </div>
       </div>
