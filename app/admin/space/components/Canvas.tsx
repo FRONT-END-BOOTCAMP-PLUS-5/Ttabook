@@ -15,8 +15,8 @@ import Konva from 'konva';
 import styles from './Canvas.module.css';
 import { CanvasProps } from './types';
 
-const STAGE_WIDTH = 800;
-const STAGE_HEIGHT = 700;
+const STAGE_WIDTH = 720;
+const STAGE_HEIGHT = 580;
 
 const Canvas: React.FC<CanvasProps> = ({
   rooms,
