@@ -10,6 +10,7 @@ import { CaptionText } from '@/ds/components/atoms/text/textWrapper';
 import { usePosts } from '@/hooks/usePosts';
 import { useSession } from '@/app/providers/SessionProvider';
 import { useRouter } from 'next/navigation';
+import LoadingSpinner from '@/ds/components/atoms/loading/LoadingSpinner';
 
 interface RoomRsvModalProps {
   onClose: () => void;
@@ -39,7 +40,7 @@ const RoomRsvModal = ({ onClose, roomId, roomName }: RoomRsvModalProps) => {
   };
   const onError = () => {};
   const { mutate } = usePosts({ onSuccess, onError });
-  const { data } = useGets<{ schedule: number[] }>(
+  const { data, isLoading } = useGets<{ schedule: number[] }>(
     ['room-rervations'],
     '/rooms/reservations',
     true,
@@ -109,11 +110,15 @@ const RoomRsvModal = ({ onClose, roomId, roomName }: RoomRsvModalProps) => {
               최대 4시간 예약이 가능합니다
             </CaptionText>
           </div>
-          <TimePicker
-            availableTimes={nineToFive}
-            reservedTimes={reservedTimes}
-            onTimeSelect={onTimeSelect}
-          />
+          {isLoading ? (
+            <LoadingSpinner size={30} />
+          ) : (
+            <TimePicker
+              availableTimes={nineToFive}
+              reservedTimes={reservedTimes}
+              onTimeSelect={onTimeSelect}
+            />
+          )}
           <div className={styles['button-container']}>
             <Button variant="primary" size="sm" onClick={handleClickRsv}>
               예약하기
