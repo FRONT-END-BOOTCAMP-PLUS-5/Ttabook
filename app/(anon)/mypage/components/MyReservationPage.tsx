@@ -10,6 +10,7 @@ import ReservationCarousel from './ReservationCarousel';
 import Image from 'next/image';
 import RsvEditModal from '../../components/modals/mypage/reservations/RsvEditModal';
 import RsvCancelModal from '../../components/modals/mypage/cancelconfirms/RsvCancelModal';
+import LoadingSpinner from '@/ds/components/atoms/loading/LoadingSpinner';
 
 const START_TIME = 9;
 const TIME_PERIOD = 9; //
@@ -22,7 +23,7 @@ const MyReservationPage = () => {
     null
   );
   const { user } = useSession();
-  const { data } = useGets<GetUserRsvDto[]>(
+  const { data, isLoading, error, isSuccess } = useGets<GetUserRsvDto[]>(
     ['mypage'],
     '/user/reservations',
     true,
@@ -32,29 +33,28 @@ const MyReservationPage = () => {
   );
 
   useEffect(() => {
-    const rsvs = data?.map((e) => {
-      if (e && e.schedule.length > 0) {
+    if (isSuccess && data) {
+      const rsvs = data.map((e) => {
+        if (e && e.schedule.length > 0) {
+          return {
+            ...e,
+            schedule: e.schedule
+              .map((value, index) => {
+                if (value === 1) {
+                  return index + START_TIME;
+                }
+              })
+              .filter(Boolean) as number[],
+          };
+        }
         return {
           ...e,
-          schedule: e.schedule
-            .map((value, index) => {
-              if (value === 1) {
-                return index + START_TIME;
-              }
-            })
-            .filter(Boolean) as number[],
+          schedule: [],
         };
-      }
-      return {
-        ...e,
-        schedule: [],
-      };
-    });
-
-    if (rsvs) {
+      });
       setReservations(rsvs);
     }
-  }, [data]);
+  }, [data, isSuccess]);
 
   const handleEdit = () => {
     openModal('rsv-edit');
@@ -81,7 +81,18 @@ const MyReservationPage = () => {
       )}
       <div className={styles.container}>
         <div className="titleset">
-          {reservations ? (
+          {isLoading && (
+            <div className={styles.container}>
+              <div className={styles.title}>나의 예약 현황</div>
+              <LoadingSpinner />
+            </div>
+          )}
+          {error && (
+            <div className={styles.container}>
+              <div className={styles.title}>오류가 발생했습니다</div>
+            </div>
+          )}
+          {isSuccess && reservations && reservations.length > 0 && (
             <>
               <div className={styles.title}>나의 예약 현황</div>
               <ReservationCarousel
@@ -93,7 +104,8 @@ const MyReservationPage = () => {
                 onDelete={handleDelete}
               />
             </>
-          ) : (
+          )}
+          {isSuccess && reservations && reservations.length === 0 && (
             <div className={styles.container}>
               <div className={styles.title}>예약이 없습니다!</div>
               <Image
