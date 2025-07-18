@@ -38,13 +38,6 @@
   position: relative;
 }
 
-.exclamation {
-  font-size: var(--text-size-xl-font-size);
-  font-weight: var(--text-size-xl-font-weight);
-  color: var(--color-text-primary);
-  margin-bottom: var(--spacing-2);
-}
-
 .turtleImage {
   width: 120px;
   height: auto;
@@ -55,8 +48,4 @@
   justify-content: center;
   width: 100%;
   margin-top: var(--spacing-4);
-}
-
-.confirmButton {
-  min-width: 100px;
 }
