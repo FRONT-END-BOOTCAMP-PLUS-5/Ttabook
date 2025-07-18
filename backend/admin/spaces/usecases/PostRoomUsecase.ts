@@ -19,6 +19,7 @@ export class PostRoomUsecase {
         room.height
       );
     });
+
     return this.repository.saveAll(saveRequests);
   }
 }

@@ -1,0 +1,49 @@
+
+.container {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.canvasContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 5px 0px;
+}
+
+.newRoomButton {
+  width: 100px;
+  height: 60px;
+  background-color: #B8D4A8;
+  cursor: grab;
+  border: solid 1px #4A5D3A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  user-select: none;
+}
+
+.saveButton {
+  width: 100px;
+  height: 40px;
+  background-color: #B8D4A8;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  user-select: none;
+}
+
+.saveButton:hover {
+  background-color: #9BB89A;
+} 
