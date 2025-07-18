@@ -8,9 +8,10 @@ import { Room } from './types';
 import { useModalStore } from '@/hooks/useModal';
 import RoomRsvModal from './modals/rooms/reservations/RoomRsvModal';
 import RoomInfoModal from './modals/rooms/infos/RoomInfoModal';
+import RoomFurniture from './RoomFurniture';
 
-const STAGE_WIDTH = 800;
-const STAGE_HEIGHT = 700;
+const STAGE_WIDTH = 650;
+const STAGE_HEIGHT = 550;
 
 interface CanvasProps {
   rooms: Room[];
@@ -74,6 +75,7 @@ const Canvas: React.FC<CanvasProps> = ({ rooms }) => {
                   width={room.width}
                   height={room.height}
                   fill="#B8D4A8"
+                  cornerRadius={5}
                   onClick={() => handleOpenReservationModal(room)}
                   onMouseEnter={() => {
                     document.body.style.cursor = 'pointer';
@@ -82,21 +84,27 @@ const Canvas: React.FC<CanvasProps> = ({ rooms }) => {
                     document.body.style.cursor = 'default';
                   }}
                 />
+                <RoomFurniture
+                  x={0}
+                  y={0}
+                  roomWidth={room.width}
+                  roomHeight={room.height}
+                />
                 <Text
-                  text={room.name || '이름 입력'}
-                  x={room.width * 0.03}
-                  y={room.height * 0.06}
+                  text={room.name || ''}
+                  x={7}
+                  y={7}
                   width={room.width * 0.92}
                   height={room.height * 0.92}
-                  fontSize={room.height * 0.1}
-                  fill="black"
+                  fontSize={15}
+                  fill="white"
                   lineHeight={1.0}
                   ellipsis={true}
                   listening={false}
                 />
                 <Label
-                  x={room.width * 0.9}
-                  y={room.height * 0.05}
+                  x={room.width - 20}
+                  y={7}
                   onClick={() => {
                     handleOpenInfoModal(room);
                   }}
@@ -104,8 +112,8 @@ const Canvas: React.FC<CanvasProps> = ({ rooms }) => {
                   <Tag fill="transparent" />
                   <Text
                     text="ⓘ"
-                    fontSize={room.height * 0.09}
-                    fill="black"
+                    fontSize={17}
+                    fill="white"
                     padding={0}
                     listening={true}
                     onMouseEnter={() => {
