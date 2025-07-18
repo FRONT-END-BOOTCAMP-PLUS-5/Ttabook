@@ -6,7 +6,10 @@ import {
   SaveRequest,
   UpdateRequest,
 } from '../../domains/repositories/rsvRequest';
-import { mapKeysToCamelCase, mapKeysToSnakeCase } from '../utils/CaseConvertUtils';
+import {
+  mapKeysToCamelCase,
+  mapKeysToSnakeCase,
+} from '../utils/CaseConvertUtils';
 
 export class SbRsvRepository implements RsvRepository {
   private supabase: SupabaseClient;
@@ -91,8 +94,8 @@ export class SbRsvRepository implements RsvRepository {
 
   async save(reservation: SaveRequest): Promise<void> {
     const query = this.supabase
-    .from('reservations')
-    .insert(mapKeysToSnakeCase(reservation));
+      .from('reservations')
+      .insert(mapKeysToSnakeCase(reservation));
 
     const { error } = await query;
 

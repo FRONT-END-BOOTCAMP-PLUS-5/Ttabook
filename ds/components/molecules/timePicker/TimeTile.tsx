@@ -19,9 +19,9 @@ export const TimeTile = ({
   };
 
   const tileNames = [
-    styles['time-tile'], 
+    styles['time-tile'],
     isSelected ? styles['selected'] : '',
-    readonly ? styles['readonly'] : ''
+    readonly ? styles['readonly'] : '',
   ];
   return (
     <div className={styles['time-tile-wrapper']}>

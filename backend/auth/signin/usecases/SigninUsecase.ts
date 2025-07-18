@@ -11,9 +11,7 @@ export class SigninUsecase {
     this.authService = authService;
   }
 
-  async execute(
-    signinData: SigninRequestDto
-  ): Promise<{
+  async execute(signinData: SigninRequestDto): Promise<{
     response: SigninResponseDto;
     tokens: { accessToken: string; refreshToken: string };
   }> {

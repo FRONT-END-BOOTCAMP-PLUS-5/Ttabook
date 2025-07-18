@@ -11,7 +11,7 @@ const ITEMS_PER_PAGE = 10;
 const ReservationListPage = () => {
   const { data } = useGets<AdminReservation[]>(
     ['admin', 'reservations'],
-    '/admin/reservations',
+    '/admin/reservations'
   );
 
   const reservations = data ?? [];
@@ -21,7 +21,7 @@ const ReservationListPage = () => {
   const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentReservations = reservations.slice(
     startIdx,
-    startIdx + ITEMS_PER_PAGE,
+    startIdx + ITEMS_PER_PAGE
   );
 
   const getPageNumbers = () => {
@@ -49,8 +49,13 @@ const ReservationListPage = () => {
         </thead>
 
         <tbody>
-          {currentReservations.map((res : AdminReservation) => (
-            <ReservationRow key={res.rsv.rsvId} user={res.user} room={res.room} rsv={res.rsv} />
+          {currentReservations.map((res: AdminReservation) => (
+            <ReservationRow
+              key={res.rsv.rsvId}
+              user={res.user}
+              room={res.room}
+              rsv={res.rsv}
+            />
           ))}
         </tbody>
       </table>
@@ -87,6 +92,6 @@ const ReservationListPage = () => {
       </div>
     </div>
   );
-}
+};
 
 export default ReservationListPage;

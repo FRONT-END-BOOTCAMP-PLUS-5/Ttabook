@@ -32,4 +32,4 @@ export const CustomBackground: Story = {
     children: 'Custom Background Card',
     background: '#f7e8a4',
   },
-}; 
+};

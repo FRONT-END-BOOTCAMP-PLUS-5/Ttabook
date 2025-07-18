@@ -6,4 +6,4 @@ export interface CarouselProps {
   style?: React.CSSProperties;
   currentIndex?: number;
   onIndexChange?: (index: number) => void;
-} 
+}

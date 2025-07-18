@@ -10,23 +10,24 @@ export class SbAssetRepository implements AssetRepository {
   }
 
   async findAll(): Promise<Asset[]> {
-    const { data, error } = await this.supabase
-      .from('assets')
-      .select('*');
+    const { data, error } = await this.supabase.from('assets').select('*');
 
     if (error) {
       throw new Error(`Error fetching assets: ${error.message}`);
     }
 
-    return data.map(row => new Asset(
-      row.id,
-      row.room_id,
-      row.type,
-      row.position_x,
-      row.position_y,
-      row.width,
-      row.height
-    ));
+    return data.map(
+      (row) =>
+        new Asset(
+          row.id,
+          row.room_id,
+          row.type,
+          row.position_x,
+          row.position_y,
+          row.width,
+          row.height
+        )
+    );
   }
 
   async findByRoomId(roomId: number): Promise<Asset[]> {
@@ -36,18 +37,23 @@ export class SbAssetRepository implements AssetRepository {
       .eq('room_id', roomId);
 
     if (error) {
-      throw new Error(`Error fetching assets for room ${roomId}: ${error.message}`);
+      throw new Error(
+        `Error fetching assets for room ${roomId}: ${error.message}`
+      );
     }
 
-    return data.map(row => new Asset(
-      row.id,
-      row.room_id,
-      row.type,
-      row.position_x,
-      row.position_y,
-      row.width,
-      row.height
-    ));
+    return data.map(
+      (row) =>
+        new Asset(
+          row.id,
+          row.room_id,
+          row.type,
+          row.position_x,
+          row.position_y,
+          row.width,
+          row.height
+        )
+    );
   }
 
   async findById(id: number): Promise<Asset | null> {
@@ -76,16 +82,14 @@ export class SbAssetRepository implements AssetRepository {
   }
 
   async save(asset: Asset): Promise<void> {
-    const { error } = await this.supabase
-      .from('assets')
-      .insert({
-        room_id: asset.roomId,
-        type: asset.type,
-        position_x: asset.positionX,
-        position_y: asset.positionY,
-        width: asset.width,
-        height: asset.height
-      });
+    const { error } = await this.supabase.from('assets').insert({
+      room_id: asset.roomId,
+      type: asset.type,
+      position_x: asset.positionX,
+      position_y: asset.positionY,
+      width: asset.width,
+      height: asset.height,
+    });
 
     if (error) {
       throw new Error(`Error saving asset: ${error.message}`);
@@ -93,18 +97,16 @@ export class SbAssetRepository implements AssetRepository {
   }
 
   async saveAll(assets: Asset[]): Promise<void> {
-    const insertData = assets.map(asset => ({
+    const insertData = assets.map((asset) => ({
       room_id: asset.roomId,
       type: asset.type,
       position_x: asset.positionX,
       position_y: asset.positionY,
       width: asset.width,
-      height: asset.height
+      height: asset.height,
     }));
 
-    const { error } = await this.supabase
-      .from('assets')
-      .insert(insertData);
+    const { error } = await this.supabase.from('assets').insert(insertData);
 
     if (error) {
       throw new Error(`Error saving assets: ${error.message}`);
@@ -120,7 +122,7 @@ export class SbAssetRepository implements AssetRepository {
         position_x: asset.positionX,
         position_y: asset.positionY,
         width: asset.width,
-        height: asset.height
+        height: asset.height,
       })
       .eq('id', asset.id);
 
@@ -130,10 +132,7 @@ export class SbAssetRepository implements AssetRepository {
   }
 
   async delete(id: number): Promise<void> {
-    const { error } = await this.supabase
-      .from('assets')
-      .delete()
-      .eq('id', id);
+    const { error } = await this.supabase.from('assets').delete().eq('id', id);
 
     if (error) {
       throw new Error(`Error deleting asset ${id}: ${error.message}`);

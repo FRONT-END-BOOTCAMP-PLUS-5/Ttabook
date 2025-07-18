@@ -7,4 +7,4 @@ export interface CardProps {
   width?: number | string;
   height?: number | string;
   background?: string;
-} 
+}

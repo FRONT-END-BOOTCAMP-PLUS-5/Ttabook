@@ -14,7 +14,7 @@ import { useToastStore } from '@/hooks/useToast';
 
 interface RoomRsvModalProps {
   onClose: () => void;
-  roomId : number;
+  roomId: number;
   roomName: string;
 }
 
@@ -45,7 +45,7 @@ const RoomRsvModal = ({ onClose, roomId, roomName }: RoomRsvModalProps) => {
     '/rooms/reservations',
     true,
     {
-      roomId: roomId.toString()
+      roomId: roomId.toString(),
     }
   );
   const [reservedTimes, setReservedTimes] = useState(
@@ -106,7 +106,12 @@ const RoomRsvModal = ({ onClose, roomId, roomName }: RoomRsvModalProps) => {
       <Modal.Body>
         <div className={styles['modal-container']}>
           <div className={styles['image-container']}>
-            <Image src={'/ttabook-basic.png'} alt="ttabook basic image" width={166} height={200} />
+            <Image
+              src={'/ttabook-basic.png'}
+              alt="ttabook basic image"
+              width={166}
+              height={200}
+            />
             <CaptionText style={{ margin: 0 }} variant="secondary">
               최대 4시간 예약이 가능합니다
             </CaptionText>

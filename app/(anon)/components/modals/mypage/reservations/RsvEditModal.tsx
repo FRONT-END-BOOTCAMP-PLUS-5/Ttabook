@@ -13,7 +13,7 @@ import LoadingSpinner from '@/ds/components/atoms/loading/LoadingSpinner';
 
 interface RsvEditModalProps {
   onClose: () => void;
-  roomId : number;
+  roomId: number;
   roomName: string;
 }
 
@@ -44,7 +44,7 @@ const RsvEditModal = ({ onClose, roomId, roomName }: RsvEditModalProps) => {
     '/rooms/reservations',
     true,
     {
-      roomId: roomId.toString()
+      roomId: roomId.toString(),
     }
   );
   const [reservedTimes, setReservedTimes] = useState(
@@ -104,7 +104,12 @@ const RsvEditModal = ({ onClose, roomId, roomName }: RsvEditModalProps) => {
       <Modal.Body>
         <div className={styles['modal-container']}>
           <div className={styles['image-container']}>
-          <Image src={'/ttabook-basic.png'} alt="ttabook basic image" width={166} height={200} />
+            <Image
+              src={'/ttabook-basic.png'}
+              alt="ttabook basic image"
+              width={166}
+              height={200}
+            />
             <CaptionText style={{ margin: 0 }} variant="secondary">
               최대 4시간 예약이 가능합니다
             </CaptionText>

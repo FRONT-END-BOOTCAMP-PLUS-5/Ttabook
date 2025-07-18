@@ -31,9 +31,7 @@ export default function RootLayout({
   return (
     <html>
       <body>
-        <SessionProvider>
-          {children}
-        </SessionProvider>
+        <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
   );
@@ -93,7 +91,7 @@ interface SessionContextType {
 #### 자동 기능
 
 - **HttpOnly 쿠키**: 보안을 위해 서버에서만 접근 가능한 쿠키 사용
-- **세션 복원**: 페이지 새로고침 시 서버 API를 통해 세션 복원  
+- **세션 복원**: 페이지 새로고침 시 서버 API를 통해 세션 복원
 - **자동 만료 처리**: 토큰 만료 시 자동 로그아웃
 - **CSRF 보호**: HttpOnly 쿠키로 XSS/CSRF 공격 방지
 
@@ -387,7 +385,7 @@ function SignupForm() {
 
 ## API 직접 사용
 
-SessionProvider를 통하지 않고 API를 직접 호출해야 하는 경우의 사용법입니다. 
+SessionProvider를 통하지 않고 API를 직접 호출해야 하는 경우의 사용법입니다.
 
 **⚠️ 중요**: 로그인/회원가입 후에는 반드시 `refreshSession()`을 호출하여 클라이언트 세션 상태를 업데이트해야 합니다. HttpOnly 쿠키는 JavaScript에서 직접 읽을 수 없으므로 서버 API를 통해 세션 정보를 가져와야 합니다.
 
@@ -830,7 +828,9 @@ describe('LoginForm', () => {
   });
 
   it('에러 메시지가 표시된다', async () => {
-    const mockRefreshSession = jest.fn().mockRejectedValue(new Error('로그인 실패'));
+    const mockRefreshSession = jest
+      .fn()
+      .mockRejectedValue(new Error('로그인 실패'));
     const sessionValue = {
       user: null,
       isLoading: false,

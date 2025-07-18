@@ -1,5 +1,5 @@
 import React from 'react';
-import { Group, Rect, Circle, RegularPolygon} from 'react-konva';
+import { Group, Rect, Circle, RegularPolygon } from 'react-konva';
 import { PersonIconProps, RoomFurnitureProps } from './types';
 
 const PersonIcon: React.FC<PersonIconProps> = ({ x, y, color = '#718096' }) => {
@@ -11,7 +11,12 @@ const PersonIcon: React.FC<PersonIconProps> = ({ x, y, color = '#718096' }) => {
   );
 };
 
-const RoomFurniture: React.FC<RoomFurnitureProps> = ({ x, y, roomWidth, roomHeight }) => {
+const RoomFurniture: React.FC<RoomFurnitureProps> = ({
+  x,
+  y,
+  roomWidth,
+  roomHeight,
+}) => {
   const tableWidth = 43;
   const tableHeight = 15;
   const spacing = 6;
@@ -39,15 +44,31 @@ const RoomFurniture: React.FC<RoomFurnitureProps> = ({ x, y, roomWidth, roomHeig
       <PersonIcon x={tableX + tableWidth} y={0} color={chairColor} />
 
       {/* 아래쪽 사람 3명 */}
-      <PersonIcon x={tableX} y={tableY + tableHeight + personSize} color={chairColor} />
-      <PersonIcon x={tableX + tableWidth / 2} y={tableY + tableHeight + personSize} color={chairColor} />
-      <PersonIcon x={tableX + tableWidth} y={tableY + tableHeight + personSize} color={chairColor} />
+      <PersonIcon
+        x={tableX}
+        y={tableY + tableHeight + personSize}
+        color={chairColor}
+      />
+      <PersonIcon
+        x={tableX + tableWidth / 2}
+        y={tableY + tableHeight + personSize}
+        color={chairColor}
+      />
+      <PersonIcon
+        x={tableX + tableWidth}
+        y={tableY + tableHeight + personSize}
+        color={chairColor}
+      />
 
       {/* 좌측 사람 */}
       <PersonIcon x={0} y={tableY + tableHeight / 2 - 2} color={chairColor} />
 
       {/* 우측 사람 */}
-      <PersonIcon x={tableX + tableWidth + spacing + personSize} y={tableY + tableHeight / 2 - 2} color={chairColor} />
+      <PersonIcon
+        x={tableX + tableWidth + spacing + personSize}
+        y={tableY + tableHeight / 2 - 2}
+        color={chairColor}
+      />
 
       {/* 테이블 */}
       <Rect

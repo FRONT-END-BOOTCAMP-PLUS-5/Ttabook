@@ -154,9 +154,9 @@ describe('Password 유틸리티', () => {
       // 프로덕션 환경으로 설정하여 함수 검증 활성화
       const originalNodeEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = 'production';
-      
+
       const { jest } = await import('@jest/globals');
-      
+
       // bcryptjs 모듈을 빈 객체로 모킹 (함수들이 undefined)
       jest.doMock('bcryptjs', () => ({
         default: {},
@@ -165,11 +165,11 @@ describe('Password 유틸리티', () => {
       // 모듈 다시 로드하여 모킹 적용
       jest.resetModules();
       const { hashPassword } = await import('../../lib/password');
-      
+
       await expect(hashPassword('testPassword')).rejects.toThrow(
         'bcryptjs library is not properly loaded or configured'
       );
-      
+
       // NODE_ENV 복원
       process.env.NODE_ENV = originalNodeEnv;
     });
@@ -178,9 +178,9 @@ describe('Password 유틸리티', () => {
       // 프로덕션 환경으로 설정하여 함수 검증 활성화
       const originalNodeEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = 'production';
-      
+
       const { jest } = await import('@jest/globals');
-      
+
       // bcryptjs 모듈에서 함수들을 제거하여 모킹
       jest.doMock('bcryptjs', () => ({
         default: {
@@ -193,11 +193,11 @@ describe('Password 유틸리티', () => {
       // 모듈 다시 로드하여 모킹 적용
       jest.resetModules();
       const { hashPassword } = await import('../../lib/password');
-      
+
       await expect(hashPassword('testPassword')).rejects.toThrow(
         'bcryptjs library is not properly loaded or configured'
       );
-      
+
       // NODE_ENV 복원
       process.env.NODE_ENV = originalNodeEnv;
     });
@@ -217,15 +217,18 @@ describe('Password 유틸리티', () => {
 
     it('hashPassword에서 bcrypt 라이브러리 에러를 적절히 처리해야 한다', async () => {
       // 환경 변수 설정
-      process.env.JWT_SECRET = 'test-jwt-secret-for-unit-tests-that-is-long-enough';
+      process.env.JWT_SECRET =
+        'test-jwt-secret-for-unit-tests-that-is-long-enough';
       process.env.BCRYPT_ROUNDS = '12';
 
       const { jest } = await import('@jest/globals');
-      
+
       // bcryptjs 모듈을 모킹하여 에러를 던지도록 함
       jest.doMock('bcryptjs', () => ({
         default: {
-          genSalt: jest.fn().mockRejectedValue(new Error('bcrypt genSalt 실패')),
+          genSalt: jest
+            .fn()
+            .mockRejectedValue(new Error('bcrypt genSalt 실패')),
           hash: jest.fn(),
           compare: jest.fn(),
         },
@@ -234,7 +237,7 @@ describe('Password 유틸리티', () => {
       // 모듈 다시 로드하여 모킹 적용
       jest.resetModules();
       const { hashPassword } = await import('../../lib/password');
-      
+
       await expect(hashPassword('testPassword')).rejects.toThrow(
         '패스워드 해시화 실패:'
       );
@@ -242,28 +245,30 @@ describe('Password 유틸리티', () => {
 
     it('verifyPassword에서 bcrypt 라이브러리 에러를 적절히 처리해야 한다', async () => {
       // 환경 변수 설정
-      process.env.JWT_SECRET = 'test-jwt-secret-for-unit-tests-that-is-long-enough';
+      process.env.JWT_SECRET =
+        'test-jwt-secret-for-unit-tests-that-is-long-enough';
       process.env.BCRYPT_ROUNDS = '12';
 
       const { jest } = await import('@jest/globals');
-      
+
       // bcryptjs 모듈을 모킹하여 에러를 던지도록 함
       jest.doMock('bcryptjs', () => ({
         default: {
           genSalt: jest.fn(),
           hash: jest.fn(),
-          compare: jest.fn().mockRejectedValue(new Error('bcrypt compare 실패')),
+          compare: jest
+            .fn()
+            .mockRejectedValue(new Error('bcrypt compare 실패')),
         },
       }));
 
       // 모듈 다시 로드하여 모킹 적용
       jest.resetModules();
       const { verifyPassword } = await import('../../lib/password');
-      
+
       await expect(verifyPassword('password', 'hash')).rejects.toThrow(
         '패스워드 검증 실패:'
       );
     });
-
   });
 });

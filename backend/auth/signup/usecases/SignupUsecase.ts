@@ -11,9 +11,7 @@ export class SignupUsecase {
     this.authService = authService;
   }
 
-  async execute(
-    signupData: SignupRequestDto
-  ): Promise<{
+  async execute(signupData: SignupRequestDto): Promise<{
     response: SignupResponseDto;
     tokens: { accessToken: string; refreshToken: string };
   }> {

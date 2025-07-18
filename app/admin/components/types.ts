@@ -21,8 +21,8 @@ export type ReservationRowProps = {
 };
 
 export type AdminReservation = {
-  spaceId: number,
-  room: Room,
-  user: User,
-  rsv: Rsv
+  spaceId: number;
+  room: Room;
+  user: User;
+  rsv: Rsv;
 };

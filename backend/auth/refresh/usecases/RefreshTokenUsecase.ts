@@ -8,9 +8,7 @@ export class RefreshTokenUsecase {
     this.authService = authService;
   }
 
-  async execute(
-    refreshData: RefreshTokenRequestDto
-  ): Promise<{
+  async execute(refreshData: RefreshTokenRequestDto): Promise<{
     response: RefreshTokenResponseDto;
     tokens: { accessToken: string; refreshToken: string };
   }> {

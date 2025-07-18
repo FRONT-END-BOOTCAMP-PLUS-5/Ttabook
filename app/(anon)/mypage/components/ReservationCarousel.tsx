@@ -26,7 +26,7 @@ const ReservationCarousel = ({
 }: ReservationCarouselProps) => {
   return (
     <div className={styles.carouselContainer}>
-      <Carousel 
+      <Carousel
         className={styles.carouselStyle}
         currentIndex={currentIndex}
         onIndexChange={onIndexChange}
