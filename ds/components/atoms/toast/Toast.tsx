@@ -3,7 +3,12 @@ import styles from './Toast.module.css';
 import '../../../styles/globals.css';
 import { ToastProps } from './Toast.types';
 
-const Toast: React.FC<ToastProps> = ({ message, variant, duration = 3000 }) => {
+const Toast: React.FC<ToastProps> = ({
+  message,
+  variant,
+  duration = 1500,
+  onDismiss,
+}) => {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
@@ -13,6 +18,15 @@ const Toast: React.FC<ToastProps> = ({ message, variant, duration = 3000 }) => {
 
     return () => clearTimeout(timer);
   }, [duration]);
+
+  useEffect(() => {
+    if (!visible) {
+      const timer = setTimeout(() => {
+        onDismiss();
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [visible, onDismiss]);
 
   const className = [
     styles.toast,

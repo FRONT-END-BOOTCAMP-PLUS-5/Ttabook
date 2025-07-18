@@ -4,5 +4,5 @@ export interface ToastProps {
   message: string;
   variant: ToastVariant;
   duration?: number;
-  onClose: () => void;
+  onDismiss: () => void;
 }
