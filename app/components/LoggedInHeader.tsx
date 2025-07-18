@@ -2,7 +2,6 @@
 import Button from '@/ds/components/atoms/button/Button';
 import Header from '@/ds/components/molecules/header/Header';
 import { usePosts } from '@/hooks/usePosts';
-// import from '../'
 import { useRouter } from 'next/navigation';
 import { useSession } from '../providers/SessionProvider';
 
