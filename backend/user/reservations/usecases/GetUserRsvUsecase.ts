@@ -25,7 +25,7 @@ export class GetUserRsvUsecase {
       const lastDate = e.editedAt
         ? new Date(e.createdAt ?? Date.now())
         : new Date(e.editedAt ?? Date.now());
-      const lastTime = `${lastDate.getDay()}일 ${lastDate.getHours()}시 ${lastDate.getMinutes()}분`
+      const lastTime = `${lastDate.getDate()}일 ${lastDate.getHours()}시 ${lastDate.getMinutes()}분`
       const dto = new GetUserRsvDto(
         e.id,
         e.room?.spaceId ?? 0,
