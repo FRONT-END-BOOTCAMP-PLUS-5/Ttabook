@@ -42,6 +42,13 @@ const ReservationCarousel = ({
             <div className={styles.spaceInfo}>
               <div className={styles.spaceName}>{e.spaceName}</div>
               <div className={styles.roomName}>{e.roomName}</div>
+              <div className={styles.createdTime}>{e.createdAt}에 예약</div>
+              {e.editedAt && (
+                <>
+                  <div className={styles.editTime}>{","}</div>
+                  <div className={styles.editTime}>{e.editedAt}에 수정</div>
+                </>
+              )}
             </div>
 
             <div className={styles.timePickerContainer}>

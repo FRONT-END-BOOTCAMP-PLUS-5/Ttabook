@@ -54,14 +54,27 @@
 .spaceName {
   color: var(--color-text-secondary);
   font-size: var(--text-size-xl-font-size);
-  font-family: 'NanumGothic';
+  font-family: 'Nanum Gothic';
   font-weight: 700;
 }
 
 .roomName {
   color: var(--color-text-secondary);
   font-size: var(--text-size-md-font-size);
-  font-family: 'Inter';
+  font-family: 'Nanum Gothic';
+  font-weight: 700;
+}
+
+.createdTime {
+  color: var(--color-text-secondary);
+  font-size: var(--text-size-md-font-size);
+  font-family: 'Nanum Gothic';
+  font-weight: 700;
+}
+
+.editTime {
+  color: var(--color-text-secondary);
+  font-size: var(--text-size-md-font-size);
   font-weight: 700;
 }
 
@@ -98,7 +111,6 @@
   cursor: pointer;
   color: var(--color-text-primary);
   font-size: var(--text-size-lg-font-size);
-  font-family: 'Inter';
   font-weight: 500;
   text-align: center;
 }

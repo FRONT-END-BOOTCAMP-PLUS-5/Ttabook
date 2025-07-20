@@ -112,7 +112,7 @@ const MyReservationPage = () => {
                 src={'/ttabook-surprised.png'}
                 width={400}
                 height={600}
-                alt=""
+                alt="예약이 없어 놀란 따북이"
               />
             </div>
           )}
