@@ -23,7 +23,7 @@ const MyReservationPage = () => {
     null
   );
   const { user } = useSession();
-  const { data, isLoading, error, isSuccess } = useGets<GetUserRsvDto[]>(
+  const { data, isLoading, error, isSuccess, refetch } = useGets<GetUserRsvDto[]>(
     ['mypage'],
     '/user/reservations',
     true,
@@ -68,8 +68,10 @@ const MyReservationPage = () => {
     <>
       {isModalOpen('rsv-edit') && reservations && (
         <RsvEditModal
+        mypageRefetch={refetch}
           roomId={reservations[carouselIndex].roomId}
           roomName={reservations[carouselIndex].roomName}
+          rsvId={reservations[carouselIndex].rsvId}
           onClose={() => closeModal('rsv-edit')}
         />
       )}
