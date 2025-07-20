@@ -6,18 +6,31 @@ import Button from '@/ds/components/atoms/button/Button';
 import Text from '@/ds/components/atoms/text/Text';
 import Image from 'next/image';
 import styles from './RsvCancelModal.module.css';
+import { useDeletes } from '@/hooks/useDeletes';
 
 interface RsvCancelModalProps {
+  userId: string;
+  rsvId: string;
   onClose: () => void;
-  onConfirm: () => void;
 }
 
 const RsvCancelModal: React.FC<RsvCancelModalProps> = ({
+  userId,
+  rsvId,
   onClose,
-  onConfirm,
 }) => {
+  const onSuccess = () => {};
+  const onError = () => {};
+  const { mutate } = useDeletes({ onSuccess, onError });
+
   const handleConfirm = () => {
-    onConfirm();
+    mutate({
+      deleteData: {
+        rsvId: rsvId,
+        userId: userId,
+      },
+      path: '/user/reservations',
+    });
     onClose();
   };
 

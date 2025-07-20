@@ -56,11 +56,11 @@ const MyReservationPage = () => {
     }
   }, [data, isSuccess]);
 
-  const handleEdit = () => {
+  const handleClickEdit = () => {
     openModal('rsv-edit');
   };
 
-  const handleDelete = () => {
+  const handleClickDelete = () => {
     openModal('cancel-confirm');
   };
 
@@ -75,7 +75,8 @@ const MyReservationPage = () => {
       )}
       {isModalOpen('cancel-confirm') && reservations && (
         <RsvCancelModal
-          onConfirm={() => {}}
+          userId={user!.id}
+          rsvId={reservations[carouselIndex].rsvId}
           onClose={() => closeModal('cancel-confirm')}
         />
       )}
@@ -100,8 +101,8 @@ const MyReservationPage = () => {
                 availableTimes={nineToFive}
                 currentIndex={carouselIndex}
                 onIndexChange={setCarouselIndex}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
+                onEdit={handleClickEdit}
+                onDelete={handleClickDelete}
               />
             </>
           )}
