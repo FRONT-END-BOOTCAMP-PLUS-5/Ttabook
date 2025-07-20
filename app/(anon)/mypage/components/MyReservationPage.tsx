@@ -79,22 +79,22 @@ const MyReservationPage = () => {
           onClose={() => closeModal('cancel-confirm')}
         />
       )}
-      <div className={styles.container}>
-        <div className="titleset">
+      <main className={styles.container}>
+        <section>
           {isLoading && (
             <div className={styles.container}>
-              <div className={styles.title}>나의 예약 현황</div>
+              <h2 className={styles.title}>나의 예약 현황</h2>
               <LoadingSpinner />
             </div>
           )}
           {error && (
             <div className={styles.container}>
-              <div className={styles.title}>오류가 발생했습니다</div>
+              <h2 className={styles.title}>오류가 발생했습니다</h2>
             </div>
           )}
           {isSuccess && reservations && reservations.length > 0 && (
             <>
-              <div className={styles.title}>나의 예약 현황</div>
+              <h2 className={styles.title}>나의 예약 현황</h2>
               <ReservationCarousel
                 reservations={reservations}
                 availableTimes={nineToFive}
@@ -107,17 +107,17 @@ const MyReservationPage = () => {
           )}
           {isSuccess && reservations && reservations.length === 0 && (
             <div className={styles.container}>
-              <div className={styles.title}>예약이 없습니다!</div>
+              <h2 className={styles.title}>예약이 없습니다!</h2>
               <Image
                 src={'/ttabook-surprised.png'}
                 width={400}
                 height={600}
-                alt=""
+                alt="예약이 없을 때 표시되는 따북이 이미지"
               />
             </div>
           )}
-        </div>
-      </div>
+        </section>
+      </main>
     </>
   );
 };
