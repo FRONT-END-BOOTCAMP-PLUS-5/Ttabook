@@ -33,7 +33,13 @@ const Input: React.FC<InputProps> = ({
         {...props}
         style={{ width: isFullWidth ? '100%' : '', boxSizing: 'border-box' }}
       />
-      {error && <CaptionText variant="danger">{error}</CaptionText>}
+      {error && (
+        <div className={styles['error-message']}>
+          <CaptionText variant="danger" style={{ margin: 0 }}>
+            {error}
+          </CaptionText>
+        </div>
+      )}
     </div>
   );
 };

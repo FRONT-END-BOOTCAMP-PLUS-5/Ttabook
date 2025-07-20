@@ -57,6 +57,6 @@
 
 ## 작업 전 읽어야 할 파일
 
-- @shared/yarn_context.md
-- @shared/coding_convention.md
-- @shared/clean-code-philosophy.md
+- @agent-context/yarn_context.md
+- @agent-context/coding_convention.md
+- @agent-context/clean-code-philosophy.md

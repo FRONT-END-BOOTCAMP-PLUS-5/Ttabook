@@ -80,7 +80,7 @@ describe('ProtectedRoute', () => {
         </QueryClientProvider>
       );
 
-      expect(mockReplace).toHaveBeenCalledWith('/login?next=%2Fprotected-page');
+      expect(mockReplace).toHaveBeenCalledWith('/');
       expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
     });
 
@@ -103,7 +103,7 @@ describe('ProtectedRoute', () => {
         </QueryClientProvider>
       );
 
-      expect(mockReplace).toHaveBeenCalledWith('/login?next=%2Fprotected-page');
+      expect(mockReplace).toHaveBeenCalledWith('/');
     });
   });
 

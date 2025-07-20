@@ -8,7 +8,7 @@ import { Space } from './components/types';
 
 const SpacePage: React.FC = () => {
   const getSpace = async () => {
-    const res = await axios.get('http://localhost:3000/api/spaces/155');
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/spaces/150`);
 
     const space = res.data;
     return space;

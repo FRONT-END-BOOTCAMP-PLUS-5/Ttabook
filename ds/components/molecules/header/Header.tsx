@@ -2,11 +2,16 @@ import React from 'react';
 import Image from 'next/image';
 import { HeaderProps } from './Header.types';
 import styles from './Header.module.css';
+import { useRouter } from 'next/navigation';
 
 const Header: React.FC<HeaderProps> = ({ children }) => {
+  const router = useRouter();
+  const handleClickLogo = () => {
+    router.push('/');
+  };
   return (
     <header className={styles.header}>
-      <div className={styles.logoWrapper}>
+      <div className={styles.logoWrapper} onClick={handleClickLogo}>
         <Image src={'/Logo.png'} alt="Ttabook Logo" width={117} height={28} />
       </div>
       <nav className={styles.actionsWrapper}>{children}</nav>

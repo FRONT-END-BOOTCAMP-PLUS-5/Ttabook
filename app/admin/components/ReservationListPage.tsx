@@ -36,9 +36,10 @@ const ReservationListPage = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <main className={styles.container}>
       <h2 className={styles.title}>예약 리스트</h2>
       <table className={styles.table}>
+        <caption className="sr-only">예약 목록 테이블</caption>
         <thead>
           <tr>
             <th className={styles.headerCell}></th>
@@ -90,7 +91,7 @@ const ReservationListPage = () => {
           ▶
         </button>
       </div>
-    </div>
+    </main>
   );
 };
 
