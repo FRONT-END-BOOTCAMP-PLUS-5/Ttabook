@@ -42,56 +42,59 @@
   justify-content: flex-start;
   align-items: flex-start;
   gap: var(--spacing-8);
+  height: 100%;
+}
+
+.rsvNumber {
+  color: var(--color-text-primary);
+  font-size: var(--text-size-xl-font-size);
+  font-family: 'Nanum Gothic';
+  font-weight: var(--text-size-lg-font-weight);
 }
 
 .spaceInfo {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: flex-end;
-  gap: var(--spacing-3);
+  width: 100%;
 }
 
-.spaceName {
-  color: var(--color-text-secondary);
+.spaceRoomName {
+  display: flex;
+  color: var(--color-text-primary);
   font-size: var(--text-size-xl-font-size);
   font-family: 'Nanum Gothic';
-  font-weight: 700;
+  font-weight: var(--text-size-lg-font-weight);
+  gap: var(--spacing-2);
 }
 
-.roomName {
-  color: var(--color-text-secondary);
-  font-size: var(--text-size-md-font-size);
-  font-family: 'Nanum Gothic';
-  font-weight: 700;
-}
-
-.createdTime {
-  color: var(--color-text-secondary);
-  font-size: var(--text-size-md-font-size);
-  font-family: 'Nanum Gothic';
-  font-weight: 700;
+.badge {
+  color: var(--color-text-primary);
+  background-color: #ccd6e0;
+  border-radius: var(--button-size-lg-border-radius);
+  font-size: var(--text-size-lg-font-size);
+  font-weight: var(--text-size-sm-font-weight);
+  padding: 2px 6px;
 }
 
 .editTime {
   color: var(--color-text-secondary);
-  font-size: var(--text-size-md-font-size);
-  font-weight: 700;
+  font-size: var(--text-size-sm-font-size);
+  font-weight: var(--text-size-lg-font-weight);
+  float: right;
 }
 
 .timePickerContainer {
   width: 100%;
-  padding: var(--spacing-3);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-3);
+  margin-top: 4%;
 }
 
 .buttonContainer {
+  margin-top: auto;
   align-self: stretch;
   padding: var(--spacing-3);
   display: flex;
   justify-content: flex-end;
-  align-items: flex-start;
   gap: var(--spacing-3);
 }
 

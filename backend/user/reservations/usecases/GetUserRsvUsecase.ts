@@ -22,14 +22,17 @@ export class GetUserRsvUsecase {
     }
 
     const reservationStatus = reservations.map((e) => {
+      const lastDate = e.editedAt
+        ? new Date(e.createdAt ?? Date.now())
+        : new Date(e.editedAt ?? Date.now());
+      const lastTime = `${lastDate.getDay()}일 ${lastDate.getHours()}시 ${lastDate.getMinutes()}분`
       const dto = new GetUserRsvDto(
         e.id,
         e.room?.spaceId ?? 0,
         e.space?.name ?? '',
         e.roomId,
         e.room?.name ?? '',
-        e.createdAt ? new Date(e.createdAt).toLocaleTimeString() : "-",
-        e.editedAt ? new Date(e.editedAt).toLocaleTimeString() : null,
+        lastTime,
         new Array(RESERVATION_END_TIME - RESERVATION_START_TIME).fill(0)
       );
       for (

@@ -5,8 +5,7 @@ export class GetUserRsvDto {
     public spaceName: string,
     public roomId: number,
     public roomName: string,
-    public createdAt: string,
-    public editedAt: string | null,
+    public lastEdit: string,
     public schedule: number[]
   ) {}
 }
