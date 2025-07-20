@@ -10,8 +10,8 @@ import RoomRsvModal from './modals/rooms/reservations/RoomRsvModal';
 import RoomInfoModal from './modals/rooms/infos/RoomInfoModal';
 import RoomFurniture from './RoomFurniture';
 
-const STAGE_WIDTH = 650;
-const STAGE_HEIGHT = 550;
+const STAGE_WIDTH = 720;
+const STAGE_HEIGHT = 580;
 
 interface CanvasProps {
   rooms: Room[];
