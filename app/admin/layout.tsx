@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { ReactNode } from 'react';
 import styles from './layout.module.css';
 import { ProtectedRoute } from '../components/ProtectedRoute';

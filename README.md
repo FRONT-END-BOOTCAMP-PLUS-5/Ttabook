@@ -58,12 +58,14 @@ PORT=3000
 ### 설치
 
 1. 저장소를 클론하세요:
+
 ```bash
 git clone <repository-url>
 cd Ttabook
 ```
 
 2. 종속성을 설치하세요:
+
 ```bash
 yarn install
 ```
@@ -71,6 +73,7 @@ yarn install
 3. Supabase 데이터베이스 스키마를 설정하세요 (`docs/` 폴더의 문서 참조)
 
 4. 개발 서버를 시작하세요:
+
 ```bash
 yarn dev
 ```
@@ -151,6 +154,7 @@ tests/                 # 테스트 파일
 - **문서화**: 대화형 Storybook 스토리
 
 디자인 시스템 시작:
+
 ```bash
 yarn storybook
 ```
@@ -174,6 +178,7 @@ yarn storybook
 - 통합: 전체 인증 플로우 및 주요 기능
 
 테스트 실행:
+
 ```bash
 yarn test
 ```
@@ -181,18 +186,21 @@ yarn test
 ## 📊 주요 기능 심화
 
 ### 캔버스 기반 공간 관리
+
 - 대화형 방 배치 및 편집
 - 실시간 시각적 피드백
 - 드래그 앤 드롭 가구 배치
 - 반응형 캔버스 스케일링
 
 ### 예약 시스템
+
 - 사용자 친화적 예약 인터페이스
 - 관리자 승인 워크플로우
 - 충돌 방지
 - 캘린더 통합
 
 ### 관리자 대시보드
+
 - 공간 및 방 관리
 - 예약 감독
 - 사용자 관리
@@ -201,18 +209,21 @@ yarn test
 ## 🔧 개발 가이드라인
 
 ### 코드 품질
+
 - **ESLint**: `next/core-web-vitals` 설정
 - **Prettier**: 일관된 코드 포맷팅
 - **Husky**: 품질 검사를 위한 pre-commit 훅
 - **TypeScript**: Strict 모드 활성화
 
 ### 네이밍 컨벤션
+
 - 컴포넌트: PascalCase (`UserProfile.tsx`)
 - 훅: `use` 접두사를 사용한 camelCase (`useUserData`)
 - 파일: 컴포넌트 이름과 일치
 - 폴더: 복수형 (`components/`, `usecases/`)
 
 ### Git 워크플로우
+
 - `dev`에서 기능 브랜치 생성
 - 명확한 커밋 메시지
 - Pre-commit 테스팅 및 포맷팅
@@ -231,19 +242,23 @@ yarn test
 ## 🚀 배포
 
 ### 프로덕션 빌드
+
 ```bash
 yarn build
 yarn start
 ```
 
 ### 환경 고려사항
+
 - `NODE_ENV=production` 설정
 - 안전한 JWT 시크릿 설정
 - 프로덕션에서 HTTPS 활성화
 - 적절한 CORS 정책 설정
 
 ### Vercel 배포
+
 이 프로젝트는 Vercel 배포에 최적화되어 있습니다:
+
 1. 저장소를 Vercel에 연결
 2. 환경 변수 설정
 3. main 브랜치에 푸시하면 자동 배포
