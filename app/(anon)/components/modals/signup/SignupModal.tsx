@@ -110,7 +110,7 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
 
     if (data?.available === true && data?.message) {
       setCheckedDuplication(true);
-      showToast(data?.message, 'danger');
+      showToast(data?.message, 'secondary');
     }
     if (
       error &&
