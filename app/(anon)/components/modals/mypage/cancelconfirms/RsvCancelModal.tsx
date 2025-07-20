@@ -7,6 +7,8 @@ import Text from '@/ds/components/atoms/text/Text';
 import Image from 'next/image';
 import styles from './RsvCancelModal.module.css';
 import { useDeletes } from '@/hooks/useDeletes';
+import { useQueryClient } from '@tanstack/react-query';
+import { GetUserRsvDto } from '@/backend/user/reservations/dtos/GetUserRsvDto';
 
 interface RsvCancelModalProps {
   userId: string;
@@ -19,6 +21,7 @@ const RsvCancelModal: React.FC<RsvCancelModalProps> = ({
   rsvId,
   onClose,
 }) => {
+  const queryClient = useQueryClient();
   const onSuccess = () => {};
   const onError = () => {};
   const { mutate } = useDeletes({ onSuccess, onError });
@@ -31,6 +34,9 @@ const RsvCancelModal: React.FC<RsvCancelModalProps> = ({
       },
       path: '/user/reservations',
     });
+    queryClient.setQueryData(['mypage'], (oldData: GetUserRsvDto[]) =>
+      oldData.filter((e) => e.rsvId !== rsvId)
+    );
     onClose();
   };
 
