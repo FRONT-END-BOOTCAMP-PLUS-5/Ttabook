@@ -16,8 +16,13 @@ export default function AnonLayout({
   const { isModalOpen, openModal, closeModal } = useModalStore();
 
   return (
-    // 150px = footer + 80px = header
-    <div style={{ position: 'relative', height: 'calc(100vh - 230px)' }}>
+    // 160px = 80px(=footer) + 80px(=header)
+    <div
+      style={{
+        position: 'relative',
+        height: 'calc(100vh - 160px)',
+      }}
+    >
       {isModalOpen('signin') && (
         <SigninModal
           onClose={() => closeModal('signin')}

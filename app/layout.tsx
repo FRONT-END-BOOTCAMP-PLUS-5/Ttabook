@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Ttabook',
     url: 'https://ttabook.vercel.app/',
-    images: '%PUBLIC_URL%/ttabook-basic.png',
+    images: '/ttabook-basic.png',
     description: '예약을 Ttabook, 간편한 공간 예약 시스템.',
   },
 };
@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ko">
       <body>
         <ReactQueryProvider>
           <SessionProvider>
