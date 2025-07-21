@@ -23,14 +23,11 @@ const MyReservationPage = () => {
     null
   );
   const { user } = useSession();
-  const { data, isLoading, error, isSuccess, refetch } = useGets<GetUserRsvDto[]>(
-    ['mypage'],
-    '/user/reservations',
-    true,
-    {
-      userId: user?.id ?? '',
-    }
-  );
+  const { data, isLoading, error, isSuccess, refetch } = useGets<
+    GetUserRsvDto[]
+  >(['mypage'], '/user/reservations', true, {
+    userId: user?.id ?? '',
+  });
 
   useEffect(() => {
     if (isSuccess && data) {
@@ -68,7 +65,7 @@ const MyReservationPage = () => {
     <>
       {isModalOpen('rsv-edit') && reservations && (
         <RsvEditModal
-        mypageRefetch={refetch}
+          mypageRefetch={refetch}
           roomId={reservations[carouselIndex].roomId}
           roomName={reservations[carouselIndex].roomName}
           rsvId={reservations[carouselIndex].rsvId}
@@ -113,8 +110,8 @@ const MyReservationPage = () => {
               <h2 className={styles.title}>예약이 없습니다!</h2>
               <Image
                 src={'/ttabook-surprised.png'}
-                width={400}
-                height={600}
+                width={200}
+                height={300}
                 alt="예약이 없을 때 표시되는 따북이 이미지"
               />
             </div>
