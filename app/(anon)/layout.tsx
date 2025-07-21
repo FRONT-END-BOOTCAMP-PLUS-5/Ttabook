@@ -1,11 +1,11 @@
 'use client';
-import Footer from '@/ds/components/molecules/footer/Footer';
 import { useSession } from '../providers/SessionProvider';
 import LoggedInHeader from '../components/LoggedInHeader';
 import LoggedOutHeader from '../components/LoggedOutHeader';
 import SigninModal from './components/modals/signin/SigninModal';
 import SignupModal from './components/modals/signup/SignupModal';
 import { useModalStore } from '@/hooks/useModal';
+import TtabookFooter from '../components/TtabookFooter';
 
 export default function AnonLayout({
   children,
@@ -36,7 +36,7 @@ export default function AnonLayout({
         />
       )}
       {children}
-      <Footer />
+      <TtabookFooter />
     </div>
   );
 }
