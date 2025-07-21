@@ -6,15 +6,28 @@ import { useEffect, useRef, useState } from 'react';
 import Button from '@/ds/components/atoms/button/Button';
 import Image from 'next/image';
 import { CaptionText } from '@/ds/components/atoms/text/textWrapper';
-import { usePosts } from '@/hooks/usePosts';
 import { useSession } from '@/app/providers/SessionProvider';
-import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/ds/components/atoms/loading/LoadingSpinner';
+import { usePuts } from '@/hooks/usePuts';
+import { QueryObserverResult, useQueryClient } from '@tanstack/react-query';
+import { GetUserRsvDto } from '@/backend/user/reservations/dtos/GetUserRsvDto';
+import { AxiosError } from 'axios';
 
 interface RsvEditModalProps {
+  mypageRefetch: () => Promise<
+    QueryObserverResult<GetUserRsvDto[], AxiosError<unknown, unknown>>
+  >;
   onClose: () => void;
   roomId: number;
   roomName: string;
+  rsvId: string;
+}
+
+interface RsvPutPayload {
+  rsvId: string;
+  userId: string | undefined;
+  startTime: string;
+  endTime: string;
 }
 
 const START_TIME = 9;
@@ -31,22 +44,24 @@ const numberHourToDate = (hour: number): string => {
   return date.toISOString();
 };
 
-const RsvEditModal = ({ onClose, roomId, roomName }: RsvEditModalProps) => {
-  const router = useRouter();
+const RsvEditModal = ({
+  mypageRefetch,
+  onClose,
+  roomId,
+  roomName,
+  rsvId,
+}: RsvEditModalProps) => {
   const onSuccess = () => {
-    onClose();
-    router.push('/mypage');
+    mypageRefetch();
+    refetch();
   };
   const onError = () => {};
-  const { mutate } = usePosts({ onSuccess, onError });
-  const { data, isLoading } = useGets<{ schedule: number[] }>(
-    ['room-rervations'],
-    '/rooms/reservations',
-    true,
-    {
-      roomId: roomId.toString(),
-    }
-  );
+  const { mutate } = usePuts({ onSuccess, onError });
+  const { data, isLoading, refetch } = useGets<{
+    schedule: number[];
+  }>(['room-reservations'], '/rooms/reservations', true, {
+    roomId: roomId.toString(),
+  });
   const [reservedTimes, setReservedTimes] = useState(
     Array.from({ length: TIME_PERIOD }, () => 0)
   );
@@ -74,28 +89,25 @@ const RsvEditModal = ({ onClose, roomId, roomName }: RsvEditModalProps) => {
   }, [data]);
 
   const handleClickRsv = () => {
-    if (!user) {
-      alert('로그인 후 사용해주세요!');
-      return;
-    }
     if (!reservationTime.current || reservationTime.current.length < 2) {
       alert('예약시간을 정확히 선택해주세요');
       return;
     }
 
-    const rsvData = {
+    const rsvData: RsvPutPayload = {
+      rsvId: rsvId,
       userId: user?.id,
-      roomId,
       startTime: numberHourToDate(reservationTime.current[0]),
       endTime: numberHourToDate(reservationTime.current[1]),
     };
 
     mutate({
-      postData: {
+      putData: {
         reservationData: rsvData,
       },
       path: '/user/reservations',
     });
+    onClose();
   };
 
   return (

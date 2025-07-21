@@ -41,7 +41,7 @@ const RoomRsvModal = ({ onClose, roomId, roomName }: RoomRsvModalProps) => {
   const onError = () => {};
   const { mutate } = usePosts({ onSuccess, onError });
   const { data, isLoading } = useGets<{ schedule: number[] }>(
-    ['room-rervations'],
+    ['room-reservations'],
     '/rooms/reservations',
     true,
     {

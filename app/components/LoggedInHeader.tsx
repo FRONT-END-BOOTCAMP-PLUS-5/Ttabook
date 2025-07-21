@@ -6,12 +6,13 @@ import { useRouter } from 'next/navigation';
 import { useSession } from '../providers/SessionProvider';
 
 const LoggedInHeader = () => {
+  const router = useRouter();
   const onSuccess = () => {
     logout();
+    router.push('/');
   };
   const onError = () => {};
   const { mutate } = usePosts({ onSuccess, onError });
-  const router = useRouter();
   const { logout } = useSession();
 
   const handleClickMypage = () => {

@@ -110,7 +110,7 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
 
     if (data?.available === true && data?.message) {
       setCheckedDuplication(true);
-      showToast(data?.message, 'danger');
+      showToast(data?.message, 'secondary');
     }
     if (
       error &&
@@ -121,7 +121,8 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
     }
   };
 
-  const handleClickSignup = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     if (!name || !email || !password || !passwordCheck) {
       showToast('필수 값을 모두 입력하세요.', 'danger');
       return;
@@ -146,7 +147,7 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
     <Modal height={600}>
       <Modal.Title>Signup</Modal.Title>
       <Modal.Body>
-        <div className={styles['modal-container']}>
+        <form className={styles['modal-container']} onSubmit={handleSubmit}>
           <div className={styles['modal-input-container']}>
             <div className={styles['modal-input-absolute-parents']}>
               <InputField
@@ -171,6 +172,7 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
                   variant="outline"
                   size="sm"
                   onClick={handleClickCheckDup}
+                  type="button"
                 >
                   {' '}
                   중복확인
@@ -232,11 +234,11 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
             />
           </div>
           <div className={styles['modal-button-container']}>
-            <Button size="md" isFullWidth={false} onClick={handleClickSignup}>
+            <Button size="md" isFullWidth={false} type="submit">
               회원가입
             </Button>
           </div>
-        </div>
+        </form>
       </Modal.Body>
       <Modal.CloseButton onClick={onClose} />
     </Modal>

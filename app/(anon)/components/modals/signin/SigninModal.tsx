@@ -41,7 +41,8 @@ const SigninModal = ({ onClose, openSignup }: SigninModalProps) => {
   };
   const { mutate } = usePosts({ onSuccess, onError });
 
-  const handleClickSignin = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (emailRef.current?.value && passwordRef.current?.value) {
       mutate({
         postData: {
@@ -62,7 +63,7 @@ const SigninModal = ({ onClose, openSignup }: SigninModalProps) => {
     <Modal>
       <Modal.Title>Signin</Modal.Title>
       <Modal.Body>
-        <div className={styles['modal-container']}>
+        <form className={styles['modal-container']} onSubmit={handleSubmit}>
           <div className={styles['modal-input-container']}>
             <InputField
               inputProps={{
@@ -95,7 +96,7 @@ const SigninModal = ({ onClose, openSignup }: SigninModalProps) => {
             />
           </div>
           <div className={styles['modal-button-container']}>
-            <Button size="md" isFullWidth={false} onClick={handleClickSignin}>
+            <Button size="md" isFullWidth={false} type="submit">
               로그인
             </Button>
             <div className={styles['modal-button-signup-container']}>
@@ -107,12 +108,13 @@ const SigninModal = ({ onClose, openSignup }: SigninModalProps) => {
                 size="sm"
                 style={{ fontSize: 12 }}
                 onClick={handleClickSignup}
+                type="button"
               >
                 회원가입
               </Button>
             </div>
           </div>
-        </div>
+        </form>
       </Modal.Body>
       <Modal.CloseButton onClick={() => onClose()} />
     </Modal>

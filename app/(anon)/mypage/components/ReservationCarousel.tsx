@@ -33,15 +33,18 @@ const ReservationCarousel = ({
       >
         {reservations?.map((e, i) => (
           <Card
-            key={i}
+            key={e.rsvId}
             width={912}
             height={280}
             background="white"
             className={styles.reservationCard}
           >
             <div className={styles.spaceInfo}>
-              <div className={styles.spaceName}>{e.spaceName}</div>
-              <div className={styles.roomName}>{e.roomName}</div>
+              <div className={styles.spaceRoomName}>
+                <span className={styles.badge}>{`#${i + 1}`}</span>
+                {`${e.spaceName} ${e.roomName}`}
+              </div>
+              <div className={styles.editTime}>마지막 수정: {e.lastEdit}</div>
             </div>
 
             <div className={styles.timePickerContainer}>

@@ -23,14 +23,11 @@ const MyReservationPage = () => {
     null
   );
   const { user } = useSession();
-  const { data, isLoading, error, isSuccess } = useGets<GetUserRsvDto[]>(
-    ['mypage'],
-    '/user/reservations',
-    true,
-    {
-      userId: user?.id ?? '',
-    }
-  );
+  const { data, isLoading, error, isSuccess, refetch } = useGets<
+    GetUserRsvDto[]
+  >(['mypage'], '/user/reservations', true, {
+    userId: user?.id ?? '',
+  });
 
   useEffect(() => {
     if (isSuccess && data) {
@@ -56,11 +53,11 @@ const MyReservationPage = () => {
     }
   }, [data, isSuccess]);
 
-  const handleEdit = () => {
+  const handleClickEdit = () => {
     openModal('rsv-edit');
   };
 
-  const handleDelete = () => {
+  const handleClickDelete = () => {
     openModal('cancel-confirm');
   };
 
@@ -68,56 +65,59 @@ const MyReservationPage = () => {
     <>
       {isModalOpen('rsv-edit') && reservations && (
         <RsvEditModal
+          mypageRefetch={refetch}
           roomId={reservations[carouselIndex].roomId}
           roomName={reservations[carouselIndex].roomName}
+          rsvId={reservations[carouselIndex].rsvId}
           onClose={() => closeModal('rsv-edit')}
         />
       )}
       {isModalOpen('cancel-confirm') && reservations && (
         <RsvCancelModal
-          onConfirm={() => {}}
+          userId={user!.id}
+          rsvId={reservations[carouselIndex].rsvId}
           onClose={() => closeModal('cancel-confirm')}
         />
       )}
-      <div className={styles.container}>
-        <div className="titleset">
+      <main className={styles.container}>
+        <section>
           {isLoading && (
             <div className={styles.container}>
-              <div className={styles.title}>나의 예약 현황</div>
+              <h2 className={styles.title}>나의 예약 현황</h2>
               <LoadingSpinner />
             </div>
           )}
           {error && (
             <div className={styles.container}>
-              <div className={styles.title}>오류가 발생했습니다</div>
+              <h2 className={styles.title}>오류가 발생했습니다</h2>
             </div>
           )}
           {isSuccess && reservations && reservations.length > 0 && (
             <>
-              <div className={styles.title}>나의 예약 현황</div>
+              <h2 className={styles.title}>나의 예약 현황</h2>
               <ReservationCarousel
                 reservations={reservations}
                 availableTimes={nineToFive}
                 currentIndex={carouselIndex}
                 onIndexChange={setCarouselIndex}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
+                onEdit={handleClickEdit}
+                onDelete={handleClickDelete}
               />
             </>
           )}
           {isSuccess && reservations && reservations.length === 0 && (
             <div className={styles.container}>
-              <div className={styles.title}>예약이 없습니다!</div>
+              <h2 className={styles.title}>예약이 없습니다!</h2>
               <Image
                 src={'/ttabook-surprised.png'}
                 width={400}
                 height={600}
-                alt=""
+                alt="예약이 없을 때 표시되는 따북이 이미지"
               />
             </div>
           )}
-        </div>
-      </div>
+        </section>
+      </main>
     </>
   );
 };

@@ -57,6 +57,8 @@ export class SbRsvRepository implements RsvRepository {
       room_id,
       start_time,
       end_time,
+      created_at,
+      edited_at,
       room:room_id(
         name,
         space_id,
@@ -110,9 +112,9 @@ export class SbRsvRepository implements RsvRepository {
       .update({
         start_time: reservation.startTime,
         end_time: reservation.endTime,
+        edited_at: new Date().toISOString(),
       })
-      .eq('id', reservation.rsvId)
-      .eq('user_id', reservation.userId);
+      .eq('id', reservation.rsvId);
 
     const { error } = await query;
 
