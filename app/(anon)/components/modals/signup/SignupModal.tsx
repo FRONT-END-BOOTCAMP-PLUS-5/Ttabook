@@ -143,7 +143,6 @@ const SignupModal = ({ onClose }: SignupModalProps) => {
     }
   };
 
-
   return (
     <Modal height={600}>
       <Modal.Title>Signup</Modal.Title>
