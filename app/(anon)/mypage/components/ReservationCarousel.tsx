@@ -40,9 +40,10 @@ const ReservationCarousel = ({
             className={styles.reservationCard}
           >
             <div className={styles.spaceInfo}>
-              <div
-                className={styles.spaceRoomName}
-              ><span className={styles.badge}>{`#${i + 1}`}</span>{`${e.spaceName} ${e.roomName}`}</div>
+              <div className={styles.spaceRoomName}>
+                <span className={styles.badge}>{`#${i + 1}`}</span>
+                {`${e.spaceName} ${e.roomName}`}
+              </div>
               <div className={styles.editTime}>마지막 수정: {e.lastEdit}</div>
             </div>
 

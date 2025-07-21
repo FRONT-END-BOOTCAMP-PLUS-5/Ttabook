@@ -114,7 +114,7 @@ export class SbRsvRepository implements RsvRepository {
         end_time: reservation.endTime,
         edited_at: new Date().toISOString(),
       })
-      .eq('id', reservation.rsvId)
+      .eq('id', reservation.rsvId);
 
     const { error } = await query;
 

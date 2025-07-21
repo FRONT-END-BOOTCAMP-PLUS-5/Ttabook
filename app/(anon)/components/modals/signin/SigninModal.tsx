@@ -54,7 +54,6 @@ const SigninModal = ({ onClose, openSignup }: SigninModalProps) => {
     }
   };
 
-
   const handleClickSignup = () => {
     onClose();
     openSignup();
