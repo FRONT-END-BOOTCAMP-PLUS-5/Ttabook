@@ -23,7 +23,7 @@ const MyReservationPage = () => {
     null
   );
   const { user } = useSession();
-  const { data, isLoading, error, isSuccess } = useGets<GetUserRsvDto[]>(
+  const { data, isLoading, error, isSuccess, refetch } = useGets<GetUserRsvDto[]>(
     ['mypage'],
     '/user/reservations',
     true,
@@ -56,11 +56,11 @@ const MyReservationPage = () => {
     }
   }, [data, isSuccess]);
 
-  const handleEdit = () => {
+  const handleClickEdit = () => {
     openModal('rsv-edit');
   };
 
-  const handleDelete = () => {
+  const handleClickDelete = () => {
     openModal('cancel-confirm');
   };
 
@@ -68,14 +68,17 @@ const MyReservationPage = () => {
     <>
       {isModalOpen('rsv-edit') && reservations && (
         <RsvEditModal
+        mypageRefetch={refetch}
           roomId={reservations[carouselIndex].roomId}
           roomName={reservations[carouselIndex].roomName}
+          rsvId={reservations[carouselIndex].rsvId}
           onClose={() => closeModal('rsv-edit')}
         />
       )}
       {isModalOpen('cancel-confirm') && reservations && (
         <RsvCancelModal
-          onConfirm={() => {}}
+          userId={user!.id}
+          rsvId={reservations[carouselIndex].rsvId}
           onClose={() => closeModal('cancel-confirm')}
         />
       )}
@@ -100,8 +103,8 @@ const MyReservationPage = () => {
                 availableTimes={nineToFive}
                 currentIndex={carouselIndex}
                 onIndexChange={setCarouselIndex}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
+                onEdit={handleClickEdit}
+                onDelete={handleClickDelete}
               />
             </>
           )}

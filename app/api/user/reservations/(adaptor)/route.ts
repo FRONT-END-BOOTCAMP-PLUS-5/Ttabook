@@ -82,9 +82,15 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { rsvId, userId, startTime, endTime } = body;
-
-    if (!rsvId || !userId || !startTime || !endTime) {
+    const { reservationData } = body;
+    console.log(reservationData)
+    if (
+      !reservationData ||
+      !reservationData.userId ||
+      !reservationData.rsvId ||
+      !reservationData.startTime ||
+      !reservationData.endTime
+    ) {
       return NextResponse.json(
         { error: 'Invalid request body' },
         { status: 400 }
@@ -97,10 +103,10 @@ export async function PUT(request: NextRequest) {
 
     await updateUserRsvUsecase.execute(
       new UpdateUserRsvDto(
-        rsvId,
-        userId,
-        new Date(startTime),
-        new Date(endTime)
+        reservationData.rsvId,
+        reservationData.userId,
+        new Date(reservationData.startTime),
+        new Date(reservationData.endTime)
       )
     );
     return NextResponse.json({ message: 'success' });
