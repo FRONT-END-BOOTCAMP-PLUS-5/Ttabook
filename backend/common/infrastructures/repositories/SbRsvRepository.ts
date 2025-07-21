@@ -57,6 +57,8 @@ export class SbRsvRepository implements RsvRepository {
       room_id,
       start_time,
       end_time,
+      created_at,
+      edited_at,
       room:room_id(
         name,
         space_id,

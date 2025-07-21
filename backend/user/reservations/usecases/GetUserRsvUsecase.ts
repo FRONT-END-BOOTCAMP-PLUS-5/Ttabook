@@ -21,31 +21,29 @@ export class GetUserRsvUsecase {
       return [];
     }
 
-    const reservationStatus: Map<number, GetUserRsvDto> = new Map();
-
-    reservations.forEach((e) => {
-      if (!reservationStatus.has(e.roomId)) {
-        reservationStatus.set(
-          e.roomId,
-          new GetUserRsvDto(
-            e.room?.spaceId ?? 0,
-            e.space?.name ?? '',
-            e.roomId,
-            e.room?.name ?? '',
-            new Array(RESERVATION_END_TIME - RESERVATION_START_TIME).fill(0)
-          )
-        );
-      }
-
+    const reservationStatus = reservations.map((e) => {
+      const lastDate = e.editedAt
+        ? new Date(e.createdAt ?? Date.now())
+        : new Date(e.editedAt ?? Date.now());
+      const lastTime = `${lastDate.getDay()}일 ${lastDate.getHours()}시 ${lastDate.getMinutes()}분`
+      const dto = new GetUserRsvDto(
+        e.id,
+        e.room?.spaceId ?? 0,
+        e.space?.name ?? '',
+        e.roomId,
+        e.room?.name ?? '',
+        lastTime,
+        new Array(RESERVATION_END_TIME - RESERVATION_START_TIME).fill(0)
+      );
       for (
-        let i = new Date(e.startTime).getHours() - RESERVATION_START_TIME;
-        i <= new Date(e.endTime).getHours() - RESERVATION_START_TIME;
+        let i = new Date(e.startTime).getUTCHours() - RESERVATION_START_TIME;
+        i <= new Date(e.endTime).getUTCHours() - RESERVATION_START_TIME;
         i++
-      ) {
-        reservationStatus.get(e.roomId)!.schedule[i] = 1;
-      }
+      )
+        dto.schedule[i] = 1;
+      return dto;
     });
 
-    return Array.from(reservationStatus.values());
+    return reservationStatus;
   }
 }
