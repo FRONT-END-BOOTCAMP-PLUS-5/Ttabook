@@ -116,12 +116,16 @@ const RsvEditModal = ({
       <Modal.Body>
         <div className={styles['modal-container']}>
           <div className={styles['image-container']}>
-            <Image
-              src={'/ttabook-basic.png'}
-              alt="ttabook basic image"
-              width={166}
-              height={200}
-            />
+            <picture>
+              <source srcSet="/ttabook-basic.avif" type="image/avif" />
+              <source srcSet="/ttabook-basic.webp" type="image/webp" />
+              <Image
+                src={'/ttabook-basic.png'}
+                alt="ttabook basic image"
+                width={166}
+                height={200}
+              />
+            </picture>
             <CaptionText style={{ margin: 0 }} variant="secondary">
               최대 4시간 예약이 가능합니다
             </CaptionText>
