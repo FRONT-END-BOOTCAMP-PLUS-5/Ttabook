@@ -24,8 +24,8 @@ export class GetRoomRsvUsecase {
 
       reservations.forEach((e) => {
         for (
-          let i = new Date(e.startTime).getUTCHours() - RESERVATION_START_TIME;
-          i <= new Date(e.endTime).getUTCHours() - RESERVATION_START_TIME;
+          let i = new Date(e.startTime).getHours() - RESERVATION_START_TIME;
+          i <= new Date(e.endTime).getHours() - RESERVATION_START_TIME;
           i++
         )
           reservationStatus.schedule[i] = 1;
