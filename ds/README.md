@@ -17,7 +17,9 @@ yarn add ttabook-design-system
 This package requires the following peer dependencies:
 
 ```bash
-npm install react react-dom next @storybook/nextjs @storybook/react storybook
+npm install react react-dom next
+# or
+yarn add react react-dom next
 ```
 
 ## 🎯 Usage
