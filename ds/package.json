@@ -1,0 +1,44 @@
+{
+  "name": "ttabook-design-system",
+  "version": "0.0.1",
+  "description": "Nextjs based design system from ttabook group.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc && cp -r styles dist/",
+    "prepublishOnly": "yarn build",
+    "storybook-test": "storybook dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FRONT-END-BOOTCAMP-PLUS-5/Ttabook.git"
+  },
+  "keywords": [
+    "Design",
+    "system"
+  ],
+  "author": "Ttabook",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/FRONT-END-BOOTCAMP-PLUS-5/Ttabook/issues"
+  },
+  "homepage": "https://github.com/FRONT-END-BOOTCAMP-PLUS-5/Ttabook#readme",
+  "peerDependencies": {
+    "@storybook/nextjs": "^8.0.0 || ^9.0.0",
+    "@storybook/react": "^8.0.0 || ^9.0.0",
+    "next": "^14.0.0 || ^15.0.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "storybook": "^8.0.0 || ^9.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0 || ^19.0.0",
+    "@types/react-dom": "^18.0.0 || ^19.0.0",
+    "next": "^15.0.0",
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "dist/"
+  ],
+  "packageManager": "yarn@4.9.2"
+}
