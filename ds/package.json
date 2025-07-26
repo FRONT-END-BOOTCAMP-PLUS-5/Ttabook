@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc && cp -r styles dist/",
+    "build": "tsc && mkdir -p dist/styles && cp styles/*.css dist/styles/ 2>/dev/null || true",
     "prepublishOnly": "yarn build",
     "storybook-test": "storybook dev"
   },
