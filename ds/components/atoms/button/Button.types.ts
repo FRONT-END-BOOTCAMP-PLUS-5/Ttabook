@@ -1,6 +1,6 @@
 import React from 'react';
-import { ButtonSize } from '@/ds/styles/tokens/button/size';
-import { ButtonVariant } from '@/ds/styles/tokens/button/variant';
+import { ButtonSize } from '../../../styles/tokens/button/size';
+import { ButtonVariant } from '../../../styles/tokens/button/variant';
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {

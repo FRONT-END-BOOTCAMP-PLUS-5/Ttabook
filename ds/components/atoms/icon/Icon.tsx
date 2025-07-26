@@ -1,6 +1,6 @@
-import { iconList } from '@/ds/styles/tokens/icon/icons';
+import { iconList } from '../../../styles/tokens/icon/icons';
 import { IconProps } from './Icon.types';
-import { color } from '@/ds/styles/tokens/color';
+import { color } from '../../../styles/tokens/color';
 const { primary } = color;
 
 const Icon: React.FC<IconProps> = ({ name, size = 24, color = primary }) => {
