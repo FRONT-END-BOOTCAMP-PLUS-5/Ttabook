@@ -14,27 +14,35 @@
     "url": "git+https://github.com/FRONT-END-BOOTCAMP-PLUS-5/Ttabook.git"
   },
   "keywords": [
-    "Design",
-    "system"
+    "react",
+    "design system",
+    "web",
+    "nextjs",
+    "component"
   ],
   "author": "Ttabook",
+  "contributors": [
+    "kanghyun <dev.kanghyun@gmail.com> (https://github.com/developer-kanghyun)",
+    "Kim Jiwoo <jjew0504@gmail.com> (https://github.com/jjew-woo)",
+    "zu0p <zu0p@kakao.com> (https://github.com/zu0p/)",
+    "ori <sdgwsld@gmail.com> (https://github.com/cgm-16)"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/FRONT-END-BOOTCAMP-PLUS-5/Ttabook/issues"
   },
   "homepage": "https://github.com/FRONT-END-BOOTCAMP-PLUS-5/Ttabook#readme",
   "peerDependencies": {
-    "@storybook/nextjs": "^8.0.0 || ^9.0.0",
-    "@storybook/react": "^8.0.0 || ^9.0.0",
     "next": "^14.0.0 || ^15.0.0",
     "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0",
-    "storybook": "^8.0.0 || ^9.0.0"
+    "react-dom": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
+    "@storybook/nextjs": "^9.0.18",
     "@types/react": "^18.0.0 || ^19.0.0",
     "@types/react-dom": "^18.0.0 || ^19.0.0",
     "next": "^15.0.0",
+    "storybook": "^9.0.18",
     "typescript": "^5.0.0"
   },
   "files": [
