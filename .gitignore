@@ -10,6 +10,7 @@
 !.yarn/releases
 !.yarn/versions
 !.yarn/sdks
+ds/node_modules
 
 # testing
 /coverage
@@ -20,6 +21,7 @@
 
 # production
 /build
+ds/dist
 
 # misc
 .DS_Store
