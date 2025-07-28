@@ -1,6 +1,6 @@
 import React, { Ref } from 'react';
-import { InputSize } from '@/ds/styles/tokens/input/size';
-import { InputVariant } from '@/ds/styles/tokens/input/variant';
+import { InputSize } from '../../../styles/tokens/input/size';
+import { InputVariant } from '../../../styles/tokens/input/variant';
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
