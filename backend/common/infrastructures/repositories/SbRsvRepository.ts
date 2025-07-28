@@ -112,7 +112,7 @@ export class SbRsvRepository implements RsvRepository {
       .update({
         start_time: reservation.startTime,
         end_time: reservation.endTime,
-        edited_at: new Date().toISOString(),
+        edited_at: new Date().toUTCString(),
       })
       .eq('id', reservation.rsvId);
 

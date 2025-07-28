@@ -23,8 +23,8 @@ export class GetUserRsvUsecase {
 
     const reservationStatus = reservations.map((e) => {
       const lastDate = e.editedAt
-        ? new Date(e.createdAt ?? Date.now())
-        : new Date(e.editedAt ?? Date.now());
+        ? new Date(e.editedAt ?? Date.now())
+        : new Date(e.createdAt ?? Date.now());
       const lastTime = `${lastDate.getDate()}일 ${lastDate.getHours()}시 ${lastDate.getMinutes()}분`;
       const dto = new GetUserRsvDto(
         e.id,
@@ -36,8 +36,8 @@ export class GetUserRsvUsecase {
         new Array(RESERVATION_END_TIME - RESERVATION_START_TIME).fill(0)
       );
       for (
-        let i = new Date(e.startTime).getUTCHours() - RESERVATION_START_TIME;
-        i <= new Date(e.endTime).getUTCHours() - RESERVATION_START_TIME;
+        let i = new Date(e.startTime).getHours() - RESERVATION_START_TIME;
+        i <= new Date(e.endTime).getHours() - RESERVATION_START_TIME;
         i++
       )
         dto.schedule[i] = 1;

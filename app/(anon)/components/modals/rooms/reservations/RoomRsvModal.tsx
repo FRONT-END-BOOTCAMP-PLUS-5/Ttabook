@@ -24,12 +24,12 @@ const nineToFive = Array.from({ length: TIME_PERIOD }, (_, i) => i + 9); // 9시
 const numberHourToDate = (hour: number): string => {
   const date = new Date();
 
-  date.setUTCHours(hour);
-  date.setUTCMinutes(0);
-  date.setUTCSeconds(0);
-  date.setUTCMilliseconds(0);
+  date.setHours(hour);
+  date.setMinutes(0);
+  date.setSeconds(0);
+  date.setMilliseconds(0);
 
-  return date.toISOString();
+  return date.toUTCString();
 };
 
 const RoomRsvModal = ({ onClose, roomId, roomName }: RoomRsvModalProps) => {
