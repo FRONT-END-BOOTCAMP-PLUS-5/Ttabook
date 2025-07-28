@@ -108,12 +108,17 @@ const MyReservationPage = () => {
           {isSuccess && reservations && reservations.length === 0 && (
             <div className={styles.container}>
               <h2 className={styles.title}>예약이 없습니다!</h2>
-              <Image
-                src={'/ttabook-surprised.png'}
-                width={200}
-                height={300}
-                alt="예약이 없을 때 표시되는 따북이 이미지"
-              />
+              <picture>
+                <source srcSet="/ttabook-surprised.avif" type="image/avif" />
+                <source srcSet="/ttabook-surprised.webp" type="image/webp" />
+                <Image
+                  src="/ttabook-surprised.png"
+                  width={200}
+                  height={300}
+                  alt="surprised turtle"
+                  className={styles.turtleImage}
+                />
+              </picture>
             </div>
           )}
         </section>
