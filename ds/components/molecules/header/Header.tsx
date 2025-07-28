@@ -12,7 +12,17 @@ const Header: React.FC<HeaderProps> = ({ children }) => {
   return (
     <header className={styles.header}>
       <div className={styles.logoWrapper} onClick={handleClickLogo}>
-        <Image src={'/Logo.png'} alt="Ttabook Logo" width={117} height={28} />
+        <picture>
+          <source srcSet="/Logo.avif" type="image/avif" />
+          <source srcSet="/Logo.webp" type="image/webp" />
+          <Image
+            src={'/Logo.png'}
+            alt="Ttabook Logo"
+            width={117}
+            height={28}
+            priority
+          />
+        </picture>
       </div>
       <nav className={styles.actionsWrapper}>{children}</nav>
     </header>

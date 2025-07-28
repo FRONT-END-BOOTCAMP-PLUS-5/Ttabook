@@ -24,12 +24,12 @@ const nineToFive = Array.from({ length: TIME_PERIOD }, (_, i) => i + 9); // 9시
 const numberHourToDate = (hour: number): string => {
   const date = new Date();
 
-  date.setUTCHours(hour);
-  date.setUTCMinutes(0);
-  date.setUTCSeconds(0);
-  date.setUTCMilliseconds(0);
+  date.setHours(hour);
+  date.setMinutes(0);
+  date.setSeconds(0);
+  date.setMilliseconds(0);
 
-  return date.toISOString();
+  return date.toUTCString();
 };
 
 const RoomRsvModal = ({ onClose, roomId, roomName }: RoomRsvModalProps) => {
@@ -106,12 +106,16 @@ const RoomRsvModal = ({ onClose, roomId, roomName }: RoomRsvModalProps) => {
       <Modal.Body>
         <div className={styles['modal-container']}>
           <div className={styles['image-container']}>
-            <Image
-              src={'/ttabook-basic.png'}
-              alt="ttabook basic image"
-              width={166}
-              height={200}
-            />
+            <picture>
+              <source srcSet="/ttabook-basic.avif" type="image/avif" />
+              <source srcSet="/ttabook-basic.webp" type="image/webp" />
+              <Image
+                src={'/ttabook-basic.png'}
+                alt="ttabook basic image"
+                width={166}
+                height={200}
+              />
+            </picture>
             <CaptionText style={{ margin: 0 }} variant="secondary">
               최대 4시간 예약이 가능합니다
             </CaptionText>
