@@ -22,7 +22,6 @@ export async function GET(request: NextRequest) {
         { status: 400 }
       );
     }
-    console.log('userId', userId);
 
     const supabase: SupabaseClient = await createClient();
     const rsvRepository = new SbRsvRepository(supabase);
@@ -83,7 +82,6 @@ export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
     const { reservationData } = body;
-    console.log(reservationData);
     if (
       !reservationData ||
       !reservationData.userId ||

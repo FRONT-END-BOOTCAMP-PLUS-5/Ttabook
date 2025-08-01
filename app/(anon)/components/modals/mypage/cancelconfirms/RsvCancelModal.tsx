@@ -54,13 +54,17 @@ const RsvCancelModal: React.FC<RsvCancelModalProps> = ({
             </Text>
           </div>
           <div className={styles.imageSection}>
-            <Image
-              src="/ttabook-surprised.png"
-              width={120}
-              height={120}
-              alt="surprised turtle"
-              className={styles.turtleImage}
-            />
+            <picture>
+              <source srcSet="/ttabook-surprised.avif" type="image/avif" />
+              <source srcSet="/ttabook-surprised.webp" type="image/webp" />
+              <Image
+                src="/ttabook-surprised.png"
+                width={120}
+                height={120}
+                alt="surprised turtle"
+                className={styles.turtleImage}
+              />
+            </picture>
           </div>
         </div>
         <div className={styles.buttonContainer}>

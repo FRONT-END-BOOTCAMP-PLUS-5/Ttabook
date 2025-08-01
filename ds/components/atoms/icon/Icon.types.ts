@@ -1,4 +1,4 @@
-import { IconName } from '@/ds/styles/tokens/icon/icons';
+import { IconName } from '../../../styles/tokens/icon/icons';
 
 export interface IconProps {
   name: IconName;

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import Label from './Label';
-import { textVariants } from '@/ds/styles/tokens/text/variant';
-import { textSizes } from '@/ds/styles/tokens/text/size';
+import { textVariants } from '../../../styles/tokens/text/variant';
+import { textSizes } from '../../../styles/tokens/text/size';
 
 const meta: Meta<typeof Label> = {
   title: 'Components/Atoms/Label',
