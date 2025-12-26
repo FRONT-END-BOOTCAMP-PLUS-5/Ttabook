@@ -1,5 +1,8 @@
 # Ttabook | 따북
 
+- [디자인 시스템](https://www.npmjs.com/package/ttabook-design-system)
+- [서비스 링크](https://ttabook.vercel.app/)
+
 **공간 예약 시스템**
 
 따북은 Next.js로 구축된 종합 공간 예약 시스템입니다. 시각적 공간 관리, 사용자 인증, 관리자 제어 기능을 제공하며, 사용자는 직관적인 캔버스 기반 인터페이스를 통해 다양한 공간의 방을 예약할 수 있습니다.
