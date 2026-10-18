@@ -73,7 +73,7 @@ cd Ttabook
 yarn install
 ```
 
-3. Supabase 데이터베이스 스키마를 설정하세요 (`docs/` 폴더의 문서 참조)
+3. Supabase 데이터베이스 스키마를 설정하세요 (`docs/` 폴더의 문서 참조). 서버 전용 테이블의 권한 변경과 로컬 검증은 [Data API 접근 경계](docs/data-api-access.md)를 따르세요.
 
 4. 개발 서버를 시작하세요:
 
